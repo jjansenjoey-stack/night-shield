@@ -1,0 +1,19 @@
+node_modules
+dist
+dist-ssr
+
+# Local env — .env.example is committed, real keys never are.
+.env
+.env.local
+.env.*.local
+
+# Build artefacts
+tsconfig.tsbuildinfo
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
