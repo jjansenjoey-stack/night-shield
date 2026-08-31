@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Brush, CalendarDays, Route, ShieldHalf, Users } from 'lucide-react';
 import { LinkButton } from '@/components/ui/Button';
+import { ShaderBackground } from '@/components/ui/ShaderBackground';
 import { useAppStore } from '@/store/appStore';
 
 const BENEFITS = [
@@ -32,7 +33,15 @@ export function LandingPage() {
 
   return (
     <div style={{ minHeight: '100vh', paddingBottom: '3rem' }}>
-      <section className="hero">
+      <section className="hero hero--shader">
+        {/*
+          The animated gradient sits behind everything and is aria-hidden. The
+          scrim over it is not decoration: the shader swings from near-black to
+          hot pink, and white body copy has to stay readable across all of it.
+        */}
+        <ShaderBackground className="hero__shader" />
+        <div className="hero__scrim" aria-hidden="true" />
+
         <span className="hero__kicker">
           <ShieldHalf size={14} aria-hidden="true" />
           A concept for Tilburg · Inclusivity · Safety · Awareness
