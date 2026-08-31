@@ -114,7 +114,7 @@ const A11Y_LABELS: Record<string, string> = {
   service_animal: 'Assistance dogs welcome',
   // Avoids kerb/curb entirely — the spelling differs by country and the word
   // adds nothing. "No steps" is what people actually need to know.
-  step_free: 'No steps',
+  step_free: 'Flat — no stairs',
   well_lit: 'Well lit at night',
   gender_neutral_toilets: 'Gender-neutral toilets',
 };

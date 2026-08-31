@@ -3,7 +3,9 @@ import {
   daysUntilCollection,
   effectivePlacementStatus,
   PLACEMENT_DAYS,
+  type LatLng,
   type Placement,
+  type PlacementFind,
   type RouteSpot,
 } from '@/types';
 
@@ -130,10 +132,37 @@ export async function placeArt(
     description: string | null;
     materials: string | null;
     image_url: string | null;
+    /** Set to hide the piece until somebody finds it. */
+    hunt_clue?: string | null;
   },
 ): Promise<Placement> {
   const provider = await getProvider();
-  return provider.placeArt(userId, spotId, input);
+  return provider.placeArt(userId, spotId, { hunt_clue: null, ...input });
+}
+
+/**
+ * Log finding a hidden piece. Returns the new points balance.
+ *
+ * The distance is checked by the backend against the spot, the same way a
+ * cache find is.
+ */
+export async function logPlacementFind(
+  userId: string,
+  placementId: string,
+  at: LatLng | null,
+): Promise<number> {
+  const provider = await getProvider();
+  return provider.logPlacementFind(userId, placementId, at);
+}
+
+export async function getPlacementFinds(userId: string): Promise<PlacementFind[]> {
+  const provider = await getProvider();
+  return provider.getPlacementFinds(userId);
+}
+
+/** Everything ever placed, newest first — the gallery's source. */
+export function galleryEntries(placements: Placement[]): Placement[] {
+  return [...placements].sort((a, b) => Date.parse(b.placed_at) - Date.parse(a.placed_at));
 }
 
 export async function collectPlacement(

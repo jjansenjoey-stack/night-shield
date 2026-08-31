@@ -7,6 +7,7 @@ import {
   PackageOpen,
   Plus,
   Ruler,
+  Search,
   Trophy,
   X,
 } from 'lucide-react';
@@ -20,6 +21,8 @@ import { AccessibilityIcons, SafeImage } from '@/components/ui/Shared';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { RouteComparison } from '@/components/routes/RouteComparison';
+import { ArtGallery } from '@/components/routes/ArtGallery';
+import { fileToCompressedDataUrl } from '@/lib/image';
 import { POINTS } from '@/services/pointsService';
 import {
   buildBoard,
@@ -27,7 +30,9 @@ import {
   collectPlacement,
   currentPlacement,
   getPlacements,
+  getPlacementFinds,
   getSpots,
+  logPlacementFind,
   placeArt,
   PLACEMENT_DAYS,
   urgencyOf,
@@ -69,6 +74,7 @@ export function ArtRoutesPage() {
   const [loading, setLoading] = useState(true);
   const [placing, setPlacing] = useState<RouteSpot | null>(null);
   const [busy, setBusy] = useState(false);
+  const [foundIds, setFoundIds] = useState<Set<string>>(new Set());
 
   const refresh = useCallback(async () => {
     const [nextSpots, nextPlacements] = await Promise.all([
@@ -77,7 +83,45 @@ export function ArtRoutesPage() {
     ]);
     setSpots(nextSpots);
     setPlacements(nextPlacements);
+
+    const me = useAppStore.getState().user;
+    if (me) {
+      const finds = await getPlacementFinds(me.id).catch(() => []);
+      setFoundIds(new Set(finds.map((f) => f.placement_id)));
+    } else {
+      setFoundIds(new Set());
+    }
   }, []);
+
+  async function handleFind(placement: Placement) {
+    if (!user) return;
+    setBusy(true);
+    try {
+      // The position is checked by the backend against the spot, so a browser
+      // that refuses location simply cannot log a find.
+      const at = await new Promise<GeolocationPosition | null>((resolve) => {
+        if (!navigator.geolocation) return resolve(null);
+        navigator.geolocation.getCurrentPosition(resolve, () => resolve(null), {
+          enableHighAccuracy: true,
+          timeout: 8000,
+        });
+      });
+
+      await logPlacementFind(
+        user.id,
+        placement.id,
+        at ? { latitude: at.coords.latitude, longitude: at.coords.longitude } : null,
+      );
+      await refresh();
+      const fresh = await fetchCurrentUser();
+      if (fresh) setUser(fresh);
+      toast.success(`Found it. +${POINTS.find_art} points.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not log that find.');
+    } finally {
+      setBusy(false);
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -212,9 +256,59 @@ export function ArtRoutesPage() {
               canPlace={Boolean(user) && !mine}
               signedIn={Boolean(user)}
               onPlace={() => setPlacing(entry.spot)}
+              foundIds={foundIds}
+              onFind={(p) => void handleFind(p)}
+              busy={busy}
             />
           ))}
         </div>
+      </Section>
+
+      {/*
+        Two things on this page ask people to walk around looking for something,
+        and they are not the same thing. Saying so plainly, next to each other,
+        is the only way anyone will keep them straight.
+      */}
+      {/*
+        Its own section, about caches and nothing else.
+
+        This used to sit Two Weeks Only in a column beside it, which put the
+        fortnight rule inside a heading that said "Night Caches" and made it
+        look as though caches expired too. They do not: the two-week clock
+        belongs to the art route above and to nothing else on this page.
+      */}
+      <Section title="Night Caches">
+        <Card>
+          <h3 style={{ margin: '0 0 0.3rem', fontSize: '1rem' }}>
+            <Search size={15} aria-hidden="true" /> Permanent, and always there
+          </h3>
+          <p className="small muted" style={{ margin: 0 }}>
+            Eight details of the city, each with a story behind it: a rail left in the pavement,
+            a bolt on the water tower. Nobody puts these there and nobody takes them home —{' '}
+            <strong>they do not expire</strong>. You go and find them, and they stay for the next
+            person. Worth 6–16 points each, and there is a trail that links all eight into one
+            walk.
+          </p>
+          <p className="tiny muted" style={{ margin: '0.6rem 0 0' }}>
+            The two-week rule above is only for Two Weeks Only. It does not apply here.
+          </p>
+          <div className="row row--wrap" style={{ gap: '0.35rem', marginTop: '0.6rem' }}>
+            <LinkButton to="/discover" variant="text" icon={<MapPin size={14} />}>
+              Find them on the map
+            </LinkButton>
+            <LinkButton
+              to="/route/route-night-cache-trail"
+              variant="text"
+              icon={<Footprints size={14} />}
+            >
+              Walk the trail
+            </LinkButton>
+          </div>
+        </Card>
+      </Section>
+
+      <Section title="The gallery">
+        <ArtGallery placements={placements} spots={spots} />
       </Section>
 
       {(data?.routes?.length ?? 0) > 0 ? (
@@ -298,14 +392,69 @@ function SpotCard({
   canPlace,
   signedIn,
   onPlace,
+  foundIds,
+  onFind,
+  busy,
 }: {
   entry: SpotBoardEntry;
   index: number;
   canPlace: boolean;
   signedIn: boolean;
   onPlace: () => void;
+  foundIds: Set<string>;
+  onFind: (placement: Placement) => void;
+  busy: boolean;
 }) {
   const { spot, live, daysLeft, history } = entry;
+
+  /*
+   * A hidden piece stays hidden until you have actually found it. Showing the
+   * photo and title next to the clue would give the game away before anyone
+   * left the house.
+   */
+  const hidden = Boolean(live?.hunt_clue) && !(live && foundIds.has(live.id));
+
+  if (live && hidden) {
+    return (
+      <Card
+        className="card-enter twoweeks-spot twoweeks-spot--hunt"
+        style={{ '--i': index } as React.CSSProperties}
+      >
+        <div className="row row--between" style={{ gap: 'var(--xs)' }}>
+          <h3 style={{ margin: 0 }}>
+            <span className="twoweeks-spot__number" aria-hidden="true">
+              {spot.number}
+            </span>
+            {spot.label}
+          </h3>
+        </div>
+
+        <div className="twoweeks-spot__empty" style={{ borderStyle: 'solid' }}>
+          <Badge tone="pink" icon={<Search size={12} />}>
+            Something is hidden here
+          </Badge>
+          <p className="small" style={{ margin: '0.6rem 0 0.4rem' }}>
+            <strong>Clue:</strong> {live.hunt_clue}
+          </p>
+          <p className="tiny muted" style={{ margin: '0 0 0.7rem' }}>
+            Go and look. When you have it in front of you, tap below — we check you are
+            actually there. Worth {POINTS.find_art} points.
+          </p>
+          {signedIn ? (
+            <Button variant="secondary" onClick={() => onFind(live)} disabled={busy}>
+              I found it
+            </Button>
+          ) : (
+            <p className="small muted" style={{ margin: 0 }}>
+              Sign in to log a find.
+            </p>
+          )}
+        </div>
+
+        <AccessibilityIcons tags={spot.accessibility} />
+      </Card>
+    );
+  }
 
   return (
     <Card
@@ -404,6 +553,8 @@ function PlaceModal({
   const [description, setDescription] = useState('');
   const [materials, setMaterials] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [huntClue, setHuntClue] = useState('');
+  const [isHunt, setIsHunt] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -412,8 +563,20 @@ function PlaceModal({
       setDescription('');
       setMaterials('');
       setImageUrl('');
+      setHuntClue('');
+      setIsHunt(false);
     }
   }, [spot]);
+
+  async function pickPhoto(file: File | undefined) {
+    if (!file) return;
+    try {
+      // Shrunk before it is stored — see lib/image.ts for why that matters.
+      setImageUrl(await fileToCompressedDataUrl(file));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not read that photo.');
+    }
+  }
 
   if (!spot) return null;
 
@@ -430,6 +593,7 @@ function PlaceModal({
         description: description.trim() || null,
         materials: materials.trim() || null,
         image_url: imageUrl.trim() || null,
+        hunt_clue: isHunt ? huntClue.trim() || null : null,
       });
       await onPlaced();
       toast.success(
@@ -507,17 +671,67 @@ function PlaceModal({
       </div>
 
       <div className="field">
-        <label className="field__label" htmlFor="place-image">
-          Photo link <span className="field__hint">(optional)</span>
+        <label className="field__label" htmlFor="place-photo">
+          Photo <span className="field__hint">(optional)</span>
         </label>
         <input
-          id="place-image"
+          id="place-photo"
           className="input"
-          type="url"
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
-          placeholder="https://…"
+          type="file"
+          accept="image/*"
+          onChange={(e) => void pickPhoto(e.target.files?.[0])}
         />
+        <p className="field__hint">
+          Taken on your phone is fine. It is made smaller before it is saved.
+        </p>
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt="The piece you are placing"
+            style={{
+              width: '100%',
+              maxHeight: 160,
+              objectFit: 'cover',
+              borderRadius: 'var(--r-sm)',
+              marginTop: '0.4rem',
+            }}
+          />
+        ) : null}
+      </div>
+
+      {/*
+        The hunt. The spots are public, so this is not "where is spot 5" — it is
+        what is at it and where exactly, which turns a walk past into a two
+        minute search. Finding one is worth a few points to whoever does it.
+      */}
+      <div className="field">
+        <label className="row" style={{ gap: '0.5rem', cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={isHunt}
+            onChange={(e) => setIsHunt(e.target.checked)}
+          />
+          <span className="small">
+            <strong>Hide it and leave a clue</strong> — make it something to find
+          </span>
+        </label>
+
+        {isHunt ? (
+          <>
+            <input
+              className="input"
+              value={huntClue}
+              maxLength={140}
+              onChange={(e) => setHuntClue(e.target.value)}
+              placeholder="Behind the third fence post, low down"
+              aria-label="Your clue"
+              style={{ marginTop: '0.4rem' }}
+            />
+            <p className="field__hint">
+              People who find it earn {POINTS.find_art} points, and you can see how many did.
+            </p>
+          </>
+        ) : null}
       </div>
 
       <p className="small muted" style={{ marginBottom: 0 }}>

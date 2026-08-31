@@ -3,6 +3,7 @@ import { Check, Euro, MapPin, Users, Video } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import { ClickableCard } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 import { SafeImage } from '@/components/ui/Shared';
 import { countGoing, isPast } from '@/services/eventService';
 import { eventCategoryLabel, formatEuros, formatEventDate } from '@/lib/format';
@@ -47,6 +48,7 @@ export function EventCard({ event, onSelect, compact, index }: Props) {
         <div className="grow stack stack--xs" style={{ gap: '0.25rem', minWidth: 0 }}>
           <div className="row" style={{ gap: '0.35rem' }}>
             <Badge tone="pink">{eventCategoryLabel(event.category)}</Badge>
+            <ExampleBadge show={event.is_example} />
             {event.is_virtual ? (
               <Badge tone="teal" icon={<Video size={10} />}>
                 Online

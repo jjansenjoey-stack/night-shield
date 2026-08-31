@@ -41,6 +41,12 @@ export interface Installation {
   created_by: string | null;
   moderation_status: ModerationStatus;
   created_at: string;
+  /**
+   * Invented for the demo rather than a real listing. See NightEvent.is_example
+   * — everything seeded in this app is made up, and saying so on the card is
+   * the honest thing.
+   */
+  is_example?: boolean;
 }
 
 export type RouteType = 'safe' | 'exploration' | 'art_walk';
@@ -73,6 +79,12 @@ export interface DiscoveryRoute {
   created_by: string | null;
   moderation_status: ModerationStatus;
   created_at: string;
+  /**
+   * Invented for the demo rather than a real listing. See NightEvent.is_example
+   * — everything seeded in this app is made up, and saying so on the card is
+   * the honest thing.
+   */
+  is_example?: boolean;
 }
 
 export type EventCategory = 'workshop' | 'art_talk' | 'social' | 'nightlife';
@@ -169,6 +181,12 @@ export interface ThirdSpace {
   image_url: string | null;
   created_by: string | null;
   created_at: string;
+  /**
+   * Invented for the demo rather than a real listing. See NightEvent.is_example
+   * — everything seeded in this app is made up, and saying so on the card is
+   * the honest thing.
+   */
+  is_example?: boolean;
 }
 
 export interface SavedItem {
@@ -233,6 +251,12 @@ export interface NightCache {
   /** Compared case- and whitespace-insensitively. */
   answers: string[];
   created_at: string;
+  /**
+   * Invented for the demo rather than a real listing. See NightEvent.is_example
+   * — everything seeded in this app is made up, and saying so on the card is
+   * the honest thing.
+   */
+  is_example?: boolean;
 }
 
 export type FindMethod = 'visited' | 'answered';
@@ -291,6 +315,12 @@ export interface Course {
   capacity: number;
   materials_included: boolean;
   created_at: string;
+  /**
+   * Invented for the demo rather than a real listing. See NightEvent.is_example
+   * — everything seeded in this app is made up, and saying so on the card is
+   * the honest thing.
+   */
+  is_example?: boolean;
 }
 
 export type EnrolmentStatus = 'reserved' | 'completed' | 'cancelled';
@@ -426,6 +456,25 @@ export interface Placement {
   collect_by: string;
   status: PlacementStatus;
   collected_at: string | null;
+  /**
+   * Turns the piece into something to find rather than something to look at.
+   *
+   * The spots are published, so the hunt is not "where is spot 5" — it is what
+   * is at it, and where exactly. A clue like "behind the third fence post, low
+   * down" makes a two-minute search out of a walk past. Absent, the piece is
+   * simply on show.
+   */
+  hunt_clue?: string | null;
+  /** How many people have logged finding it. Shown to the maker and in the gallery. */
+  find_count?: number;
+}
+
+/** One person finding one hidden piece. */
+export interface PlacementFind {
+  id: string;
+  placement_id: string;
+  user_id: string;
+  found_at: string;
 }
 
 /** How long a piece may stay before it has to be taken home. */

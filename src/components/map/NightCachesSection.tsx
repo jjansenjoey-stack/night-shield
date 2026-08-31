@@ -2,6 +2,7 @@ import { Accessibility, CheckCircle2, Compass, Moon, Trophy } from 'lucide-react
 import { ClickableCard } from '@/components/ui/Card';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SafeImage } from '@/components/ui/Shared';
 import { cacheToMapItem } from '@/services/api';
@@ -90,6 +91,7 @@ export function NightCachesSection({ caches, finds, onOpen }: Props) {
               <div style={{ padding: '0.85rem' }}>
                 <div className="row" style={{ marginBottom: '0.4rem' }}>
                   <Badge tone="warning">{DIFFICULTY_LABELS[cache.difficulty]}</Badge>
+                  <ExampleBadge show={cache.is_example} />
                   <Badge tone="pink">{cache.points} pts</Badge>
                   {cache.night_only ? (
                     <Badge tone="teal" icon={<Moon size={10} />}>

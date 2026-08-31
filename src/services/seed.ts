@@ -204,6 +204,7 @@ export const seedUsers: Array<UserProfile & { password: string }> = [
 export const seedInstallations: Installation[] = [
   {
     id: 'inst-lochal-loom',
+    is_example: true,
     title: 'The Loom Wall',
     artist: 'Sanne de Wit',
     description:
@@ -221,6 +222,7 @@ export const seedInstallations: Installation[] = [
   },
   {
     id: 'inst-piushaven-lights',
+    is_example: true,
     title: 'Harbour Signals',
     artist: 'Collectief Nachtlicht',
     description:
@@ -238,6 +240,7 @@ export const seedInstallations: Installation[] = [
   },
   {
     id: 'inst-dwaalgebied-mural',
+    is_example: true,
     title: 'Everyone Is From Somewhere',
     artist: 'Rui Ferreira & buurtgroep Dwaalgebied',
     description:
@@ -255,6 +258,7 @@ export const seedInstallations: Installation[] = [
   },
   {
     id: 'inst-hall-of-fame',
+    is_example: true,
     title: 'Hall of Fame — open wall',
     artist: 'Rotating',
     description:
@@ -272,6 +276,7 @@ export const seedInstallations: Installation[] = [
   },
   {
     id: 'inst-leijpark-sound',
+    is_example: true,
     title: 'Quiet Grove',
     artist: 'Mieke Bosch',
     description:
@@ -289,6 +294,7 @@ export const seedInstallations: Installation[] = [
   },
   {
     id: 'inst-station-ceiling',
+    is_example: true,
     title: 'Overhead',
     artist: 'Studio Kuipers',
     description:
@@ -309,6 +315,7 @@ export const seedInstallations: Installation[] = [
 export const seedThirdSpaces: ThirdSpace[] = [
   {
     id: 'ts-lochal',
+    is_example: true,
     name: 'LocHal Library',
     type: 'library',
     description:
@@ -324,6 +331,7 @@ export const seedThirdSpaces: ThirdSpace[] = [
   },
   {
     id: 'ts-hall-of-fame-cafe',
+    is_example: true,
     name: 'Café de Werkplaats',
     type: 'cafe',
     description:
@@ -339,6 +347,7 @@ export const seedThirdSpaces: ThirdSpace[] = [
   },
   {
     id: 'ts-wilhelminapark',
+    is_example: true,
     name: 'Wilhelminapark',
     type: 'park',
     description:
@@ -354,6 +363,7 @@ export const seedThirdSpaces: ThirdSpace[] = [
   },
   {
     id: 'ts-veemarkt-studio',
+    is_example: true,
     name: 'Veemarkt Studios',
     type: 'studio',
     description:
@@ -369,6 +379,7 @@ export const seedThirdSpaces: ThirdSpace[] = [
   },
   {
     id: 'ts-buurthuis-reeshof',
+    is_example: true,
     name: 'Buurthuis De Symfonie',
     type: 'community_centre',
     description:
@@ -384,6 +395,7 @@ export const seedThirdSpaces: ThirdSpace[] = [
   },
   {
     id: 'ts-piushaven-kiosk',
+    is_example: true,
     name: 'Kiosk Piushaven',
     type: 'cafe',
     description:
@@ -402,6 +414,7 @@ export const seedThirdSpaces: ThirdSpace[] = [
 export const seedRoutes: DiscoveryRoute[] = [
   {
     id: 'route-lit-way-home',
+    is_example: true,
     title: 'The Lit Way Home',
     description:
       'Station to Piushaven along streets that stay lit and busy after midnight. Built from three years of resident reports.',
@@ -454,6 +467,7 @@ export const seedRoutes: DiscoveryRoute[] = [
   },
   {
     id: 'route-dwaalgebied-art',
+    is_example: true,
     title: 'Dwaalgebied Art Walk',
     description:
       'An hour through the wandering quarter: murals, galleries with lit windows, and two courtyards most people walk straight past.',
@@ -499,6 +513,7 @@ export const seedRoutes: DiscoveryRoute[] = [
   },
   {
     id: 'route-north-discovery',
+    is_example: true,
     title: 'North of the Tracks',
     description:
       'For people who like not knowing what is next. Crosses into Tilburg-Noord, ends at the open graffiti wall.',
@@ -544,6 +559,7 @@ export const seedRoutes: DiscoveryRoute[] = [
   },
   {
     id: 'route-quiet-green',
+    is_example: true,
     title: 'The Quiet Green',
     description:
       'A low-stimulation loop through two parks. Step-free the whole way, benches every 200 metres, no through traffic.',
@@ -582,6 +598,7 @@ export const seedRoutes: DiscoveryRoute[] = [
   },
   {
     id: 'route-two-weeks-only',
+    is_example: true,
     rotates: true,
     title: 'Two Weeks Only',
     description:
@@ -656,6 +673,7 @@ export const seedRoutes: DiscoveryRoute[] = [
   },
   {
     id: 'route-night-cache-trail',
+    is_example: true,
     title: 'The Night Cache trail',
     description:
       'All eight Night Caches in one walk, ordered so you never double back. It is the longest route in the app by a distance and it crosses the whole city, so treat it as an afternoon and an evening rather than an hour. The caches are worth points on their own; finishing the trail is worth the usual route reward on top.',
@@ -1235,6 +1253,7 @@ export const seedEvents: NightEvent[] = [
 export const seedCaches: NightCache[] = [
   {
     id: 'cache-last-rail',
+    is_example: true,
     title: 'The last rail',
     hint: 'Outside the LocHal, look down instead of up. One strip of the old depot never got lifted, and the paving was laid around it.',
     story:
@@ -1252,6 +1271,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-kruikenzeiker',
+    is_example: true,
     title: 'The man with the jug',
     hint: 'Near the Heuvel, someone is permanently relieving himself into a pot. Nobody in Tilburg finds this odd. Look for the bronze.',
     story:
@@ -1269,6 +1289,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-drowned-stream',
+    is_example: true,
     title: 'The drowned stream',
     hint: 'In the Leijpark, find the low stone kerb that runs through the grass and stops for no reason. It is not decorative.',
     story:
@@ -1286,6 +1307,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-sixty-windows',
+    is_example: true,
     title: 'Sixty windows',
     hint: 'Off the Willem II-straat there is an archway most people read as private. It is not. Go through it and count the faces on the wall.',
     story:
@@ -1303,6 +1325,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-water-tower-bolt',
+    is_example: true,
     title: 'The water tower bolt',
     hint: 'Spoorpark, at the foot of the tower. One of the base bolts is brass and the rest are steel. Somebody replaced it on purpose.',
     story:
@@ -1320,6 +1343,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-harbour-ring',
+    is_example: true,
     title: 'Ring number four',
     hint: 'Walk the Piushaven quay counting mooring rings from the kiosk. The fourth one is worn smooth on one side only.',
     story:
@@ -1337,6 +1361,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-wagner-corner',
+    is_example: true,
     title: 'The corner that waited',
     hint: 'Wagnerplein, Tilburg-Noord. On the café side, one shopfront has its original 1960s tiling behind the newer sign. You can see it from the pavement.',
     story:
@@ -1354,6 +1379,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-station-mirror',
+    is_example: true,
     title: 'Find yourself overhead',
     hint: 'Tilburg Centraal, on the bicycle ramp. There is exactly one spot where the mirrored panels above put your own reflection directly over your head. It is closer to the railing than you think.',
     story:
@@ -1538,6 +1564,7 @@ export const seedPlacements: Placement[] = [
 export const seedCourses: Course[] = [
   {
     id: 'course-screenprint',
+    is_example: true,
     title: 'Screenprinting: from sketch to edition',
     provider: 'Veemarkt Studios',
     description:
@@ -1561,6 +1588,7 @@ export const seedCourses: Course[] = [
   },
   {
     id: 'course-darkroom',
+    is_example: true,
     title: 'Analogue darkroom, start to finish',
     provider: 'Fontys Academy for Creative Industries',
     description:
@@ -1584,6 +1612,7 @@ export const seedCourses: Course[] = [
   },
   {
     id: 'course-sound-design',
+    is_example: true,
     title: 'Sound design for film and games',
     provider: 'Fontys × 013',
     description:
@@ -1607,6 +1636,7 @@ export const seedCourses: Course[] = [
   },
   {
     id: 'course-natural-dye',
+    is_example: true,
     title: 'Dyeing with what grows here',
     provider: 'TextielLab',
     description:
@@ -1630,6 +1660,7 @@ export const seedCourses: Course[] = [
   },
   {
     id: 'course-mural',
+    is_example: true,
     title: 'Painting at wall scale',
     provider: 'Hall of Fame collective',
     description:
@@ -1653,6 +1684,7 @@ export const seedCourses: Course[] = [
   },
   {
     id: 'course-zine',
+    is_example: true,
     title: 'Zines and very small publishing',
     provider: 'LocHal Kennismakerij',
     description:
@@ -1676,6 +1708,7 @@ export const seedCourses: Course[] = [
   },
   {
     id: 'course-ceramics',
+    is_example: true,
     title: 'Hand-built ceramics',
     provider: 'Veemarkt Studios',
     description:
@@ -1699,6 +1732,7 @@ export const seedCourses: Course[] = [
   },
   {
     id: 'course-documentary',
+    is_example: true,
     title: 'Documenting the street you live on',
     provider: 'Fontys Academy for Creative Industries',
     description:
@@ -1722,6 +1756,7 @@ export const seedCourses: Course[] = [
   },
   {
     id: 'course-lighting',
+    is_example: true,
     title: 'Stage lighting: the first desk',
     provider: '013 Poppodium',
     description:
@@ -1745,6 +1780,7 @@ export const seedCourses: Course[] = [
   },
   {
     id: 'course-writing',
+    is_example: true,
     title: 'Writing in a language that is not your first',
     provider: 'LocHal × Buurthuis De Symfonie',
     description:
@@ -1768,6 +1804,7 @@ export const seedCourses: Course[] = [
   },
   {
     id: 'course-masterclass',
+    is_example: true,
     title: 'Masterclass: Sanne de Wit on painting big in public',
     provider: 'Inclusivity Department',
     description:

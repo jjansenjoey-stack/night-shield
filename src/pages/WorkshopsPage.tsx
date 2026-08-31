@@ -15,6 +15,7 @@ import { fetchCurrentUser } from '@/services/authService';
 import { useAppStore } from '@/store/appStore';
 import { Card, ClickableCard, Section } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 import { Button, LinkButton } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingBlock } from '@/components/ui/LoadingSpinner';
@@ -327,6 +328,7 @@ export function WorkshopsPage() {
                 <div style={{ padding: '0.85rem' }}>
                   <div className="row" style={{ marginBottom: '0.4rem' }}>
                     <Badge tone="teal">{FORMAT_LABELS[course.format]}</Badge>
+                    <ExampleBadge show={course.is_example} />
                     {/* A gentle pulse marks the ones already within reach. */}
                     <Badge
                       tone={short === 0 ? 'success' : 'neutral'}

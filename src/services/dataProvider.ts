@@ -16,6 +16,7 @@ import type {
   JourneyStage,
   NightEvent,
   Placement,
+  PlacementFind,
   RouteSpot,
   RsvpCounts,
   RsvpStatus,
@@ -166,8 +167,24 @@ export interface DataProvider {
   placeArt(
     userId: string,
     spotId: string,
-    data: { title: string; description: string | null; materials: string | null; image_url: string | null },
+    data: {
+      title: string;
+      description: string | null;
+      materials: string | null;
+      image_url: string | null;
+      /** Set to hide the piece until somebody finds it. */
+      hunt_clue: string | null;
+    },
   ): Promise<Placement>;
+  /**
+   * Logs finding somebody else's hidden piece.
+   *
+   * The distance is measured by the backend against the spot, exactly as a
+   * cache find is — a client saying "I am here" is not evidence of anything.
+   */
+  logPlacementFind(userId: string, placementId: string, at: LatLng | null): Promise<number>;
+  /** Which hidden pieces this person has already found. */
+  getPlacementFinds(userId: string): Promise<PlacementFind[]>;
   /** Marks your own piece as taken home, and pays for doing it. */
   collectPlacement(userId: string, placementId: string): Promise<Placement>;
 

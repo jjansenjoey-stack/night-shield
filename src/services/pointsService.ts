@@ -39,6 +39,11 @@ export const POINTS = {
    * for coming back.
    */
   walk_art_route: 1,
+  /*
+   * Finding a hidden piece someone else left. Small: the walk is the reward,
+   * and it must never be worth more than making the thing in the first place.
+   */
+  find_art: 3,
 } as const;
 
 export type PointsReason = keyof typeof POINTS;

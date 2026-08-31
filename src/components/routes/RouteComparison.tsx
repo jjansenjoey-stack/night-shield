@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
-import { Accessibility, Clock, Footprints, Ruler } from 'lucide-react';
+import { Clock, Footprints, MoveHorizontal, Ruler } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 import { AccessibilityIcons } from '@/components/ui/Shared';
 import { useSnappedRoutes } from '@/hooks/useSnappedRoutes';
 import { routeTypeLabel } from '@/lib/format';
@@ -116,8 +117,8 @@ export function RouteComparison({ routes }: { routes: DiscoveryRoute[] }) {
           aria-pressed={stepFreeOnly}
           onClick={() => setStepFreeOnly((on) => !on)}
         >
-          <Accessibility size={13} aria-hidden="true" />
-          No steps
+          <MoveHorizontal size={13} aria-hidden="true" />
+          Flat routes only
         </button>
       </div>
 
@@ -128,7 +129,7 @@ export function RouteComparison({ routes }: { routes: DiscoveryRoute[] }) {
       {rows.length === 0 ? (
         <Card>
           <p className="small muted" style={{ margin: 0 }}>
-            None of the walks are marked as step-free yet. Turn the filter off to see them all.
+            None of the walks are marked as flat yet. Turn the filter off to see them all.
           </p>
         </Card>
       ) : (
@@ -144,6 +145,7 @@ export function RouteComparison({ routes }: { routes: DiscoveryRoute[] }) {
                       </Badge>
                       {route.id === shortestId ? <Badge tone="success">Shortest</Badge> : null}
                       {route.id === longestId ? <Badge tone="warning">Longest</Badge> : null}
+                      <ExampleBadge show={route.is_example} />
                     </div>
 
                     {/*

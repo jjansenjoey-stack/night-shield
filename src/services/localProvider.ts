@@ -25,6 +25,7 @@ import type {
   Enrolment,
   NightCache,
   Placement,
+  PlacementFind,
   RouteSpot,
   CacheFind,
   RsvpCounts,
@@ -87,6 +88,7 @@ interface Database {
   pointAwards: PointAward[];
   routeSpots: RouteSpot[];
   placements: Placement[];
+  placementFinds: PlacementFind[];
 }
 
 interface PointAward {
@@ -143,6 +145,7 @@ function freshDatabase(): Database {
     pointAwards: [],
     routeSpots: [...seedRouteSpots],
     placements: [...seedPlacements],
+    placementFinds: [],
   };
 }
 
@@ -229,6 +232,7 @@ function load(): Database {
           // reports free spots as taken.
           ['image_url', 'spot_id'],
         ),
+        placementFinds: parsed.placementFinds ?? [],
       };
       return db;
     }
@@ -914,12 +918,69 @@ export const localProvider: DataProvider = {
       collect_by: collectBy.toISOString(),
       status: 'live',
       collected_at: null,
+      hunt_clue: input.hunt_clue,
+      find_count: 0,
     };
     data.placements.push(placement);
     persist();
 
     await this.awardPoints(userId, 'place_art', placement.id, null);
     return tick(placement);
+  },
+
+  async getPlacementFinds(userId) {
+    return tick(load().placementFinds.filter((f) => f.user_id === userId));
+  },
+
+  async logPlacementFind(userId, placementId, at) {
+    const data = load();
+    const user = findUser(userId);
+    const placement = data.placements.find((p) => p.id === placementId);
+    if (!placement) throw new Error('We cannot find that piece.');
+
+    // Mirrors log_placement_find() in migration 0007.
+    if (placement.user_id === userId) {
+      throw new Error('You hid this one — let somebody else find it.');
+    }
+    if (effectivePlacementStatus(placement) !== 'live') {
+      throw new Error('That piece is not out there any more.');
+    }
+
+    const spot = data.routeSpots.find((s) => s.id === placement.spot_id);
+    if (!spot) throw new Error('That spot is not on the route any more.');
+
+    /*
+     * Same finiteness guard as a cache find, and for the same reason: NaN
+     * loses every comparison, so `metres > 60` would be false and a garbage
+     * coordinate would log a find from the other side of the country.
+     */
+    if (!at || !Number.isFinite(at.latitude) || !Number.isFinite(at.longitude)) {
+      throw new Error('We need your location to confirm you are there.');
+    }
+    const metres = distanceKm(at, spot.location) * 1000;
+    if (!Number.isFinite(metres)) {
+      throw new Error('We could not work out where you are.');
+    }
+    if (metres > CACHE_FIND_RADIUS_M) {
+      throw new Error(`You are still ${Math.round(metres)} m away.`);
+    }
+
+    const already = data.placementFinds.some(
+      (f) => f.user_id === userId && f.placement_id === placementId,
+    );
+    if (already) return tick(user.points);
+
+    data.placementFinds.push({
+      id: uid('find'),
+      placement_id: placementId,
+      user_id: userId,
+      found_at: new Date().toISOString(),
+    });
+    placement.find_count = (placement.find_count ?? 0) + 1;
+    persist();
+
+    await this.awardPoints(userId, 'find_art', placementId, null);
+    return tick(findUser(userId).points);
   },
 
   async collectPlacement(userId, placementId) {

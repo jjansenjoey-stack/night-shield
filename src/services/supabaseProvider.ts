@@ -15,6 +15,7 @@ import type {
   NightCache,
   NightEvent,
   Placement,
+  PlacementFind,
   RouteSpot,
   CacheFind,
   RsvpCounts,
@@ -724,7 +725,7 @@ export const supabaseProvider: DataProvider = {
     const { data, error } = await sb
       .from('placements_public')
       .select(
-        'id, spot_id, user_id, maker_name, title, description, materials, image_url, placed_at, collect_by, status, collected_at',
+        'id, spot_id, user_id, maker_name, title, description, materials, image_url, placed_at, collect_by, status, collected_at, hunt_clue, find_count',
       )
       .eq('route_id', routeId)
       .order('placed_at', { ascending: false });
@@ -743,9 +744,33 @@ export const supabaseProvider: DataProvider = {
       p_description: input.description,
       p_materials: input.materials,
       p_image_url: input.image_url,
+      p_hunt_clue: input.hunt_clue,
     });
     if (error) throw new Error(error.message);
     return data as Placement;
+  },
+
+  async getPlacementFinds(userId) {
+    const sb = requireSupabase();
+    const { data, error } = await sb
+      .from('placement_finds')
+      .select('id, placement_id, user_id, found_at')
+      .eq('user_id', userId);
+    if (error) throw new Error(`Could not load your finds: ${error.message}`);
+    return (data ?? []) as PlacementFind[];
+  },
+
+  async logPlacementFind(userId, placementId, at) {
+    const sb = requireSupabase();
+    void userId; // the server reads the finder from the JWT
+    // The distance is re-measured server-side against the spot's own geography.
+    const { data, error } = await sb.rpc('log_placement_find', {
+      target_placement: placementId,
+      at_latitude: at?.latitude ?? null,
+      at_longitude: at?.longitude ?? null,
+    });
+    if (error) throw new Error(error.message);
+    return (data as number) ?? 0;
   },
 
   async collectPlacement(userId, placementId) {
