@@ -78,7 +78,7 @@ export function MenuPage() {
       </Section>
 
       <Section title="Put something in the city">
-        <LinkButton to="/two-weeks-only" variant="secondary" block icon={<Footprints size={15} />}>
+        <LinkButton to="/art-routes" variant="secondary" block icon={<Footprints size={15} />}>
           Two Weeks Only — the changing route
         </LinkButton>
         <p className="tiny muted" style={{ margin: '0.5rem 0 0' }}>

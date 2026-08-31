@@ -172,13 +172,13 @@ button { font-family: inherit; }
   height: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   background: rgba(26, 26, 46, 0.96);
   backdrop-filter: blur(14px);
   border-top: 1px solid var(--border);
 }
 
-/* Six tabs on a small phone is about 60px each — shrink the label rather than
+/* Seven tabs on a small phone is about 45px each — shrink the label rather than
    letting "Workshops" wrap onto two lines. */
 @media (max-width: 420px) {
   .bottom-nav__item {
@@ -1317,7 +1317,7 @@ button { font-family: inherit; }
 }
 
 @media (min-width: 900px) {
-  .bottom-nav { grid-template-columns: repeat(6, 116px); justify-content: center; }
+  .bottom-nav { grid-template-columns: repeat(7, 108px); justify-content: center; }
   .page { padding: var(--md); }
 }
 

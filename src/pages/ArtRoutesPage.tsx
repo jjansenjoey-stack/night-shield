@@ -47,16 +47,18 @@ function daysLabel(days: number): string {
 }
 
 /**
- * Two Weeks Only — the route that changes itself.
+ * Art routes — walks built around what people have made.
  *
- * Eight fixed spots on a loop. Anyone can put a small piece of work in a free
- * one; a fortnight later they come back for it, or the municipality clears the
- * spot. The value for a walker is that the route is never twice the same, and
- * the value for a maker is a real place to show something without applying to
- * anyone for permission.
+ * Led by Two Weeks Only, the route that changes itself: eight fixed spots on a
+ * loop, anyone can put a small piece of work in a free one, and a fortnight
+ * later they come back for it or the municipality clears the spot. The value
+ * for a walker is that the route is never twice the same, and the value for a
+ * maker is a real place to show something without applying to anyone for
+ * permission. The city's other art walks are listed underneath.
  */
-export function ChangingRoutePage() {
+export function ArtRoutesPage() {
   const user = useAppStore((s) => s.user);
+  const data = useAppStore((s) => s.data);
   const setUser = useAppStore((s) => s.setUser);
   const markJourney = useAppStore((s) => s.markJourney);
   const toast = useToast();
@@ -106,6 +108,16 @@ export function ChangingRoutePage() {
 
   const freeCount = board.filter((entry) => entry.free).length;
 
+  // The city's other art walks, so the tab is about art routes rather than
+  // about one of them. The changing route is already the whole page above.
+  const otherWalks = useMemo(
+    () =>
+      (data?.routes ?? []).filter(
+        (route) => route.type === 'art_walk' && route.id !== CHANGING_ROUTE_ID,
+      ),
+    [data?.routes],
+  );
+
   async function handleCollect(placement: Placement) {
     if (!user) return;
     setBusy(true);
@@ -132,7 +144,13 @@ export function ChangingRoutePage() {
 
   return (
     <div className="page">
-      <h1 className="page__title">Two Weeks Only</h1>
+      <h1 className="page__title">Art routes</h1>
+      <p className="page__lede">
+        Walks through Tilburg built around what people have made. One of them changes every
+        fortnight, because the work on it is yours to put there.
+      </p>
+
+      <h2 style={{ marginBottom: '0.3rem' }}>Two Weeks Only</h2>
       <p className="page__lede">
         A loop with eight spots on it. Put something you have made in a free one and it stays
         for {PLACEMENT_DAYS} days — then you come back for it and the spot goes to someone
@@ -195,6 +213,34 @@ export function ChangingRoutePage() {
           ))}
         </div>
       </Section>
+
+      {otherWalks.length > 0 ? (
+        <Section title="Other art walks">
+          <div className="stack stack--xs">
+            {otherWalks.map((route) => (
+              <Card key={route.id} className="card--interactive">
+                <h3 style={{ margin: 0 }}>{route.title}</h3>
+                <p className="small muted" style={{ margin: '0.2rem 0 0.6rem' }}>
+                  {route.distance_km} km · about {route.estimated_time_minutes} minutes
+                </p>
+                {route.description ? (
+                  <p className="small" style={{ margin: '0 0 0.7rem' }}>
+                    {route.description}
+                  </p>
+                ) : null}
+                <AccessibilityIcons tags={route.accessibility} />
+                <LinkButton
+                  to={`/route/${route.id}`}
+                  variant="text"
+                  icon={<Footprints size={15} />}
+                >
+                  Walk it
+                </LinkButton>
+              </Card>
+            ))}
+          </div>
+        </Section>
+      ) : null}
 
       {!user ? (
         <Card style={{ marginTop: 'var(--md)' }}>
