@@ -1,4 +1,4 @@
-import { FlaskConical } from 'lucide-react';
+import { Flag } from 'lucide-react';
 import { Badge } from './Badge';
 
 /**
@@ -13,10 +13,29 @@ import { Badge } from './Badge';
  * It doubles as a worked example: an organiser reading it is looking at the
  * shape their own listing would take.
  */
-export function ExampleBadge({ show = true }: { show?: boolean }) {
+export function ExampleBadge({
+  show = true,
+  iconOnly,
+}: {
+  show?: boolean;
+  /**
+   * For rows with no space for a worded badge — a map list, a carousel pill.
+   * The flag still carries the meaning; the word moves into the label so it
+   * is read out and shown on hover rather than lost.
+   */
+  iconOnly?: boolean;
+}) {
   if (!show) return null;
+  if (iconOnly) {
+    return (
+      <span className="example-flag" title="Example — invented for this demo">
+        <Flag size={12} aria-hidden="true" />
+        <span className="sr-only">Example — invented for this demo</span>
+      </span>
+    );
+  }
   return (
-    <Badge tone="warning" icon={<FlaskConical size={12} />} title="Invented for this demo">
+    <Badge tone="warning" icon={<Flag size={12} />} title="Invented for this demo">
       Example
     </Badge>
   );

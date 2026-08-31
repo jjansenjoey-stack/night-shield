@@ -13,6 +13,7 @@ import { routePath } from '@/services/routeService';
 import { hasEnoughReports } from '@/services/feedbackService';
 import { bestTimeToVisit, fetchWeather, type WeatherReport } from '@/services/weatherService';
 import type { DiscoveryRoute } from '@/types';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 
 interface Props {
   route: DiscoveryRoute;
@@ -109,6 +110,7 @@ export function RouteDetailModal({ route, onClose }: Props) {
       <div className="stack">
         <div className="row">
           <Badge tone={tone}>{routeTypeLabel(route.type)}</Badge>
+          <ExampleBadge show={route.is_example} />
           {route.accessibility.includes('wheelchair') ? (
             <Badge tone="success">Step-free</Badge>
           ) : null}

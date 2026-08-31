@@ -1183,10 +1183,25 @@ button { font-family: inherit; }
   }
 }
 
+/*
+ * The entrance animation must never be what makes a card visible.
+ *
+ * This used to set opacity: 0 on the element and rely on the animation to
+ * bring it back. Two things went wrong with that. The delay is per-card, so
+ * on a long list the fortieth card sat at zero opacity for nearly two seconds
+ * and the page read as half-empty; and any time the animation did not run at
+ * all — a backgrounded tab, animations off — the card stayed invisible for
+ * good, with its text in the DOM and nothing on the screen.
+ *
+ * animation-fill-mode: backwards gets the same effect safely: the card holds
+ * the keyframe's from-state during the delay, and its resting state is
+ * visible, so anything that stops the animation just shows the card.
+ */
 .card-enter {
-  opacity: 0;
-  animation: card-rise 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: calc(var(--i, 0) * 45ms);
+  animation: card-rise 0.42s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  /* Capped, so a long list finishes arriving in about a third of a second
+     rather than staggering all the way down. */
+  animation-delay: calc(min(var(--i, 0), 8) * 45ms);
 }
 
 /* Lift, brighten the image, and slide a coloured edge in on hover. */
@@ -1327,6 +1342,12 @@ button { font-family: inherit; }
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+    /* The delay has to go too. Shortening only the duration still leaves a
+       staggered card holding its from-state — which is invisible — for as
+       long as its delay says, so the list arrives just as slowly and the
+       person who asked for less motion waits the longest. */
+    animation-delay: 0.01ms !important;
+    transition-delay: 0.01ms !important;
   }
 }
 
@@ -1665,4 +1686,40 @@ button { font-family: inherit; }
 
 @media (max-width: 640px) {
   .gallery-grid { grid-template-columns: 1fr; }
+}
+
+/* ---- Photos that have not arrived yet ------------------------------------
+   Wikimedia serves these over two redirects, so on a cold cache there is a
+   visible gap before the photo paints. Without something behind it that gap
+   is empty space and the page reads as broken rather than as loading. The
+   tint sits on the image element itself, so it works wherever SafeImage is
+   used without any call site having to know about it. */
+img[data-loading] {
+  background: linear-gradient(100deg, var(--surface-raised) 30%, var(--surface) 50%, var(--surface-raised) 70%);
+  background-size: 220% 100%;
+  animation: img-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes img-shimmer {
+  from { background-position: 180% 0; }
+  to   { background-position: -80% 0; }
+}
+
+/* A shimmer that never stops is worse than no shimmer for anyone who finds
+   motion uncomfortable; the tint alone still says "something goes here". */
+@media (prefers-reduced-motion: reduce) {
+  img[data-loading] { animation: none; }
+}
+
+/* ---- The example flag in a tight row -------------------------------------
+   A map list row and a carousel pill have no room for a worded badge, but the
+   mark still has to be there: someone scanning the map should not have to open
+   a sheet to learn the listing is invented. Just the flag, inline with the
+   title, with the word kept in the label for screen readers and on hover. */
+.example-flag {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: -1px;
+  margin-left: 0.3rem;
+  color: var(--warning);
 }

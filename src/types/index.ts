@@ -467,6 +467,13 @@ export interface Placement {
   hunt_clue?: string | null;
   /** How many people have logged finding it. Shown to the maker and in the gallery. */
   find_count?: number;
+  /**
+   * Invented for the demo rather than a real piece somebody made.
+   *
+   * The seeded route has work in it so the idea is legible on a first visit,
+   * and that work is fictional. Anything a real person places is not.
+   */
+  is_example?: boolean;
 }
 
 /** One person finding one hidden piece. */

@@ -4,6 +4,7 @@ import { Compass, Eye, Search } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { SafeImage } from '@/components/ui/Shared';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { galleryEntries } from '@/services/routeArtService';
 import { effectivePlacementStatus, type Placement, type RouteSpot } from '@/types';
@@ -118,6 +119,7 @@ export function ArtGallery({
                     </Badge>
                   ) : null}
                   {number ? <Badge tone="warning">Spot {number}</Badge> : null}
+                  <ExampleBadge show={piece.is_example} />
                 </div>
 
                 <h3 style={{ margin: '0.5rem 0 0.15rem', fontSize: '1rem' }}>{piece.title}</h3>

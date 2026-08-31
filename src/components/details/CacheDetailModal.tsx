@@ -30,6 +30,7 @@ import { awardBadge } from '@/services/pointsService';
 import { badgesEarned } from '@/services/cacheService';
 import { directionsUrl } from '@/lib/geo';
 import { CACHE_FIND_RADIUS_M, type NightCache } from '@/types';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 
 interface Props {
   cache: NightCache;
@@ -207,6 +208,7 @@ export function CacheDetailModal({ cache, onClose }: Props) {
         <div>
           <div className="row" style={{ marginBottom: '0.35rem' }}>
             <Badge tone="warning">{DIFFICULTY_LABELS[cache.difficulty]}</Badge>
+            <ExampleBadge show={cache.is_example} />
             <Badge tone="pink" icon={<Trophy size={10} />}>
               {cache.points} points
             </Badge>

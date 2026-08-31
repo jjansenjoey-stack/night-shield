@@ -32,8 +32,18 @@ import type {
  * image renders through SafeImage/ImageCarousel, which fall back to a neutral
  * tile if a file is ever moved or deleted.
  */
+/*
+ * Commons serves whatever width you ask for, and the width you ask for turns
+ * out to be the whole performance story on a page of cards. At 900 these
+ * photos are ~360 kB each; a list page holds forty of them, which is fourteen
+ * megabytes of image for cards that are never wider than about 400 px. At 480
+ * the same photo is ~120 kB. Ask small here, and let heroWidth() ask for a big
+ * one in the single place a big one is actually shown.
+ */
+const CARD_WIDTH = 480;
+
 const commons = (file: string) =>
-  `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=900`;
+  `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=${CARD_WIDTH}`;
 
 /** Subject → a real Commons photograph of that subject. */
 const PHOTOS: Record<string, string> = {
@@ -1503,6 +1513,7 @@ export const seedRouteSpots: RouteSpot[] = [
 export const seedPlacements: Placement[] = [
   {
     id: 'place-1',
+    is_example: true,
     spot_id: 'spot-1',
     user_id: 'seed-attendee-a',
     maker_name: 'Ilse',
@@ -1518,6 +1529,7 @@ export const seedPlacements: Placement[] = [
   },
   {
     id: 'place-2',
+    is_example: true,
     spot_id: 'spot-2',
     user_id: 'seed-attendee-b',
     maker_name: 'Tomas',
@@ -1533,6 +1545,7 @@ export const seedPlacements: Placement[] = [
   },
   {
     id: 'place-3',
+    is_example: true,
     spot_id: 'spot-4',
     user_id: 'seed-attendee-c',
     maker_name: 'Reem',
@@ -1546,7 +1559,62 @@ export const seedPlacements: Placement[] = [
     collected_at: null,
   },
   {
+    id: 'place-5',
+    is_example: true,
+    spot_id: 'spot-3',
+    user_id: 'seed-attendee-e',
+    maker_name: 'Nadia',
+    title: 'Six metres of flowers',
+    description:
+      'The underpass is grey and lit all night, so I painted the thing it has none of. It is on boards, not on the wall — I take it home in two weeks and the wall is exactly as it was.',
+    materials: 'Spray paint on plywood boards',
+    image_url: img('hof-2'),
+    placed_at: daysAgo(6),
+    collect_by: inDays(8),
+    status: 'live',
+    collected_at: null,
+  },
+  {
+    id: 'place-6',
+    is_example: true,
+    spot_id: 'spot-5',
+    user_id: 'seed-attendee-f',
+    maker_name: 'Bram',
+    title: 'Tiles for a kiosk that closed',
+    description:
+      'The kiosk sold chips here for forty years. Nine painted tiles, one for each thing that was on the menu board when it shut.',
+    materials: 'Glazed ceramic, fixed to a board',
+    image_url: img('course-ceramics'),
+    placed_at: daysAgo(1),
+    collect_by: inDays(13),
+    status: 'live',
+    collected_at: null,
+  },
+  /*
+   * One piece is hidden rather than shown, so the hunt is visible on a first
+   * visit. Without a seeded example the gallery's Hidden filter is empty and
+   * the whole mechanic reads as something that was described but not built.
+   */
+  {
+    id: 'place-7',
+    is_example: true,
+    spot_id: 'spot-7',
+    user_id: 'seed-attendee-g',
+    maker_name: 'Fenna',
+    title: 'A very small library',
+    description:
+      'Eleven hand-stitched zines, each one four pages, in a tin. Take one if you find it — that is the point of them.',
+    materials: 'Riso-printed paper, thread, biscuit tin',
+    image_url: img('course-zine'),
+    hunt_clue: 'Not on the gatepost — under it. Crouch at the Ringbaan side and feel along the ledge.',
+    placed_at: daysAgo(4),
+    collect_by: inDays(10),
+    status: 'live',
+    collected_at: null,
+  },
+  {
     id: 'place-4',
+    is_example: true,
     spot_id: 'spot-6',
     user_id: 'seed-attendee-d',
     maker_name: 'Joost',

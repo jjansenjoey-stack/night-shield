@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Compass, Footprints, Ruler, ShieldCheck, Timer } from 'lucide-react';
 import { useAppStore, loadOnboardingPreference } from '@/store/appStore';
 import { ClickableCard } from '@/components/ui/Card';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingBlock } from '@/components/ui/LoadingSpinner';
@@ -138,6 +139,7 @@ export function ExplorePage() {
                 <div style={{ padding: '0.85rem' }}>
                   <div className="row" style={{ marginBottom: '0.4rem' }}>
                     <Badge tone={TYPE_TONES[route.type]}>{routeTypeLabel(route.type)}</Badge>
+                    <ExampleBadge show={route.is_example} />
                     {hasEnoughReports(summary) && summary ? (
                       <SafetyPill summary={summary} />
                     ) : null}

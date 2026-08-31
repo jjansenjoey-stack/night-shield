@@ -128,8 +128,9 @@ export function ImageCarousel({ images, alt }: { images: string[]; alt: string }
         </div>
       ) : (
         <img
-          src={images[index]}
+          src={heroWidth(images[index])}
           alt={images.length > 1 ? `${alt} — photo ${index + 1} of ${images.length}` : alt}
+          decoding="async"
           onError={() => setFailed((f) => ({ ...f, [index]: true }))}
         />
       )}
@@ -169,7 +170,27 @@ export function ImageCarousel({ images, alt }: { images: string[]; alt: string }
   );
 }
 
-/** An <img> that degrades to a neutral tile instead of a broken icon. */
+/*
+ * Seed photos are stored at card width so a list page stays light. The detail
+ * hero is the one place the photo is shown large, so it asks Commons for a
+ * bigger rendering of the same file. Commons snaps to its own width buckets,
+ * so this is a hint rather than an exact size, and any URL that is not a
+ * Commons one is returned untouched.
+ */
+function heroWidth(url: string): string {
+  return url.includes('commons.wikimedia.org') ? url.replace(/width=d+/, 'width=960') : url;
+}
+
+/*
+ * An <img> that is never a blank hole.
+ *
+ * These photos come from Wikimedia over two redirects, so on a cold cache
+ * there is a real gap between the card appearing and the photo arriving. An
+ * <img> with nothing behind it renders that gap as empty space, and a page of
+ * cards then reads as broken rather than as loading. Painting the tint on the
+ * image element itself keeps the caller in charge of size and layout — the
+ * photo covers the tint when it lands, and a failure swaps in a real tile.
+ */
 export function SafeImage({
   src,
   alt,
@@ -182,6 +203,7 @@ export function SafeImage({
   style?: React.CSSProperties;
 }) {
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   if (!src || failed) {
     return (
       <div className={className} style={{ ...style, display: 'grid', placeItems: 'center' }}>
@@ -197,6 +219,9 @@ export function SafeImage({
       className={className}
       style={style}
       loading="lazy"
+      decoding="async"
+      data-loading={loaded ? undefined : true}
+      onLoad={() => setLoaded(true)}
       onError={() => setFailed(true)}
     />
   );

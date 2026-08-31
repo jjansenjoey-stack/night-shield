@@ -5,6 +5,7 @@ import { useGeolocation } from '@/hooks/useGeolocation';
 import { formatDistance } from '@/lib/geo';
 import { itemTypeLabel } from '@/lib/format';
 import { SafeImage, SafetyPill } from '@/components/ui/Shared';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import type { ItemType } from '@/types';
@@ -95,6 +96,7 @@ export function NearbySidebar() {
               <span className="grow">
                 <span className="list-row__title truncate" style={{ display: 'block' }}>
                   {item.title}
+                  <ExampleBadge show={item.raw.is_example} iconOnly />
                 </span>
                 <span className="list-row__meta">
                   {itemTypeLabel(item.type)}

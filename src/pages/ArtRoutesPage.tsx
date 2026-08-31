@@ -18,6 +18,7 @@ import { Badge, type BadgeTone } from '@/components/ui/Badge';
 import { Button, LinkButton } from '@/components/ui/Button';
 import { LoadingBlock } from '@/components/ui/LoadingSpinner';
 import { AccessibilityIcons, SafeImage } from '@/components/ui/Shared';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { RouteComparison } from '@/components/routes/RouteComparison';
@@ -481,6 +482,7 @@ function SpotCard({
             <Badge tone={URGENCY_TONE[urgencyOf(daysLeft ?? 0)]} icon={<CalendarClock size={13} />}>
               {daysLabel(daysLeft ?? 0)}
             </Badge>
+            <ExampleBadge show={live.is_example} />
           </div>
           <h4 style={{ margin: '0.6rem 0 0.2rem' }}>{live.title}</h4>
           <p className="small muted" style={{ margin: 0 }}>

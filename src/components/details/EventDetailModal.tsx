@@ -37,6 +37,7 @@ import { canUserPerformAction } from '@/lib/permissions';
 import { directionsUrl, formatDistance } from '@/lib/geo';
 import { durationLabel, eventCategoryLabel, formatEuros, formatEventDate } from '@/lib/format';
 import { eventAttendancePoints, type NightEvent } from '@/types';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 
 interface Props {
   event: NightEvent;
@@ -242,7 +243,7 @@ export function EventDetailModal({ event, distance, onClose }: Props) {
             {event.is_virtual ? <Badge tone="teal">Online</Badge> : null}
             {event.is_featured ? <Badge tone="warning">Featured</Badge> : null}
             {past ? <Badge tone="neutral">Finished</Badge> : null}
-            {event.is_example ? <Badge tone="warning">Example</Badge> : null}
+            <ExampleBadge show={event.is_example} />
           </div>
 
           <h2 style={{ marginBottom: '0.2rem' }}>{event.title}</h2>

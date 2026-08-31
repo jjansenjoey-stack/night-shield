@@ -23,6 +23,7 @@ import { directionsUrl, formatDistance, formatWalkTime } from '@/lib/geo';
 import { itemTypeLabel, thirdSpaceLabel } from '@/lib/format';
 import { hasEnoughReports } from '@/services/feedbackService';
 import type { Installation, MapItem, ThirdSpace } from '@/types';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 
 interface Props {
   item: MapItem;
@@ -132,6 +133,7 @@ export function LocationDetailModal({ item, distance, onClose }: Props) {
             ) : null}
             {space ? <Badge tone="neutral">{thirdSpaceLabel(space.type)}</Badge> : null}
             {installation?.is_temporary ? <Badge tone="warning">Temporary</Badge> : null}
+            <ExampleBadge show={item.raw.is_example} />
           </div>
 
           <h2 style={{ marginBottom: '0.2rem' }}>{item.title}</h2>

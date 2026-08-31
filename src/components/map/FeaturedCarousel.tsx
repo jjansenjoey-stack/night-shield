@@ -3,6 +3,7 @@ import { useAppStore } from '@/store/appStore';
 import { eventToMapItem } from '@/services/api';
 import { isPast } from '@/services/eventService';
 import { formatEventDate } from '@/lib/format';
+import { ExampleBadge } from '@/components/ui/ExampleBadge';
 
 /**
  * "Featured this week", as a strip along the bottom of the map.
@@ -49,7 +50,10 @@ export function FeaturedCarousel() {
             <span className="featured-pill__when">
               {formatEventDate(event.start_time, event.end_time)}
             </span>
-            <span className="featured-pill__what">{event.title}</span>
+            <span className="featured-pill__what">
+              {event.title}
+              <ExampleBadge show={event.is_example} iconOnly />
+            </span>
           </button>
         ))}
       </div>
