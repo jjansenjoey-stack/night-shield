@@ -31,6 +31,7 @@ import { badgesEarned } from '@/services/cacheService';
 import { directionsUrl } from '@/lib/geo';
 import { CACHE_FIND_RADIUS_M, type NightCache } from '@/types';
 import { ExampleBadge } from '@/components/ui/ExampleBadge';
+import { appUrl } from '@/lib/url';
 
 interface Props {
   cache: NightCache;
@@ -90,7 +91,7 @@ export function CacheDetailModal({ cache, onClose }: Props) {
     if (!user) {
       toast.show('Sign in to log finds and collect points.', 'info', {
         label: 'Log in',
-        onClick: () => window.location.assign('/login'),
+        onClick: () => window.location.assign(appUrl('/login')),
       });
       return;
     }
@@ -113,7 +114,7 @@ export function CacheDetailModal({ cache, onClose }: Props) {
     if (!user) {
       toast.show('Sign in to log finds and collect points.', 'info', {
         label: 'Log in',
-        onClick: () => window.location.assign('/login'),
+        onClick: () => window.location.assign(appUrl('/login')),
       });
       return;
     }
@@ -137,7 +138,7 @@ export function CacheDetailModal({ cache, onClose }: Props) {
     if (!user) {
       toast.show('Sign in to keep a list of caches to hunt.', 'info', {
         label: 'Log in',
-        onClick: () => window.location.assign('/login'),
+        onClick: () => window.location.assign(appUrl('/login')),
       });
       return;
     }

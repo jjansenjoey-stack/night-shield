@@ -17,13 +17,16 @@ import { useAppStore } from '@/store/appStore';
 const BENEFITS = [
   {
     Icon: Route,
-    to: '/art-routes',
+    // Explore is where routes carry their safety score. Art routes is the
+    // art programme and has no safety ranking on it at all.
+    to: '/explore',
     title: 'Find safe routes',
     body: 'Walks put together from what residents actually report — lighting, people around, places that stay open.',
   },
   {
     Icon: Brush,
-    to: '/explore',
+    // Murals, light works and sound pieces are pins on the map, not routes.
+    to: '/discover',
     title: 'Explore local art',
     body: 'Murals, light works and sound pieces across Tilburg, with the story behind each one.',
   },
@@ -35,7 +38,8 @@ const BENEFITS = [
   },
   {
     Icon: Users,
-    to: '/explore',
+    // Third spaces are pins on the map too.
+    to: '/discover',
     title: 'Belong together',
     body: 'Third spaces where you can sit for an hour without buying anything, and nobody minds.',
   },

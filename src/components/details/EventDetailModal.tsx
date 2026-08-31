@@ -38,6 +38,7 @@ import { directionsUrl, formatDistance } from '@/lib/geo';
 import { durationLabel, eventCategoryLabel, formatEuros, formatEventDate } from '@/lib/format';
 import { eventAttendancePoints, type NightEvent } from '@/types';
 import { ExampleBadge } from '@/components/ui/ExampleBadge';
+import { appUrl } from '@/lib/url';
 
 interface Props {
   event: NightEvent;
@@ -104,7 +105,7 @@ export function EventDetailModal({ event, distance, onClose }: Props) {
     if (!user) {
       toast.show('Sign in to RSVP.', 'info', {
         label: 'Log in',
-        onClick: () => window.location.assign('/login'),
+        onClick: () => window.location.assign(appUrl('/login')),
       });
       return;
     }
@@ -135,7 +136,7 @@ export function EventDetailModal({ event, distance, onClose }: Props) {
     if (!user) {
       toast.show('Sign in to save events.', 'info', {
         label: 'Log in',
-        onClick: () => window.location.assign('/login'),
+        onClick: () => window.location.assign(appUrl('/login')),
       });
       return;
     }

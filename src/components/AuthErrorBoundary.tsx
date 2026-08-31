@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { appUrl } from '@/lib/url';
 
 interface Props {
   children: ReactNode;
@@ -48,7 +49,7 @@ export class AuthErrorBoundary extends Component<Props, State> {
 
   private toLogin = () => {
     this.reset();
-    window.location.assign('/login');
+    window.location.assign(appUrl('/login'));
   };
 
   render() {
@@ -90,7 +91,7 @@ export class AuthErrorBoundary extends Component<Props, State> {
                 Try again
               </button>
             )}
-            <button className="btn btn--text" onClick={() => window.location.assign('/discover')}>
+            <button className="btn btn--text" onClick={() => window.location.assign(appUrl('/discover'))}>
               Back to the map
             </button>
           </div>

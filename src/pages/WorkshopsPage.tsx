@@ -471,6 +471,7 @@ function CourseModal({
       <div className="stack">
         <div className="row">
           <Badge tone="teal">{FORMAT_LABELS[course.format]}</Badge>
+          <ExampleBadge show={course.is_example} />
           <Badge tone="neutral">{course.discipline}</Badge>
           <Badge tone="neutral">{LEVEL_LABELS[course.level]}</Badge>
           {course.materials_included ? <Badge tone="success">Materials included</Badge> : null}

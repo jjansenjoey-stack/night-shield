@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { CheckboxGroup, Field } from '@/components/ui/Shared';
 import { useToast } from '@/components/ui/Toast';
 import { submitContent } from '@/services/submissionService';
-import { addPoints, POINTS } from '@/services/pointsService';
+import { POINTS } from '@/services/pointsService';
 import { A11Y_TAGS, a11yLabel, thirdSpaceLabel } from '@/lib/format';
 import type { LatLng, SubmissionType, ThirdSpaceType } from '@/types';
 
@@ -82,11 +82,15 @@ export function SubmitContentPage() {
         user.full_name ?? user.email,
         payload as unknown as Record<string, unknown>,
       );
-      await addPoints(user.id, 'submit_content', submission.id).catch(() => null);
+      // No award here. It lands when a moderator approves the submission,
+      // so ten points is what an accepted contribution is worth rather than
+      // what pressing Send is worth.
+      void submission;
       void markJourney('contributed');
 
       toast.success(
-        `Sent for review — you will see it on the map once it is approved. +${POINTS.submit_content} points.`,
+        `Sent for review — you will see it on the map once it is approved, ` +
+          `and the ${POINTS.submit_content} points arrive with it.`,
       );
       navigate('/discover');
     } catch (error) {

@@ -8,7 +8,13 @@ import { distanceKm } from '@/lib/geo';
 import { ALL_ITEM_TYPES } from '@/store/appStore';
 import type { ItemType, MapItem } from '@/types';
 
-const GROUP_ORDER: ItemType[] = ['installation', 'route', 'event', 'third_space'];
+/*
+ * Every type the map can show, because results are grouped by this list and
+ * a type missing from it is a type that can never appear. Night Caches were
+ * left out: they matched the query, found no group to sit in, and the box
+ * reported "Nothing matches" for something visible on the map behind it.
+ */
+const GROUP_ORDER: ItemType[] = ['installation', 'route', 'event', 'third_space', 'cache'];
 
 /** Prompt 36 — one box, autocomplete, results grouped by type, recent searches. */
 export function SearchBar() {
@@ -83,7 +89,7 @@ export function SearchBar() {
           className="search__input"
           type="search"
           value={draft}
-          placeholder="Search art, routes, events, places…"
+          placeholder="Search art, routes, events, caches, places…"
           aria-label="Search Night Shield"
           aria-expanded={open}
           // Only reference the listbox while it is actually in the DOM, and

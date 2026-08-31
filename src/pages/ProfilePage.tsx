@@ -245,9 +245,17 @@ export function ProfilePage() {
             </>
           ) : (
             <p className="tiny muted" style={{ margin: 0 }}>
-              Every reward unlocked. The round table will be in touch.
+              Every tier reached.
             </p>
           )}
+
+          {/* These tiers are the concept's proposal, not working features. Saying
+              so here is the difference between a demo and a promise nobody can
+              keep — workshop places are the reward that actually works. */}
+          <p className="tiny muted" style={{ margin: '0.6rem 0 0' }}>
+            These tiers are part of the proposal, not yet built. The reward you can
+            actually spend points on today is a workshop place.
+          </p>
         </Card>
       </Section>
 

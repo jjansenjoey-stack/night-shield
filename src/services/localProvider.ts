@@ -230,7 +230,15 @@ function load(): Database {
           // spot_id too: the spots were renumbered into walking order, and a
           // snapshot holding the old mapping shows work in the wrong place and
           // reports free spots as taken.
-          ['image_url', 'spot_id'],
+          //
+          // And the dates, for the same reason events and courses re-anchor
+          // theirs. The seed builds collect_by relative to the moment it is
+          // read, but a snapshot freezes the answer — so three weeks after a
+          // first visit every seeded fortnight has quietly run out, all eight
+          // spots report free, and the route the whole page is about is empty.
+          // Nobody would think to clear their storage to fix that; they would
+          // just conclude the feature does not work.
+          ['image_url', 'spot_id', 'placed_at', 'collect_by'],
         ),
         placementFinds: parsed.placementFinds ?? [],
       };
@@ -603,8 +611,28 @@ export const localProvider: DataProvider = {
      * period could pass a different string every call and turn a
      * once-a-week award into an unlimited one.
      */
-    const effectivePeriod = reason === 'walk_art_route' ? isoWeek() : null;
+    const weekly = reason === 'walk_art_route' || reason === 'place_art' || reason === 'collect_art';
+    const effectivePeriod = weekly ? isoWeek() : null;
     void period;
+
+    /*
+     * Placing and collecting are also counted against the person, not the
+     * piece.
+     *
+     * They used to be keyed on the placement id, and every new placement has
+     * a new one — so place, collect, place, collect on a single spot paid its
+     * full 14 + 6 every lap and never repeated a ledger key. Six laps in a
+     * few seconds was 120 points, and the most expensive course in the
+     * catalogue costs 200. No walking, no location check, nothing to stop it.
+     *
+     * Dropping the subject makes the week the limit instead. The route turns
+     * over every fortnight and one person may hold one spot at a time, so a
+     * genuine participant places once and collects once in that window and
+     * loses nothing. Walking keeps its subject, because walking two different
+     * routes in one week really is two different things.
+     */
+    const effectiveSubject =
+      reason === 'place_art' || reason === 'collect_art' ? null : (subjectId ?? null);
 
     // Same rule the server enforces: one award per user, reason, subject and
     // period. A repeat is a no-op that reports the balance, not an error — a
@@ -613,7 +641,7 @@ export const localProvider: DataProvider = {
       (a) =>
         a.user_id === userId &&
         a.reason === reason &&
-        a.subject_id === (subjectId ?? null) &&
+        a.subject_id === effectiveSubject &&
         (a.period ?? null) === effectivePeriod,
     );
     if (already) return tick(user.points);
@@ -635,7 +663,7 @@ export const localProvider: DataProvider = {
     db.pointAwards.push({
       user_id: userId,
       reason,
-      subject_id: subjectId ?? null,
+      subject_id: effectiveSubject,
       period: effectivePeriod,
       amount,
       created_at: new Date().toISOString(),
@@ -1114,10 +1142,26 @@ export const localProvider: DataProvider = {
     return tick(load().submissions.filter((s) => s.submitted_by === userId));
   },
 
+  /*
+   * Approving is what pays, not submitting.
+   *
+   * The award used to fire the moment the form was sent, keyed on the new
+   * submission id — so every submission was a fresh ledger key and ten more
+   * points, whatever was in it. Twenty pieces of nonsense bought the most
+   * expensive course in the catalogue, and the moderator queue was the only
+   * thing that ever saw them.
+   *
+   * Paying here instead matches what the submitter is already told ("you
+   * will see it on the map once it is approved"), keeps a genuine
+   * contributor paid for every accepted piece, and puts a person between
+   * the reward and anyone who wants to farm it. Rejecting pays nothing,
+   * which is the entire point.
+   */
   async approveSubmission(id, moderatorId) {
     const data = load();
     const row = data.submissions.find((s) => s.id === id);
     if (!row) throw new Error('Submission not found');
+    if (row.moderation_status === 'approved') return tick(row);
     row.moderation_status = 'approved';
     row.moderated_by = moderatorId;
     row.moderated_at = new Date().toISOString();
@@ -1147,6 +1191,10 @@ export const localProvider: DataProvider = {
       });
     }
     persist();
+
+    // Paid to whoever sent it, not to the moderator approving it.
+    await this.awardPoints(row.submitted_by, 'submit_content', row.id, null);
+
     return tick(row);
   },
 

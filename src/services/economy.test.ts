@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { resetLocalDatabase } from './localProvider';
+import { localProvider, resetLocalDatabase } from './localProvider';
 import { addPoints, getPoints, isoWeek, POINTS } from './pointsService';
 import { cancelEnrolment, enrolInCourse, getCourses } from './courseService';
 import { claimAttendance, getEvents, setRsvp } from './eventService';
@@ -16,6 +16,7 @@ import {
   currentPlacement,
   getPlacements,
   getSpots,
+  logPlacementFind,
   placeArt,
 } from './routeArtService';
 import {
@@ -254,6 +255,40 @@ describe('two weeks only', () => {
     expect(await getPoints(USER)).toBe(afterCollect);
   });
 
+  /*
+   * The place/collect loop.
+   *
+   * Both awards used to be keyed on the placement id, and every new placement
+   * has a new one — so place, collect, place, collect on a single spot paid its
+   * full 14 + 6 every lap and never repeated a ledger key. Six laps took a few
+   * seconds and paid 120; the dearest course in the catalogue costs 200.
+   *
+   * The week is the limit now, so the whole route is worth 20 once and then
+   * nothing until Monday.
+   */
+  it('pays for placing and collecting once a week, however many laps you run', async () => {
+    const spots = await getSpots();
+    const start = await getPoints(USER);
+
+    for (let lap = 0; lap < 5; lap += 1) {
+      const live = new Set(
+        (await getPlacements()).filter((p) => p.status === 'live').map((p) => p.spot_id),
+      );
+      const free = spots.find((spot) => !live.has(spot.id));
+      expect(free, `lap ${lap} needs a free spot`).toBeTruthy();
+
+      const made = await placeArt(USER, free!.id, {
+        title: `lap ${lap}`,
+        description: null,
+        materials: null,
+        image_url: null,
+      });
+      await collectPlacement(USER, made.id);
+    }
+
+    expect(await getPoints(USER)).toBe(start + POINTS.place_art + POINTS.collect_art);
+  });
+
   it('refuses to collect someone else’s piece', async () => {
     const someoneElse = (await getPlacements()).find((p) => p.user_id !== USER);
     expect(someoneElse).toBeTruthy();
@@ -314,6 +349,135 @@ describe('two weeks only', () => {
     expect(board[0].free).toBe(false);
     expect(board[0].live?.id).toBe('test-live');
     expect(board[0].daysLeft).toBe(12);
+  });
+});
+
+/*
+ * Finding somebody else's hidden piece. This is the newest way to earn and the
+ * only one with no test until now, which is exactly the combination that goes
+ * wrong quietly: the guards were confirmed by hand in a console and nothing
+ * would have noticed if an edit removed them.
+ *
+ * The distance check is the same shape as the Night Cache one and fails the
+ * same way — a non-finite coordinate loses every comparison, so without a
+ * finiteness check first, `metres > 60` is false and the find is logged from
+ * anywhere at all.
+ */
+describe('finding a hidden piece', () => {
+  async function hidden() {
+    const spots = await getSpots();
+    const piece = (await getPlacements()).find((p) => p.hunt_clue && p.status === 'live');
+    expect(piece, 'the seed needs a hidden piece').toBeTruthy();
+    const spot = spots.find((s) => s.id === piece!.spot_id);
+    expect(spot, 'the hidden piece needs a spot that still exists').toBeTruthy();
+    return { piece: piece!, spot: spot! };
+  }
+
+  it.each([
+    ['NaN', { latitude: Number.NaN, longitude: Number.NaN }],
+    ['Infinity', { latitude: Number.POSITIVE_INFINITY, longitude: 0 }],
+    [
+      'non-numeric',
+      { latitude: 'here' as unknown as number, longitude: 'there' as unknown as number },
+    ],
+  ])('refuses a find with %s coordinates', async (_label, at) => {
+    const { piece } = await hidden();
+    const start = await getPoints(USER);
+
+    await expect(logPlacementFind(USER, piece.id, at)).rejects.toThrow();
+    expect(await getPoints(USER)).toBe(start);
+  });
+
+  it('refuses a find with no location at all', async () => {
+    const { piece } = await hidden();
+    await expect(logPlacementFind(USER, piece.id, null)).rejects.toThrow(/location/i);
+  });
+
+  it('refuses a find from outside the radius', async () => {
+    const { piece, spot } = await hidden();
+    const start = await getPoints(USER);
+
+    // Amsterdam. Far enough that no rounding argument saves it.
+    await expect(
+      logPlacementFind(USER, piece.id, { latitude: 52.3676, longitude: 4.9041 }),
+    ).rejects.toThrow(/away/i);
+    expect(await getPoints(USER)).toBe(start);
+    expect(spot.location).toBeTruthy();
+  });
+
+  it('pays for a find once, and never for your own piece', async () => {
+    const { piece, spot } = await hidden();
+    const start = await getPoints(USER);
+
+    await logPlacementFind(USER, piece.id, spot.location);
+    const afterFind = await getPoints(USER);
+    expect(afterFind).toBe(start + POINTS.find_art);
+
+    // Going back a second time is a no-op, not a second payment.
+    await logPlacementFind(USER, piece.id, spot.location);
+    expect(await getPoints(USER)).toBe(afterFind);
+
+    // Hiding something and then "finding" it would pay for both halves.
+    const free = buildBoard(await getSpots(), await getPlacements()).filter((e) => e.free);
+    expect(free.length).toBeGreaterThan(0);
+    await placeArt(USER, free[0].spot.id, {
+      title: 'Mine to find',
+      description: null,
+      materials: null,
+      image_url: null,
+      hunt_clue: 'Behind the thing',
+    });
+    const ownPiece = currentPlacement(await getPlacements(), USER);
+    expect(ownPiece).toBeTruthy();
+    await expect(
+      logPlacementFind(USER, ownPiece!.id, free[0].spot.location),
+    ).rejects.toThrow(/hid this one/i);
+  });
+});
+
+/*
+ * Adding something to the map.
+ *
+ * The award used to fire the instant the form was sent, keyed on the new
+ * submission id — so every submission was a fresh ledger key and ten more
+ * points, whatever was in it, and the moderator queue was the only thing that
+ * ever saw the contents. Twenty pieces of nonsense bought the dearest course in
+ * the catalogue.
+ *
+ * Approval is what pays now, which is also what the submitter is told.
+ */
+describe('adding something to the map', () => {
+  const ADMIN = 'seed-user-admin';
+  const payload = { title: 'A wall', location: { latitude: 51.56, longitude: 5.08 } };
+
+  it('pays nothing for submitting, however many you send', async () => {
+    const start = await getPoints(USER);
+
+    for (let i = 0; i < 5; i += 1) {
+      await localProvider.submitContent('installation', USER, 'Tester', {
+        ...payload,
+        title: `A wall ${i}`,
+      });
+    }
+
+    expect(await getPoints(USER)).toBe(start);
+  });
+
+  it('pays the submitter once when a moderator approves, and nothing for rejecting', async () => {
+    const start = await getPoints(USER);
+    const kept = await localProvider.submitContent('installation', USER, 'Tester', payload);
+    const binned = await localProvider.submitContent('installation', USER, 'Tester', payload);
+
+    await localProvider.approveSubmission(kept.id, ADMIN);
+    const afterApproval = await getPoints(USER);
+    expect(afterApproval).toBe(start + POINTS.submit_content);
+
+    // Approving the same one again is a no-op, not a second payment.
+    await localProvider.approveSubmission(kept.id, ADMIN);
+    expect(await getPoints(USER)).toBe(afterApproval);
+
+    await localProvider.rejectSubmission(binned.id, ADMIN, 'not suitable');
+    expect(await getPoints(USER)).toBe(afterApproval);
   });
 });
 

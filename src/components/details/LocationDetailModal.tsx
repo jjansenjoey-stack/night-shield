@@ -24,6 +24,7 @@ import { itemTypeLabel, thirdSpaceLabel } from '@/lib/format';
 import { hasEnoughReports } from '@/services/feedbackService';
 import type { Installation, MapItem, ThirdSpace } from '@/types';
 import { ExampleBadge } from '@/components/ui/ExampleBadge';
+import { appUrl } from '@/lib/url';
 
 interface Props {
   item: MapItem;
@@ -59,7 +60,7 @@ export function LocationDetailModal({ item, distance, onClose }: Props) {
     if (!user) {
       toast.show('Sign in to save places you want to come back to.', 'info', {
         label: 'Log in',
-        onClick: () => window.location.assign('/login'),
+        onClick: () => window.location.assign(appUrl('/login')),
       });
       return;
     }

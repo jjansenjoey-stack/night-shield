@@ -132,14 +132,20 @@ export function EarningGuide() {
         {
           action: 'Collect your art back',
           points: String(POINTS.collect_art),
-          cadence: 'once per piece',
+          cadence: 'once a week',
           note: 'Paid for the tidy-up, not the art. It is what keeps the route from becoming litter.',
         },
         {
           action: 'Put a piece on the changing route',
           points: String(POINTS.place_art),
+          cadence: 'once a week',
+          note: 'The most anything pays. You make it, carry it there, and fix it down. The route turns over every fortnight, so a week is more often than anyone needs.',
+        },
+        {
+          action: 'Find a piece somebody hid',
+          points: String(POINTS.find_art),
           cadence: 'once per piece',
-          note: 'The most anything pays. You make it, carry it there, and fix it down.',
+          note: 'Small on purpose. The walk is the reward, and finding a thing should never beat making one.',
         },
       ],
     },

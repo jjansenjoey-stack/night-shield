@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useAppStore } from '@/store/appStore';
 import { useToast } from '@/components/ui/Toast';
 import { formatEventDate } from '@/lib/format';
+import { appUrl } from '@/lib/url';
 
 const FIRED_KEY = 'ns.remindersFired.v1';
 const DAY_MS = 86400000;
@@ -77,7 +78,7 @@ export function useReminders() {
           }
           toast.show(message, 'info', {
             label: 'View event',
-            onClick: () => window.location.assign(`/events?event=${event.id}`),
+            onClick: () => window.location.assign(appUrl(`/events?event=${event.id}`)),
           });
         }, delay);
 

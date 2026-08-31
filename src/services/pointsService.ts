@@ -57,7 +57,17 @@ export const BADGES = {
   connector: 'Connector',
 } as const;
 
-/** Rewards unlocked by points balance. */
+/**
+ * What the points are proposed to be spendable on, beyond workshop places.
+ *
+ * None of these are built: nothing in the app draws a route for you, opens
+ * RSVPs a day early, runs an open call or seats anybody at a round table.
+ * They are the argument the concept is making about what a city could offer,
+ * and the profile says so rather than announcing them as unlocked — a demo
+ * that quietly promises a seat at a municipal table is making a claim it
+ * cannot keep. Workshop places are the one reward that genuinely works, and
+ * they are on the Workshops page.
+ */
 export const REWARD_TIERS = [
   { points: 20, name: 'Route creator', detail: 'Draw and publish your own route.' },
   { points: 60, name: 'Early access', detail: 'RSVP to workshops a day before they open.' },

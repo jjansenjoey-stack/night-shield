@@ -8,6 +8,10 @@
       name="description"
       content="Night Shield — discover your city with confidence. Safe routes, local art, events and third spaces in Tilburg."
     />
+    <!-- Without this the browser asks for /favicon.ico, is told 404, and shows
+         the generic page icon in the tab. Vite rewrites the leading slash to
+         the deploy base, so it resolves on a subpath host too. -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

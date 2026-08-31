@@ -14,6 +14,7 @@ import { hasEnoughReports } from '@/services/feedbackService';
 import { bestTimeToVisit, fetchWeather, type WeatherReport } from '@/services/weatherService';
 import type { DiscoveryRoute } from '@/types';
 import { ExampleBadge } from '@/components/ui/ExampleBadge';
+import { appUrl } from '@/lib/url';
 
 interface Props {
   route: DiscoveryRoute;
@@ -54,7 +55,7 @@ export function RouteDetailModal({ route, onClose }: Props) {
     if (!user) {
       toast.show('Sign in to save routes.', 'info', {
         label: 'Log in',
-        onClick: () => window.location.assign('/login'),
+        onClick: () => window.location.assign(appUrl('/login')),
       });
       return;
     }
@@ -111,9 +112,11 @@ export function RouteDetailModal({ route, onClose }: Props) {
         <div className="row">
           <Badge tone={tone}>{routeTypeLabel(route.type)}</Badge>
           <ExampleBadge show={route.is_example} />
-          {route.accessibility.includes('wheelchair') ? (
-            <Badge tone="success">Step-free</Badge>
-          ) : null}
+          {/* The access tags are rendered below by AccessibilityIcons, which
+              uses the shared labels. There used to be a hand-written
+              "Step-free" badge here keyed to the wheelchair tag — two
+              different promises under one word, in the one place people
+              read carefully. */}
         </div>
 
         {route.description ? <p>{route.description}</p> : null}

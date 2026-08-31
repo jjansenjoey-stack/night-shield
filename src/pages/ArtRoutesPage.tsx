@@ -155,8 +155,20 @@ export function ArtRoutesPage() {
 
   const freeCount = board.filter((entry) => entry.free).length;
 
-  // The city's other art walks, so the tab is about art routes rather than
-  // about one of them. The changing route is already the whole page above.
+  /*
+   * Every walk this page is about: the changing route and the permanent art
+   * walks. "Compare the walks" used to be handed the whole route table, so it
+   * offered The Lit Way Home and North of the Tracks — a safety route and an
+   * exploration route — as things to choose between on the art page. They are
+   * good routes and they belong in Explore, which is where they are.
+   */
+  const artWalks = useMemo(
+    () => (data?.routes ?? []).filter((route) => route.type === 'art_walk'),
+    [data?.routes],
+  );
+
+  // The others, for the list further down. The changing route is the whole
+  // page above it, so it is not repeated there.
   const otherWalks = useMemo(
     () =>
       (data?.routes ?? []).filter(
@@ -283,9 +295,9 @@ export function ArtRoutesPage() {
         <ArtGallery placements={placements} spots={spots} />
       </Section>
 
-      {(data?.routes?.length ?? 0) > 0 ? (
+      {artWalks.length > 1 ? (
         <Section title="Compare the walks">
-          <RouteComparison routes={data?.routes ?? []} />
+          <RouteComparison routes={artWalks} />
         </Section>
       ) : null}
 

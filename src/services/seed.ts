@@ -374,12 +374,19 @@ export const seedThirdSpaces: ThirdSpace[] = [
   {
     id: 'ts-veemarkt-studio',
     is_example: true,
+    /*
+     * Invented, like everything seeded here. It used to sit at Veemarktstraat
+     * 44, which is 013 Poppodium — a real venue with a real front door. An
+     * Example flag covers "this listing is made up"; it does not cover putting
+     * a made-up business at a real one's address, which is the kind of detail
+     * somebody local notices immediately.
+     */
     name: 'Veemarkt Studios',
     type: 'studio',
     description:
       'Shared maker space in the Veemarktkwartier. Drop-in evenings on Wednesdays — sewing machines, a laser cutter and a very loud kettle.',
     location: { latitude: 51.559, longitude: 5.0895 },
-    address: 'Veemarktstraat 44',
+    address: 'Veemarktstraat 62',
     hours_open: 'Wed 18:00–22:00 drop-in · otherwise by arrangement',
     cost: '€5 per evening',
     accessibility: ['wheelchair', 'step_free'],
@@ -750,7 +757,14 @@ export const seedRoutes: DiscoveryRoute[] = [
         location: { latitude: 51.5588, longitude: 5.0902 },
       },
     ],
-    accessibility: ['step_free', 'well_lit'],
+    /*
+     * Not well_lit. The trail is 8.1 km across the whole city and its own stop
+     * note for the Leijpark leg says "the longest leg of the trail, and the
+     * darkest. Go before dusk or go with someone." A lighting tag is a safety
+     * claim in an app whose whole subject is walking at night, so it does not
+     * get to contradict the directions underneath it.
+     */
+    accessibility: ['step_free'],
     created_by: null,
     moderation_status: 'approved',
     created_at: daysAgo(30),
@@ -776,7 +790,7 @@ export const seedEvents: NightEvent[] = [
       'Print your own patch and take it home the same evening. You get the ink, the screen and someone to show you each step. Bring a jacket or a bag to print on, or use one of ours. No experience needed.',
     category: 'workshop',
     location: { latitude: 51.559, longitude: 5.0895 },
-    address: 'Veemarktstraat 44',
+    address: 'Veemarktstraat 62',
     start_time: daysFromNow(2, 19),
     end_time: daysFromNow(2, 21, 30),
     capacity: 16,
@@ -971,7 +985,7 @@ export const seedEvents: NightEvent[] = [
       'An open mic for people who have never done one. Five minutes each: music, poems, jokes, anything. The audience is on your side. You can also just come and listen.',
     category: 'art_talk',
     location: { latitude: 51.559, longitude: 5.0895 },
-    address: 'Veemarkt Studios, Veemarktstraat 44',
+    address: 'Veemarkt Studios, Veemarktstraat 62',
     start_time: daysFromNow(6, 20),
     end_time: daysFromNow(6, 22, 30),
     capacity: 60,
@@ -1564,10 +1578,10 @@ export const seedPlacements: Placement[] = [
     spot_id: 'spot-3',
     user_id: 'seed-attendee-e',
     maker_name: 'Nadia',
-    title: 'Six metres of flowers',
+    title: 'Flowers for a grey ledge',
     description:
-      'The underpass is grey and lit all night, so I painted the thing it has none of. It is on boards, not on the wall — I take it home in two weeks and the wall is exactly as it was.',
-    materials: 'Spray paint on plywood boards',
+      'The underpass is grey and lit all night, so I painted the thing it has none of. A hand-sized panel on the ledge, not on the wall — it comes home with me in two weeks and the wall is exactly as it was.',
+    materials: 'Spray paint on a 30 cm plywood panel',
     image_url: img('hof-2'),
     placed_at: daysAgo(6),
     collect_by: inDays(8),
@@ -1647,7 +1661,7 @@ export const seedCourses: Course[] = [
     hours_total: 12,
     starts_on: daysFromNow(14, 19),
     location: { latitude: 51.559, longitude: 5.0895 },
-    address: 'Veemarktstraat 44',
+    address: 'Veemarktstraat 62',
     image_url: img('course-screenprint'),
     accessibility: ['wheelchair', 'step_free'],
     capacity: 12,
@@ -1791,7 +1805,7 @@ export const seedCourses: Course[] = [
     hours_total: 18,
     starts_on: daysFromNow(24, 19),
     location: { latitude: 51.559, longitude: 5.0895 },
-    address: 'Veemarktstraat 44',
+    address: 'Veemarktstraat 62',
     image_url: img('course-ceramics'),
     accessibility: ['wheelchair', 'step_free'],
     capacity: 12,
