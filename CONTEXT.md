@@ -115,6 +115,13 @@ inherited — a canvas returns the same context object forever, so never lose it
 cache find from anywhere in the world. Validate finiteness explicitly *before*
 comparing.
 
+**An unknown points reason used to brick an account.** `POINTS[reason]` was
+`undefined`, `balance += undefined` is `NaN`, and `NaN` loses every comparison —
+so the account silently could not afford anything, ever again. The SQL raised
+properly; the local provider did not. Both throw now, and a `NaN` balance is
+repaired on read. This is the dual-backend rule biting: a guard in one place is
+not a guard.
+
 **A column `REVOKE` after a table-level `GRANT` is a documented no-op.** This is
 why virtual-event join links were world-readable despite two revokes trying to
 hide them. The table grant has to go and be replaced by a column list.

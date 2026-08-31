@@ -153,6 +153,14 @@ function load(): Database {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as Database;
+      /*
+       * An earlier build could write NaN into a balance by awarding an unknown
+       * reason. NaN loses every comparison, so the account silently could not
+       * afford anything ever again. Repair on read rather than leaving it.
+       */
+      for (const row of parsed.users ?? []) {
+        if (!Number.isFinite(row.points)) row.points = 0;
+      }
       // Merge in any seed rows added since the snapshot was written.
       db = {
         ...freshDatabase(),
@@ -194,13 +202,25 @@ function load(): Database {
         feedback: (parsed.feedback ?? []).map((row) => ({ ...row, kind: row.kind ?? 'safety' })),
         // Snapshots predating the award ledger have no such key at all.
         pointAwards: parsed.pointAwards ?? [],
-        routeSpots: mergeSeed(parsed.routeSpots, seedRouteSpots),
+        // The spots were renumbered into walking order, so an existing snapshot
+        // has to take the new numbers, labels and positions.
+        routeSpots: resyncSeed(mergeSeed(parsed.routeSpots, seedRouteSpots), seedRouteSpots, [
+          'number',
+          'label',
+          'hint',
+          'location',
+          'max_size_cm',
+          'accessibility',
+        ]),
         // Only seeded rows are touched, so a real maker's photo is never
         // overwritten by this.
         placements: resyncSeed(
           mergeSeed(parsed.placements, seedPlacements),
           seedPlacements,
-          ['image_url'],
+          // spot_id too: the spots were renumbered into walking order, and a
+          // snapshot holding the old mapping shows work in the wrong place and
+          // reports free spots as taken.
+          ['image_url', 'spot_id'],
         ),
       };
       return db;
@@ -578,7 +598,20 @@ export const localProvider: DataProvider = {
     );
     if (already) return tick(user.points);
 
+    /*
+     * An unknown reason has to throw, exactly as award_points_for() does.
+     *
+     * Without this, POINTS[reason] is undefined, `user.points += undefined` is
+     * NaN, and the balance is NaN from then on — every comparison against a
+     * course price silently becomes false and the account is quietly bricked.
+     * TypeScript cannot catch it: the reason arrives as a string from a caller
+     * that may not be typed.
+     */
     const amount = POINTS[reason];
+    if (typeof amount !== 'number' || !Number.isFinite(amount)) {
+      throw new Error(`Unknown points reason: ${reason}`);
+    }
+
     db.pointAwards.push({
       user_id: userId,
       reason,

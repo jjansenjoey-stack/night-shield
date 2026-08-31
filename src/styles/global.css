@@ -1443,3 +1443,19 @@ button { font-family: inherit; }
 @supports not (mix-blend-mode: normal) {
   .hero__shader { display: none; }
 }
+
+/* ---------- Route comparison ---------- */
+
+.route-compare {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--xs);
+}
+.route-compare__row h3 a {
+  color: var(--neutral);
+  text-decoration: none;
+}
+.route-compare__row h3 a:hover { color: var(--accent2); }
+.route-compare__row .a11y-icons { margin-top: 0.5rem; }

@@ -19,6 +19,7 @@ import { LoadingBlock } from '@/components/ui/LoadingSpinner';
 import { AccessibilityIcons, SafeImage } from '@/components/ui/Shared';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
+import { RouteComparison } from '@/components/routes/RouteComparison';
 import { POINTS } from '@/services/pointsService';
 import {
   buildBoard,
@@ -213,6 +214,12 @@ export function ArtRoutesPage() {
           ))}
         </div>
       </Section>
+
+      {(data?.routes?.length ?? 0) > 0 ? (
+        <Section title="Compare the walks">
+          <RouteComparison routes={data?.routes ?? []} />
+        </Section>
+      ) : null}
 
       {otherWalks.length > 0 ? (
         <Section title="Other art walks">
