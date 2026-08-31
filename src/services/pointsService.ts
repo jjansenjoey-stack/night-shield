@@ -26,6 +26,19 @@ export const POINTS = {
    */
   place_art: 14,
   collect_art: 6,
+  /*
+   * Walking an art route again, once a week at most.
+   *
+   * Deliberately the smallest award on the board. Walking the changing route a
+   * second time is a real experience — the work in the spots has moved on — but
+   * it costs nothing to do and must never become a way to farm the currency.
+   * One a week caps it at 52 a year against 364 for placing, so participating
+   * stays worth roughly seven times more than looking.
+   *
+   * The first completion of any route still pays complete_route; this is only
+   * for coming back.
+   */
+  walk_art_route: 1,
 } as const;
 
 export type PointsReason = keyof typeof POINTS;
@@ -63,9 +76,27 @@ export async function addPoints(
   userId: string,
   reason: PointsReason,
   subjectId?: string | null,
+  period?: string | null,
 ): Promise<number> {
   const provider = await getProvider();
-  return provider.awardPoints(userId, reason, subjectId ?? null);
+  return provider.awardPoints(userId, reason, subjectId ?? null, period ?? null);
+}
+
+/**
+ * The ISO week a date falls in, as "2026-W36".
+ *
+ * Used as the `period` on repeatable awards: the same contribution pays once
+ * per week rather than once ever. ISO weeks start on Monday and belong to the
+ * year containing their Thursday, which is why the year is taken from the
+ * adjusted date rather than from the input.
+ */
+export function isoWeek(date: Date = new Date()): string {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  // Shift to the Thursday of this week; that is what names the ISO year.
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const week = Math.ceil(((d.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
+  return `${d.getUTCFullYear()}-W${String(week).padStart(2, '0')}`;
 }
 
 export async function getPoints(userId: string): Promise<number> {

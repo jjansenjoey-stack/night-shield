@@ -43,7 +43,7 @@ import {
   remoteCachePoints,
 } from '@/types';
 import { distanceKm } from '@/lib/geo';
-import { POINTS } from './pointsService';
+import { isoWeek, POINTS } from './pointsService';
 
 
 /**
@@ -93,6 +93,8 @@ interface PointAward {
   reason: string;
   /** The event, route or location earned against; null for one-per-account. */
   subject_id: string | null;
+  /** Set when the award repeats per period (an ISO week) rather than once. */
+  period: string | null;
   amount: number;
   created_at: string;
 }
@@ -547,15 +549,28 @@ export const localProvider: DataProvider = {
 
   // ---- points & badges --------------------------------------------------
 
-  async awardPoints(userId, reason, subjectId) {
+  async awardPoints(userId, reason, subjectId, period) {
     const db = load();
     const user = findUser(userId);
 
-    // Same rule the server enforces: one award per user, reason and subject.
-    // A repeat is a no-op that reports the balance, not an error — a double
-    // tap should look like nothing happened, not like a failure.
+    /*
+     * The window is decided here, not by the caller — same as
+     * award_points_for() in migration 0005. A client free to name its own
+     * period could pass a different string every call and turn a
+     * once-a-week award into an unlimited one.
+     */
+    const effectivePeriod = reason === 'walk_art_route' ? isoWeek() : null;
+    void period;
+
+    // Same rule the server enforces: one award per user, reason, subject and
+    // period. A repeat is a no-op that reports the balance, not an error — a
+    // double tap should look like nothing happened, not like a failure.
     const already = db.pointAwards.some(
-      (a) => a.user_id === userId && a.reason === reason && a.subject_id === (subjectId ?? null),
+      (a) =>
+        a.user_id === userId &&
+        a.reason === reason &&
+        a.subject_id === (subjectId ?? null) &&
+        (a.period ?? null) === effectivePeriod,
     );
     if (already) return tick(user.points);
 
@@ -564,6 +579,7 @@ export const localProvider: DataProvider = {
       user_id: userId,
       reason,
       subject_id: subjectId ?? null,
+      period: effectivePeriod,
       amount,
       created_at: new Date().toISOString(),
     });
@@ -801,7 +817,7 @@ export const localProvider: DataProvider = {
     data.placements.push(placement);
     persist();
 
-    await this.awardPoints(userId, 'place_art', placement.id);
+    await this.awardPoints(userId, 'place_art', placement.id, null);
     return tick(placement);
   },
 
@@ -823,7 +839,7 @@ export const localProvider: DataProvider = {
     placement.collected_at = new Date().toISOString();
     persist();
 
-    await this.awardPoints(userId, 'collect_art', placement.id);
+    await this.awardPoints(userId, 'collect_art', placement.id, null);
     return tick(placement);
   },
 

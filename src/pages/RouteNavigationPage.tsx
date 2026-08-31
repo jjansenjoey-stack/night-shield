@@ -11,7 +11,7 @@ import { SafeImage } from '@/components/ui/Shared';
 import { LoadingBlock } from '@/components/ui/LoadingSpinner';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useToast } from '@/components/ui/Toast';
-import { addPoints, POINTS } from '@/services/pointsService';
+import { addPoints, getPoints, isoWeek } from '@/services/pointsService';
 import { routeToMapItem } from '@/services/api';
 import { directionsUrl, distanceKm, formatDistance, walkingMinutes } from '@/lib/geo';
 import { routeTypeLabel } from '@/lib/format';
@@ -47,12 +47,49 @@ export function RouteNavigationPage() {
     return Math.max(1, Math.round(route.estimated_time_minutes * share));
   }, [route, stops.length, index]);
 
+  /*
+   * What this walk actually paid, measured rather than assumed.
+   *
+   * Both awards are idempotent, so a second walk of the same route earns only
+   * the weekly token and a third in the same week earns nothing. Printing a
+   * fixed "+12" would be a lie two times out of three, so take the difference
+   * in the balance and show that.
+   */
+  const [earned, setEarned] = useState<number | null>(null);
+
   useEffect(() => {
-    if (done && user) {
-      void addPoints(user.id, 'complete_route', route?.id ?? null).catch(() => null);
+    if (!done || !user) return;
+    let cancelled = false;
+
+    void (async () => {
+      const before = await getPoints(user.id).catch(() => null);
+      let after = before;
+
+      // First time on this route: the full reward, once ever.
+      const a = await addPoints(user.id, 'complete_route', route?.id ?? null).catch(() => null);
+      if (a != null) after = a;
+
+      /*
+       * Art walks also pay a token amount for coming back, capped at one a
+       * week. The changing route is different work every fortnight, so a
+       * repeat walk is a real visit — but walking costs nothing, so this has
+       * to stay small enough that it can never rival actually taking part.
+       */
+      if (route?.type === 'art_walk') {
+        const b = await addPoints(user.id, 'walk_art_route', route.id, isoWeek()).catch(
+          () => null,
+        );
+        if (b != null) after = b;
+      }
+
+      if (!cancelled && before != null && after != null) setEarned(after - before);
       void markJourney('explored');
-    }
-  }, [done, user, markJourney]);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [done, user, route, markJourney]);
 
   if (loading && !data) return <LoadingBlock label="Loading route…" />;
 
@@ -131,7 +168,7 @@ export function RouteNavigationPage() {
             <p className="small muted" style={{ margin: 0 }}>
               {route.distance_km} km in{' '}
               {Math.max(1, Math.round((Date.now() - startedAt) / 60000))} minutes
-              {user ? ` · +${POINTS.complete_route} points` : ''}.
+              {user && earned ? ` · +${earned} points` : ''}.
             </p>
             <div className="row" style={{ justifyContent: 'center' }}>
               <Button variant="primary" onClick={() => navigate('/explore')}>

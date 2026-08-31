@@ -95,6 +95,12 @@ export interface DataProvider {
     userId: string,
     reason: PointsReason,
     subjectId: string | null,
+    /**
+     * Makes an award repeatable per period instead of once ever — an ISO week
+     * for the walking reward. Null means once ever, which is the default for
+     * everything else.
+     */
+    period: string | null,
   ): Promise<number>;
   getPoints(userId: string): Promise<number>;
   awardBadge(userId: string, badgeName: string): Promise<Badge | null>;

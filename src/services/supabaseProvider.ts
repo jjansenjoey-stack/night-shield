@@ -462,7 +462,7 @@ export const supabaseProvider: DataProvider = {
 
   // ---- points & badges --------------------------------------------------
 
-  async awardPoints(_userId, reason, subjectId) {
+  async awardPoints(_userId, reason, subjectId, period) {
     const sb = requireSupabase();
     // No user id and no amount: the server reads the caller from the JWT and
     // looks the value up itself (award_points_for, migration 0003). Passing
@@ -470,6 +470,7 @@ export const supabaseProvider: DataProvider = {
     const { data, error } = await sb.rpc('award_points_for', {
       reason,
       subject: subjectId,
+      period,
     });
     if (error) throw new Error(`Could not add points: ${error.message}`);
     return (data as number) ?? 0;
