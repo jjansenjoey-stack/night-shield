@@ -153,9 +153,22 @@ Points are integers everywhere, which is why walking pays 1 a week rather than
 the 0.5 a walk originally asked for. Making the economy fractional would mean
 showing people "95.5 points" and touching every comparison against a price.
 
-**Two rewards are declared but never awarded:** `attend_event` and
-`save_first_item` have no call sites. Attendance especially has no way to be
-verified — a QR code scanned at the door is the usual answer.
+Attendance is the one variable reward: four points plus two an hour, clamped to
+4–14 by `eventAttendancePoints()`, so a one-hour talk pays 6 and a full day hits
+the ceiling. The ceiling sits at `place_art` on purpose — turning up should never
+out-earn making something and carrying it across the city. It is claimed with a
+code read out at the event, checked against a column the browser never receives,
+the same treatment as cache answers and virtual join links.
+
+The whole price list is visible to users under "How to earn points" on the
+Workshops page. `EarningGuide` reads the same constants the app awards from, and
+computes the cache and event ranges from the live data, so it cannot drift from
+what actually happens. A currency whose prices are hidden is a slot machine.
+
+**Events are free, or a few euro.** Fifteen of seventeen cost nothing; the two
+that charge cover ink and paper. A ticket price is the first thing that stops
+someone coming on their own, which is the opposite of the point. Anything that
+costs real money is a Workshop, bought with points.
 
 ---
 

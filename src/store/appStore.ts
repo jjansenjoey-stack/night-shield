@@ -372,8 +372,21 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ savedKeys: next });
 
     try {
-      if (wasSaved) await unsaveItem(user.id, type, id);
-      else await saveItem(user.id, type, id);
+      if (wasSaved) {
+        await unsaveItem(user.id, type, id);
+      } else {
+        await saveItem(user.id, type, id);
+
+        /*
+         * Saving your first thing is worth a small nudge — it is the moment
+         * the app stops being a list and starts being yours. The award has no
+         * subject, so the ledger pays it once per account however many things
+         * get saved afterwards; there is no need to check whether this really
+         * was the first.
+         */
+        const { addPoints } = await import('@/services/pointsService');
+        void addPoints(user.id, 'save_first_item').catch(() => null);
+      }
       return !wasSaved;
     } catch (error) {
       set({ savedKeys }); // roll back

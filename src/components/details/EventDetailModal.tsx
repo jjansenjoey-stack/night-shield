@@ -18,10 +18,12 @@ import { Modal, ModalCloseButton } from '@/components/ui/Modal';
 import { AnchorButton, Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { AccessibilityIcons, ImageCarousel } from '@/components/ui/Shared';
+import { Card } from '@/components/ui/Card';
 import { EventFeedbackForm } from '@/components/events/EventFeedbackForm';
 import { EventForm } from '@/components/events/EventForm';
 import {
   cancelRsvp,
+  claimAttendance,
   countGoing,
   getEventJoinUrl,
   isPast,
@@ -30,10 +32,11 @@ import {
   toIcs,
 } from '@/services/eventService';
 import { addPoints, POINTS } from '@/services/pointsService';
+import { fetchCurrentUser } from '@/services/authService';
 import { canUserPerformAction } from '@/lib/permissions';
 import { directionsUrl, formatDistance } from '@/lib/geo';
 import { durationLabel, eventCategoryLabel, formatEuros, formatEventDate } from '@/lib/format';
-import type { NightEvent } from '@/types';
+import { eventAttendancePoints, type NightEvent } from '@/types';
 
 interface Props {
   event: NightEvent;
@@ -261,6 +264,9 @@ export function EventDetailModal({ event, distance, onClose }: Props) {
 
         {event.description ? <p>{event.description}</p> : null}
 
+        <AttendanceBlock event={event} isGoing={isGoing} />
+
+
         {event.capacity != null ? (
           <div className="stack stack--xs">
             <div className="row row--between small">
@@ -367,5 +373,104 @@ export function EventDetailModal({ event, distance, onClose }: Props) {
         </div>
       </div>
     </Modal>
+  );
+}
+
+/**
+ * What turning up is worth, and how to claim it.
+ *
+ * Before the event: a promise, so the reward is visible when someone decides
+ * whether to go. During and after: a box for the code the organizer reads out.
+ *
+ * The code is the proof of presence. Everything about the claim is checked by
+ * the backend — that the event started, that you said you were going, and
+ * whether the code is right — against a column the browser never receives.
+ */
+function AttendanceBlock({ event, isGoing }: { event: NightEvent; isGoing: boolean }) {
+  const user = useAppStore((s) => s.user);
+  const setUser = useAppStore((s) => s.setUser);
+  const toast = useToast();
+  const [code, setCode] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [claimed, setClaimed] = useState(false);
+
+  const worth = eventAttendancePoints(event);
+  const started = Date.parse(event.start_time) <= Date.now();
+
+  if (!user) {
+    return (
+      <p className="small muted" style={{ margin: 0 }}>
+        Turning up to this one is worth <strong>{worth} points</strong> once you have an account.
+      </p>
+    );
+  }
+
+  if (claimed) {
+    return (
+      <Card style={{ borderColor: 'var(--success)' }}>
+        <p className="small" style={{ margin: 0 }}>
+          Claimed — <strong>+{worth} points</strong> for turning up. Thanks for coming.
+        </p>
+      </Card>
+    );
+  }
+
+  if (!started) {
+    return (
+      <p className="small muted" style={{ margin: 0 }}>
+        Worth <strong>{worth} points</strong> if you turn up — {durationLabel(event.start_time, event.end_time)}{' '}
+        of it. You will get a code on the night to claim them with.
+      </p>
+    );
+  }
+
+  if (!isGoing) {
+    return (
+      <p className="small muted" style={{ margin: 0 }}>
+        Attendance points go to people who RSVP&rsquo;d as going.
+      </p>
+    );
+  }
+
+  async function claim() {
+    if (!user) return;
+    const entered = code.trim();
+    if (!entered) {
+      toast.error('Enter the code from the event.');
+      return;
+    }
+    setBusy(true);
+    try {
+      await claimAttendance(user.id, event.id, entered);
+      const fresh = await fetchCurrentUser();
+      if (fresh) setUser(fresh);
+      setClaimed(true);
+      toast.success(`+${worth} points for turning up.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not claim that.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Card>
+      <p className="small" style={{ marginTop: 0, marginBottom: '0.5rem' }}>
+        Here tonight? Enter the code to claim <strong>{worth} points</strong>.
+      </p>
+      <div className="row" style={{ gap: '0.4rem' }}>
+        <input
+          className="input grow"
+          value={code}
+          maxLength={16}
+          placeholder="Code from the event"
+          aria-label="Attendance code"
+          onChange={(event_) => setCode(event_.target.value)}
+        />
+        <Button variant="primary" onClick={() => void claim()} disabled={busy}>
+          {busy ? 'Checking…' : 'Claim'}
+        </Button>
+      </div>
+    </Card>
   );
 }

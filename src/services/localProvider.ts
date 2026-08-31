@@ -39,6 +39,7 @@ import type {
 import {
   CACHE_FIND_RADIUS_M,
   effectivePlacementStatus,
+  eventAttendancePoints,
   PLACEMENT_DAYS,
   remoteCachePoints,
 } from '@/types';
@@ -199,7 +200,13 @@ function load(): Database {
         // Snapshots written before `kind` existed hold safety reports with no
         // kind at all. Without this backfill they would be filtered out of the
         // safety summary and every score on the map would vanish.
-        feedback: (parsed.feedback ?? []).map((row) => ({ ...row, kind: row.kind ?? 'safety' })),
+        // mergeSeed too: seeded reports added later never reached an existing
+        // snapshot, so a location topped up to the three-report threshold
+        // stayed below it forever in any browser that had already run the app.
+        feedback: mergeSeed(parsed.feedback, seedFeedback).map((row) => ({
+          ...row,
+          kind: row.kind ?? 'safety',
+        })),
         // Snapshots predating the award ledger have no such key at all.
         pointAwards: parsed.pointAwards ?? [],
         // The spots were renumbered into walking order, so an existing snapshot
@@ -696,6 +703,54 @@ export const localProvider: DataProvider = {
       return tick(event.virtual_url);
     }
     return tick(null);
+  },
+
+  async claimAttendance(userId, eventId, code) {
+    const data = load();
+    const user = findUser(userId);
+    const event = data.events.find((e) => e.id === eventId);
+    if (!event) throw new Error('That event is not on the calendar any more.');
+
+    // Mirrors claim_attendance() in migration 0006 so both backends refuse the
+    // same things. The order matters: say "not started" before "wrong code",
+    // or the message leaks that the code was right.
+    if (Date.parse(event.start_time) > Date.now()) {
+      throw new Error('The code is given out at the event itself.');
+    }
+
+    const going = data.rsvps.some(
+      (r) => r.event_id === eventId && r.user_id === userId && r.rsvp_status === 'going',
+    );
+    if (!going) throw new Error('RSVP as going first, then claim at the event.');
+
+    const normalise = (value: string) => value.toLowerCase().replace(/\s+/g, '').trim();
+    const expected = normalise(event.attendance_code ?? '');
+    if (!expected) throw new Error('This event has no code to claim with.');
+    if (normalise(code) !== expected) throw new Error('That code is not right.');
+
+    // Already claimed? Report the balance rather than failing.
+    const already = data.pointAwards.some(
+      (a) => a.user_id === userId && a.reason === 'attend_event' && a.subject_id === eventId,
+    );
+    if (already) return tick(user.points);
+
+    /*
+     * The amount comes from the event, not from the caller — a longer or
+     * harder session is worth more, and eventAttendancePoints() clamps it so
+     * an organizer cannot mint currency by typing a large number.
+     */
+    const amount = eventAttendancePoints(event);
+    data.pointAwards.push({
+      user_id: userId,
+      reason: 'attend_event',
+      subject_id: eventId,
+      period: null,
+      amount,
+      created_at: new Date().toISOString(),
+    });
+    user.points += amount;
+    persist();
+    return tick(user.points);
   },
 
   async setRsvp(userId, eventId, status) {

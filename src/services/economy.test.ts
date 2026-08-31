@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { resetLocalDatabase } from './localProvider';
 import { addPoints, getPoints, isoWeek, POINTS } from './pointsService';
 import { cancelEnrolment, enrolInCourse, getCourses } from './courseService';
+import { claimAttendance, getEvents, setRsvp } from './eventService';
 import {
   getCaches,
   isWithinFindRange,
@@ -17,7 +18,13 @@ import {
   getSpots,
   placeArt,
 } from './routeArtService';
-import { CACHE_FIND_RADIUS_M, type Placement } from '@/types';
+import {
+  ATTENDANCE_POINTS_MAX,
+  ATTENDANCE_POINTS_MIN,
+  CACHE_FIND_RADIUS_M,
+  eventAttendancePoints,
+  type Placement,
+} from '@/types';
 
 /*
  * The rules that decide what a contribution is worth, and what stops the same
@@ -307,5 +314,98 @@ describe('two weeks only', () => {
     expect(board[0].free).toBe(false);
     expect(board[0].live?.id).toBe('test-live');
     expect(board[0].daysLeft).toBe(12);
+  });
+});
+
+describe('what turning up is worth', () => {
+  const at = (hours: number) => ({
+    start_time: '2026-09-01T19:00:00.000Z',
+    end_time: new Date(Date.parse('2026-09-01T19:00:00.000Z') + hours * 3_600_000).toISOString(),
+  });
+
+  it('pays more for longer, between a floor and a ceiling', () => {
+    expect(eventAttendancePoints(at(1))).toBe(6);
+    expect(eventAttendancePoints(at(2))).toBe(8);
+    expect(eventAttendancePoints(at(3))).toBe(10);
+    // Long enough to hit the cap, and no further.
+    expect(eventAttendancePoints(at(12))).toBe(ATTENDANCE_POINTS_MAX);
+  });
+
+  it('never pays less than the floor, even for nonsense durations', () => {
+    expect(eventAttendancePoints(at(0))).toBe(ATTENDANCE_POINTS_MIN);
+    expect(eventAttendancePoints({ start_time: 'not a date', end_time: 'nor this' })).toBe(
+      ATTENDANCE_POINTS_MIN,
+    );
+  });
+
+  /* An organizer types the reward into a form, so it has to be clamped. */
+  it('clamps an organizer-set reward instead of trusting it', () => {
+    expect(eventAttendancePoints({ ...at(2), points_reward: 9999 })).toBe(ATTENDANCE_POINTS_MAX);
+    expect(eventAttendancePoints({ ...at(2), points_reward: -50 })).toBe(ATTENDANCE_POINTS_MIN);
+    expect(eventAttendancePoints({ ...at(2), points_reward: 11 })).toBe(11);
+  });
+
+  it('never lets an evening out-earn making something', () => {
+    expect(ATTENDANCE_POINTS_MAX).toBeLessThanOrEqual(POINTS.place_art);
+  });
+});
+
+describe('claiming attendance', () => {
+  const started = async () => {
+    const events = await getEvents({ includePast: true });
+    const event = events.find((e) => Date.parse(e.start_time) <= Date.now());
+    expect(event, 'the seed needs an event that has already started').toBeTruthy();
+    return event!;
+  };
+
+  it('refuses before the event has started, without revealing the code', async () => {
+    const events = await getEvents({ includePast: true });
+    const future = events.find((e) => Date.parse(e.start_time) > Date.now());
+    expect(future).toBeTruthy();
+
+    await setRsvp(USER, future!.id, 'going');
+    await expect(
+      claimAttendance(USER, future!.id, future!.attendance_code ?? 'anything'),
+    ).rejects.toThrow(/given out at the event/i);
+  });
+
+  it('refuses someone who never said they were going', async () => {
+    const event = await started();
+    await expect(claimAttendance(USER, event.id, event.attendance_code ?? 'x')).rejects.toThrow(
+      /RSVP as going/i,
+    );
+  });
+
+  it('refuses the wrong code', async () => {
+    const event = await started();
+    await setRsvp(USER, event.id, 'going');
+    const before = await getPoints(USER);
+
+    await expect(claimAttendance(USER, event.id, 'DEFINITELY-NOT-IT')).rejects.toThrow(/not right/i);
+    expect(await getPoints(USER)).toBe(before);
+  });
+
+  it('pays what the event is worth, once', async () => {
+    const event = await started();
+    await setRsvp(USER, event.id, 'going');
+    const before = await getPoints(USER);
+    const worth = eventAttendancePoints(event);
+
+    await claimAttendance(USER, event.id, event.attendance_code!);
+    expect(await getPoints(USER)).toBe(before + worth);
+
+    // Claiming again is a no-op, not a second payment and not an error.
+    await claimAttendance(USER, event.id, event.attendance_code!);
+    expect(await getPoints(USER)).toBe(before + worth);
+  });
+
+  it('ignores spacing and case in the code', async () => {
+    const event = await started();
+    await setRsvp(USER, event.id, 'going');
+    const before = await getPoints(USER);
+
+    const messy = ` ${event.attendance_code!.toLowerCase().split('').join(' ')} `;
+    await claimAttendance(USER, event.id, messy);
+    expect(await getPoints(USER)).toBeGreaterThan(before);
   });
 });

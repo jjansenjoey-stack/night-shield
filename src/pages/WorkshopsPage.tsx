@@ -21,6 +21,7 @@ import { LoadingBlock } from '@/components/ui/LoadingSpinner';
 import { AccessibilityIcons, SafeImage } from '@/components/ui/Shared';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
+import { EarningGuide } from '@/components/points/EarningGuide';
 import {
   applyCourseFilters,
   cancelEnrolment,
@@ -175,6 +176,18 @@ export function WorkshopsPage() {
           )}
         </div>
       </Card>
+
+      <details className="earning-guide">
+        <summary>
+          <span className="row" style={{ gap: '0.45rem' }}>
+            <Sparkles size={15} aria-hidden="true" />
+            How to earn points — every action and what it pays
+          </span>
+        </summary>
+        <div style={{ marginTop: 'var(--xs)' }}>
+          <EarningGuide />
+        </div>
+      </details>
 
       {myCourses.length > 0 ? (
         <Section title="Your places">

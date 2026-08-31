@@ -89,8 +89,55 @@ export interface NightEvent {
   is_virtual: boolean;
   virtual_url: string | null;
   is_featured: boolean;
+  /**
+   * What turning up is worth, when the organizer wants to set it by hand.
+   * Left unset, it is derived from how long the event runs — see
+   * eventAttendancePoints(). Optional so the seed does not have to name it
+   * seventeen times.
+   */
+  points_reward?: number | null;
+  /**
+   * Read out at the door so people can claim the attendance points. Never
+   * reaches the browser on the real backend — the same treatment as cache
+   * answers, and for the same reason: a code the client can read is not proof
+   * of anything.
+   */
+  attendance_code?: string | null;
   updated_at: string | null;
   created_at: string;
+}
+
+/** Attendance is never worth less than this, or more. */
+export const ATTENDANCE_POINTS_MIN = 4;
+export const ATTENDANCE_POINTS_MAX = 14;
+
+/**
+ * What turning up to an event is worth.
+ *
+ * Longer and harder is worth more, but the ceiling is deliberately low: an
+ * evening at a workshop should not out-earn making a piece of work and
+ * carrying it across the city, which pays 14. Two points an hour on top of a
+ * base of four puts a one-hour talk at 6 and a full-day session at the cap.
+ *
+ * An explicit points_reward wins, clamped to the same range so an organizer
+ * cannot print currency by typing a big number into a form.
+ */
+export function eventAttendancePoints(event: {
+  start_time: string;
+  end_time: string;
+  points_reward?: number | null;
+}): number {
+  const clamp = (n: number) =>
+    Math.max(ATTENDANCE_POINTS_MIN, Math.min(ATTENDANCE_POINTS_MAX, Math.round(n)));
+
+  if (typeof event.points_reward === 'number' && Number.isFinite(event.points_reward)) {
+    return clamp(event.points_reward);
+  }
+
+  const hours = (Date.parse(event.end_time) - Date.parse(event.start_time)) / 3_600_000;
+  if (!Number.isFinite(hours) || hours <= 0) return ATTENDANCE_POINTS_MIN;
+
+  return clamp(ATTENDANCE_POINTS_MIN + hours * 2);
 }
 
 export type ThirdSpaceType = 'cafe' | 'library' | 'park' | 'community_centre' | 'studio';

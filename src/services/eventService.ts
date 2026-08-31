@@ -202,3 +202,19 @@ export function toIcs(event: NightEvent): string {
     'END:VCALENDAR',
   ].join('\r\n');
 }
+
+/**
+ * Claims the attendance points using the code given out at the event.
+ *
+ * Everything is decided by the backend: whether the event started, whether you
+ * said you were going, whether the code is right, and how much it is worth.
+ * Returns the new balance.
+ */
+export async function claimAttendance(
+  userId: string,
+  eventId: string,
+  code: string,
+): Promise<number> {
+  const provider = await getProvider();
+  return provider.claimAttendance(userId, eventId, code);
+}

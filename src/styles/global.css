@@ -1459,3 +1459,41 @@ button { font-family: inherit; }
 }
 .route-compare__row h3 a:hover { color: var(--accent2); }
 .route-compare__row .a11y-icons { margin-top: 0.5rem; }
+
+/* ---------- Earning guide ---------- */
+
+.earning-guide {
+  margin: var(--sm) 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  padding: var(--sm);
+}
+.earning-guide > summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.92rem;
+  list-style: none;
+}
+.earning-guide > summary::-webkit-details-marker { display: none; }
+.earning-guide > summary::after {
+  content: '＋';
+  float: right;
+  color: var(--text-muted);
+}
+.earning-guide[open] > summary::after { content: '－'; }
+
+.earning-group { background: var(--surface-raised); }
+
+.earning-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+/* A hairline between rows keeps a long price list scannable. */
+.earning-list > li + li {
+  border-top: 1px solid var(--border);
+  padding-top: 0.6rem;
+}

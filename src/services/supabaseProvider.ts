@@ -555,6 +555,20 @@ export const supabaseProvider: DataProvider = {
     return (data as string | null) ?? null;
   },
 
+  async claimAttendance(userId, eventId, code) {
+    const sb = requireSupabase();
+    void userId; // the server reads the claimant from the JWT
+    // The code is compared against a column the client never receives, the
+    // start time and the RSVP are checked there too, and the amount comes off
+    // the event row. Nothing here is trusted.
+    const { data, error } = await sb.rpc('claim_attendance', {
+      target_event: eventId,
+      given_code: code,
+    });
+    if (error) throw new Error(error.message);
+    return (data as number) ?? 0;
+  },
+
   async setRsvp(userId, eventId, status) {
     const sb = requireSupabase();
     const { data, error } = await sb

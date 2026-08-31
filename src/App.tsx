@@ -14,15 +14,11 @@ import { SignupPage } from '@/pages/SignupPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { ResetPasswordPage } from '@/pages/ResetPasswordPage';
-import { DiscoverPage } from '@/pages/DiscoverPage';
 import { ExplorePage } from '@/pages/ExplorePage';
 import { EventsCalendarPage } from '@/pages/EventsCalendarPage';
-import { CreateEventPage } from '@/pages/CreateEventPage';
-import { RouteNavigationPage } from '@/pages/RouteNavigationPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { MenuPage } from '@/pages/MenuPage';
 import { ModerationPage } from '@/pages/ModerationPage';
-import { SubmitContentPage } from '@/pages/SubmitContentPage';
 import { WorkshopsPage } from '@/pages/WorkshopsPage';
 import { ArtRoutesPage } from '@/pages/ArtRoutesPage';
 import { LoadingBlock } from '@/components/ui/LoadingSpinner';
@@ -35,6 +31,33 @@ import { LoadingBlock } from '@/components/ui/LoadingSpinner';
 const OrganizerDashboardPage = lazy(() =>
   import('@/pages/OrganizerDashboardPage').then((m) => ({ default: m.OrganizerDashboardPage })),
 );
+
+/*
+ * The four pages that touch MapLibre, split out for the same reason.
+ *
+ * MapLibre is 762 kB — bigger than the rest of the app put together — and it
+ * arrives through MapView (Discover, route navigation) and LocationPicker
+ * (submitting content, creating an event). Left in the main chunk, someone
+ * opening the landing page on mobile data downloads a map engine to read four
+ * paragraphs and tap "Browse as guest". Now it loads when a map does.
+ */
+const DiscoverPage = lazy(() =>
+  import('@/pages/DiscoverPage').then((m) => ({ default: m.DiscoverPage })),
+);
+const RouteNavigationPage = lazy(() =>
+  import('@/pages/RouteNavigationPage').then((m) => ({ default: m.RouteNavigationPage })),
+);
+const SubmitContentPage = lazy(() =>
+  import('@/pages/SubmitContentPage').then((m) => ({ default: m.SubmitContentPage })),
+);
+const CreateEventPage = lazy(() =>
+  import('@/pages/CreateEventPage').then((m) => ({ default: m.CreateEventPage })),
+);
+
+/** One place to say what a page looks like while its chunk is arriving. */
+function Lazy({ children, label }: { children: React.ReactNode; label: string }) {
+  return <Suspense fallback={<LoadingBlock label={label} />}>{children}</Suspense>;
+}
 
 /** Everything that needs the toast context lives inside this. */
 function AppRoutes() {
@@ -59,7 +82,14 @@ function AppRoutes() {
 
       {/* Inside the shell. Discover and Events stay open to guests (prompt 20). */}
       <Route element={<AppShell />}>
-        <Route path="/discover" element={<DiscoverPage />} />
+        <Route
+          path="/discover"
+          element={
+            <Lazy label="Loading the map…">
+              <DiscoverPage />
+            </Lazy>
+          }
+        />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/events" element={<EventsCalendarPage />} />
         <Route path="/workshops" element={<WorkshopsPage />} />
@@ -82,7 +112,9 @@ function AppRoutes() {
           path="/submit"
           element={
             <PrivateRoute requires="submit_content">
-              <SubmitContentPage />
+              <Lazy label="Loading the form…">
+                <SubmitContentPage />
+              </Lazy>
             </PrivateRoute>
           }
         />
@@ -90,7 +122,9 @@ function AppRoutes() {
           path="/events/new"
           element={
             <PrivateRoute requires="create_event">
-              <CreateEventPage />
+              <Lazy label="Loading the form…">
+                <CreateEventPage />
+              </Lazy>
             </PrivateRoute>
           }
         />
@@ -115,7 +149,14 @@ function AppRoutes() {
       </Route>
 
       {/* Full-bleed: navigation takes the whole screen. */}
-      <Route path="/route/:routeId" element={<RouteNavigationPage />} />
+      <Route
+        path="/route/:routeId"
+        element={
+          <Lazy label="Loading the route…">
+            <RouteNavigationPage />
+          </Lazy>
+        }
+      />
 
       <Route path="*" element={<Navigate to="/discover" replace />} />
     </Routes>

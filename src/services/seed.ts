@@ -52,6 +52,14 @@ const PHOTOS: Record<string, string> = {
   'overhead-1': 'Tilburg Centraal Station Mosaicpanelen 2.jpg',
   'overhead-2': 'Tilburg Centraal Station Mosaicpaneel 1.jpg',
 
+  'cachetrail-1': 'Tilburg Centraal Station Mosaicpaneel 3.jpg',
+  'cachetrail-2': 'Drieburcht, renovatie Wagnerplein Tilburg 2.jpg',
+  'cachetrail-3': 'Tilburg watertoren.jpg',
+  'cachetrail-4': 'Spoorzone tilburg AVS 9329.jpg',
+  'cachetrail-5': 'Leijpark 2, Tilburg.jpg',
+  'cachetrail-6': 'Piushaven Tilburg Welkom (01).jpg',
+  'cachetrail-7': '2109 Tilburg - Centrum 242- Jan Geerling.jpg',
+  'cachetrail-8': 'Heuvel (Tilburg) P1050530.JPG',
   // --- Two Weeks Only: the eight spots, then the work currently in them ----
   'twoweeks-lochal': 'LocHal 20190606 - 06.jpg',
   'twoweeks-spoorpark': 'Spoorpark (Tilburg) 016.jpg',
@@ -645,11 +653,94 @@ export const seedRoutes: DiscoveryRoute[] = [
     moderation_status: 'approved',
     created_at: daysAgo(45),
   },
+  {
+    id: 'route-night-cache-trail',
+    title: 'The Night Cache Trail',
+    description:
+      'All eight Night Caches in one walk, ordered so you never double back. It is the longest route in the app by a distance and it crosses the whole city, so treat it as an afternoon and an evening rather than an hour. The caches are worth points on their own; finishing the trail is worth the usual route reward on top.',
+    type: 'art_walk',
+    distance_km: 8.1,
+    estimated_time_minutes: 165,
+    start_location: { latitude: 51.5608, longitude: 5.0838 },
+    end_location: { latitude: 51.5588, longitude: 5.0902 },
+    stops: [
+      {
+        order: 1,
+        title: 'Tilburg Centraal — Find Yourself Overhead',
+        note: 'Cache 1 is in the station hall. Look up at the mosaic, then down at your own reflection.',
+        image_url: img('cachetrail-1'),
+        location: { latitude: 51.5608, longitude: 5.0838 },
+      },
+      {
+        order: 2,
+        title: 'Tilburg-Noord — The Corner That Waited',
+        note: 'Cache 2. The furthest north, and the quietest. Bus 5 runs back if you need it.',
+        image_url: img('cachetrail-2'),
+        location: { latitude: 51.5686, longitude: 5.0734 },
+      },
+      {
+        order: 3,
+        title: 'Spoorpark — The Water Tower Bolt',
+        note: 'Cache 3, at the foot of the tower. Park gates close at midnight.',
+        image_url: img('cachetrail-3'),
+        location: { latitude: 51.5654, longitude: 5.0744 },
+      },
+      {
+        order: 4,
+        title: 'Spoorzone — The Last Rail',
+        note: 'Cache 4, outside the LocHal. One rail was left in the pavement on purpose.',
+        image_url: img('cachetrail-4'),
+        location: { latitude: 51.5607, longitude: 5.0799 },
+      },
+      {
+        order: 5,
+        title: 'Leijpark — The Drowned Stream',
+        note: 'Cache 5. The longest leg of the trail, and the darkest. Go before dusk or go with someone.',
+        image_url: img('cachetrail-5'),
+        location: { latitude: 51.5465, longitude: 5.0933 },
+      },
+      {
+        order: 6,
+        title: 'Piushaven — Ring Number Four',
+        note: 'Cache 6, on the quay. Kiosk open late, benches, and the harbour lights.',
+        image_url: img('cachetrail-6'),
+        location: { latitude: 51.5499, longitude: 5.0989 },
+      },
+      {
+        order: 7,
+        title: 'Dwaalgebied — Sixty Windows',
+        note: 'Cache 7. Back into the wandering quarter, where the galleries stay lit.',
+        image_url: img('cachetrail-7'),
+        location: { latitude: 51.5582, longitude: 5.0873 },
+      },
+      {
+        order: 8,
+        title: 'Heuvel — The Man With The Jug',
+        note: 'Cache 8, at the statue. The end of the trail, and the busiest square on it.',
+        image_url: img('cachetrail-8'),
+        location: { latitude: 51.5588, longitude: 5.0902 },
+      },
+    ],
+    accessibility: ['step_free', 'well_lit'],
+    created_by: null,
+    moderation_status: 'approved',
+    created_at: daysAgo(30),
+  },
 ];
 
+/*
+ * Events are free, or as close to it as materials allow.
+ *
+ * The point of the programme is to get people through the door, and a ticket
+ * price is the first thing that stops someone coming on their own. Where a
+ * charge exists it covers consumables — ink, paper — and stays at a few euro.
+ * Anything that needs real money is a Workshop, and those are bought with
+ * points rather than cash.
+ */
 export const seedEvents: NightEvent[] = [
   {
     id: 'evt-screenprint',
+    attendance_code: 'SCREEN25',
     title: 'Screenprint your own patch',
     description:
       'Bring a jacket, leave with a patch. All materials provided, no experience needed. Runs in the Veemarkt Studios drop-in slot.',
@@ -659,7 +750,7 @@ export const seedEvents: NightEvent[] = [
     start_time: daysFromNow(2, 19),
     end_time: daysFromNow(2, 21, 30),
     capacity: 16,
-    cost_euros: 5,
+    cost_euros: 3,
     organizer_id: SEED_ORGANIZER_ID,
     organizer_name: 'Nadia el Amrani',
     image_url: img('screenprint'),
@@ -672,6 +763,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-night-walk',
+    attendance_code: 'NIGHTW18',
     title: 'Night walk: The Lit Way Home',
     description:
       'We walk the safe route together, then talk about what makes a street feel walkable. Hosted with the Inclusivity Department.',
@@ -694,6 +786,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-artist-talk',
+    attendance_code: 'ARTIST25',
     title: 'Artist talk: Sanne de Wit on The Loom Wall',
     description:
       'How a 1920s sample book became a ten-metre wall. Followed by questions and a walk to the piece itself.',
@@ -716,6 +809,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-late-opening',
+    attendance_code: 'LATEOP32',
     title: 'Late opening — Kiosk Piushaven',
     description:
       'The harbour stays lit until 02:00 with a DJ on the terrace. Free entry, drinks at normal prices.',
@@ -738,6 +832,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-language-cafe',
+    attendance_code: 'LANGUA39',
     title: 'Language café',
     description:
       'Practise Dutch, English, Arabic or Tigrinya over tea. Come as a learner or a speaker, both are needed.',
@@ -760,6 +855,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-online-mapping',
+    attendance_code: 'ONLINE46',
     title: 'Online: map your own safe route',
     description:
       'A one-hour call where we build a personal route together and add it to Night Shield. Join from anywhere.',
@@ -785,6 +881,7 @@ export const seedEvents: NightEvent[] = [
   // and needs no sign-up — the section of the calendar that has to stay full.
   {
     id: 'evt-repair-cafe',
+    attendance_code: 'REPAIR25',
     title: 'Repair Café',
     description:
       'Bring the thing that broke. Volunteers fix clothes, bikes, lamps, laptops and kettles, and show you how while they do it. Parts at cost, labour free, no appointment.',
@@ -807,6 +904,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-board-games',
+    attendance_code: 'BOARDG25',
     title: 'Board game night',
     description:
       'Fifty-odd games on the shelf, from ten-minute card games to the ones that eat an evening. Turn up alone — the whole point is that you get put on a table with people.',
@@ -829,6 +927,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-open-mic',
+    attendance_code: 'OPENMI94',
     title: 'Open mic — first-timers only',
     description:
       'Five minutes each, and you are not allowed to have done this before. Poetry, songs, stand-up, a thing you wrote on the bus. The audience is contractually obliged to be kind.',
@@ -851,6 +950,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-study-cafe',
+    attendance_code: 'STUDYC18',
     title: 'Study café — free coffee until close',
     description:
       'Long tables, plugs at every seat, and the machine kept running for anyone with an exam coming. Silence upstairs, talking allowed downstairs.',
@@ -873,6 +973,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-skate-jam',
+    attendance_code: 'SKATEJ11',
     title: 'Skate jam & paint session',
     description:
       'Open session at the Hall of Fame wall. Spare boards and spare cans for anyone who turns up without either. Beginners get the first hour to themselves.',
@@ -895,6 +996,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-queer-social',
+    attendance_code: 'QUEERS32',
     title: 'Queer social — no dance floor, just chairs',
     description:
       'A quiet alternative to a club night. Tea, a corner to sit in, and people to sit with. Trans and non-binary friendly, sober-friendly, and you can leave whenever you like without explaining.',
@@ -917,6 +1019,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-bike-drop-in',
+    attendance_code: 'BIKEDR32',
     title: 'Bike repair drop-in',
     description:
       'Brakes, lights, punctures, a chain that keeps coming off. Bring the bike, borrow the tools, someone will talk you through it. Free lights while they last — Dutch autumn being what it is.',
@@ -939,6 +1042,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-community-meal',
+    attendance_code: 'COMMUN46',
     title: 'Eetcafé — pay what you can',
     description:
       'One pot, one long table, forty chairs. There is a tin by the door and nobody watches it. Vegetarian by default, halal on request, allergies catered for if you say so beforehand.',
@@ -961,6 +1065,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-cache-walk',
+    attendance_code: 'CACHEW18',
     title: 'Night Cache walk: the first four',
     description:
       'A guided run at four of the Night Caches, ending at the station canopy after dark so the mirrors actually do their thing. Bring a phone; everything else is provided.',
@@ -983,6 +1088,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-morning-park-run',
+    attendance_code: 'MORNIN60',
     title: 'Slow walk in the Spoorpark',
     description:
       'Forty-five minutes at whatever pace the slowest person sets, once round the lake and back to the pavilion for coffee. Explicitly not a running club.',
@@ -1005,6 +1111,7 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-past-zine',
+    attendance_code: 'PASTZI11',
     title: 'Zine night: writing the city',
     description:
       'We made a twenty-page zine in one evening. Copies are in the LocHal reading room.',
@@ -1024,6 +1131,75 @@ export const seedEvents: NightEvent[] = [
     is_featured: false,
     updated_at: null,
     created_at: daysAgo(40),
+  },
+  {
+    id: 'evt-past-night-walk',
+    attendance_code: 'LITWAY42',
+    title: 'Night walk: the long way round',
+    description:
+      'A slow loop from the station to Piushaven and back along the water. Twenty-two people came, which is the most yet.',
+    category: 'social',
+    location: { latitude: 51.5606, longitude: 5.0836 },
+    address: 'Tilburg Centraal, south exit',
+    start_time: daysFromNow(-6, 20, 30),
+    end_time: daysFromNow(-6, 22, 0),
+    capacity: 30,
+    cost_euros: 0,
+    organizer_id: SEED_ORGANIZER_ID,
+    organizer_name: 'Nadia el Amrani',
+    image_url: img('nightwalk'),
+    accessibility: ['wheelchair', 'step_free', 'well_lit'],
+    is_virtual: false,
+    virtual_url: null,
+    is_featured: false,
+    updated_at: null,
+    created_at: daysAgo(30),
+  },
+  {
+    id: 'evt-past-repair-cafe',
+    attendance_code: 'REPAIR17',
+    title: 'Repair Café — bring the broken thing',
+    description:
+      'Lamps, kettles, one accordion. Volunteers with tools and the patience to show you rather than do it for you.',
+    category: 'workshop',
+    location: { latitude: 51.5648, longitude: 5.0776 },
+    address: 'Buurthuis De Symfonie',
+    start_time: daysFromNow(-3, 14, 0),
+    end_time: daysFromNow(-3, 17, 0),
+    capacity: 24,
+    cost_euros: 0,
+    organizer_id: SEED_ORGANIZER_ID,
+    organizer_name: 'Inclusivity Department',
+    image_url: img('repaircafe'),
+    accessibility: ['wheelchair', 'step_free', 'quiet'],
+    is_virtual: false,
+    virtual_url: null,
+    is_featured: false,
+    updated_at: null,
+    created_at: daysAgo(40),
+  },
+  {
+    id: 'evt-past-artist-talk',
+    attendance_code: 'LOOM88',
+    title: 'Artist talk: what the mill left behind',
+    description:
+      'An hour on the textile works that used to stand where the Spoorzone is now, and the pieces made from what was left.',
+    category: 'art_talk',
+    location: { latitude: 51.5607, longitude: 5.0799 },
+    address: 'LocHal, Stadszaal',
+    start_time: daysFromNow(-11, 19, 30),
+    end_time: daysFromNow(-11, 20, 30),
+    capacity: 60,
+    cost_euros: 0,
+    organizer_id: SEED_ORGANIZER_ID,
+    organizer_name: 'Inclusivity Department',
+    image_url: img('artisttalk'),
+    accessibility: ['wheelchair', 'step_free', 'quiet', 'well_lit'],
+    is_virtual: false,
+    virtual_url: null,
+    is_featured: false,
+    updated_at: null,
+    created_at: daysAgo(45),
   },
 ];
 
@@ -1598,18 +1774,18 @@ export const seedCourses: Course[] = [
 export const seedFeedback: Feedback[] = [
   ...buildFeedback('inst-lochal-loom', [5, 5, 4, 5], [5, 4, 5]),
   ...buildFeedback('inst-piushaven-lights', [4, 5, 4], [4, 4, 3]),
-  ...buildFeedback('inst-dwaalgebied-mural', [4, 3, 4, 4], [3, 3]),
+  ...buildFeedback('inst-dwaalgebied-mural', [4, 3, 4, 4], [3, 3, 2]),
   ...buildFeedback('inst-hall-of-fame', [3, 2, 3], [2, 2, 1]),
-  ...buildFeedback('inst-leijpark-sound', [4, 4, 5], [2, 3]),
+  ...buildFeedback('inst-leijpark-sound', [4, 4, 5], [2, 3, 2]),
   ...buildFeedback('inst-station-ceiling', [4, 4, 3, 4], [3, 4, 3]),
-  ...buildFeedback('ts-lochal', [5, 5, 5, 4], [5, 5]),
+  ...buildFeedback('ts-lochal', [5, 5, 5, 4], [5, 5, 4]),
   ...buildFeedback('ts-wilhelminapark', [5, 4, 4], [3, 3, 4]),
-  ...buildFeedback('ts-piushaven-kiosk', [4, 5, 4], [4, 4]),
-  ...buildFeedback('ts-hall-of-fame-cafe', [5, 4, 5], [4]),
-  ...buildFeedback('ts-buurthuis-reeshof', [5, 5, 4], [4, 4]),
+  ...buildFeedback('ts-piushaven-kiosk', [4, 5, 4], [4, 4, 5]),
+  ...buildFeedback('ts-hall-of-fame-cafe', [5, 4, 5], [4, 3, 4]),
+  ...buildFeedback('ts-buurthuis-reeshof', [5, 5, 4], [4, 4, 5]),
   ...buildFeedback('route-lit-way-home', [5, 5, 4, 5], [5, 4, 5, 5]),
-  ...buildFeedback('route-north-discovery', [4, 3, 4], [2, 3]),
-  ...buildFeedback('route-quiet-green', [5, 5, 4], [4, 4]),
+  ...buildFeedback('route-north-discovery', [4, 3, 4], [2, 3, 2]),
+  ...buildFeedback('route-quiet-green', [5, 5, 4], [4, 4, 5]),
 ];
 
 function buildFeedback(

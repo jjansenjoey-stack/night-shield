@@ -121,6 +121,15 @@ export interface DataProvider {
   removeRsvp(userId: string, eventId: string): Promise<void>;
   /** The join link for a virtual event — only for people who are going. */
   getEventJoinUrl(eventId: string): Promise<string | null>;
+  /**
+   * Claims the attendance points for an event, using the code given out at it.
+   *
+   * The code is the proof, and it is checked by the backend against a column
+   * the client never receives. Everything else is checked there too: that the
+   * event has actually started, and that the claimant said they were going.
+   * Returns the new balance.
+   */
+  claimAttendance(userId: string, eventId: string, code: string): Promise<number>;
 
   // ---- night caches -----------------------------------------------------
   getCaches(): Promise<NightCache[]>;
