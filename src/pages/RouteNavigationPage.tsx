@@ -11,7 +11,7 @@ import { SafeImage } from '@/components/ui/Shared';
 import { LoadingBlock } from '@/components/ui/LoadingSpinner';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useToast } from '@/components/ui/Toast';
-import { addPoints } from '@/services/pointsService';
+import { addPoints, POINTS } from '@/services/pointsService';
 import { routeToMapItem } from '@/services/api';
 import { directionsUrl, distanceKm, formatDistance, walkingMinutes } from '@/lib/geo';
 import { routeTypeLabel } from '@/lib/format';
@@ -49,7 +49,7 @@ export function RouteNavigationPage() {
 
   useEffect(() => {
     if (done && user) {
-      void addPoints(user.id, 'complete_route').catch(() => null);
+      void addPoints(user.id, 'complete_route', route?.id ?? null).catch(() => null);
       void markJourney('explored');
     }
   }, [done, user, markJourney]);
@@ -131,7 +131,7 @@ export function RouteNavigationPage() {
             <p className="small muted" style={{ margin: 0 }}>
               {route.distance_km} km in{' '}
               {Math.max(1, Math.round((Date.now() - startedAt) / 60000))} minutes
-              {user ? ' · +30 points' : ''}.
+              {user ? ` · +${POINTS.complete_route} points` : ''}.
             </p>
             <div className="row" style={{ justifyContent: 'center' }}>
               <Button variant="primary" onClick={() => navigate('/explore')}>

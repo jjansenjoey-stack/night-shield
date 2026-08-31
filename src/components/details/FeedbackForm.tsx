@@ -5,7 +5,7 @@ import { useToast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Shared';
 import { submitFeedback } from '@/services/feedbackService';
-import { addPoints } from '@/services/pointsService';
+import { addPoints, POINTS } from '@/services/pointsService';
 import { currentTimeOfDay, timeOfDayLabel } from '@/lib/format';
 import type { TimeOfDay } from '@/types';
 
@@ -54,12 +54,12 @@ export function FeedbackForm({ locationId, onSubmitted }: Props) {
       });
 
       if (user) {
-        await addPoints(user.id, 'submit_feedback').catch(() => null);
+        await addPoints(user.id, 'submit_feedback', locationId).catch(() => null);
         void markJourney('contributed');
       }
 
       toast.success(
-        user ? 'Thanks — your report is in, +10 points.' : 'Thanks — your report is in.',
+        user ? `Thanks — your report is in, +${POINTS.submit_feedback} points.` : 'Thanks — your report is in.',
       );
       await refreshData();
       onSubmitted();

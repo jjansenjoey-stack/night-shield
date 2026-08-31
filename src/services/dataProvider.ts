@@ -1,3 +1,4 @@
+import type { PointsReason } from './pointsService';
 import type {
   Badge,
   CommunitySubmission,
@@ -82,7 +83,17 @@ export interface DataProvider {
   getFeedbackForLocation(locationId: string): Promise<Feedback[]>;
 
   // ---- points & badges --------------------------------------------------
-  addPoints(userId: string, points: number): Promise<number>;
+  /**
+   * Award the points for one contribution and return the new balance.
+   *
+   * Takes a reason rather than an amount, and a subject to be idempotent
+   * against, so the same contribution can never be banked twice.
+   */
+  awardPoints(
+    userId: string,
+    reason: PointsReason,
+    subjectId: string | null,
+  ): Promise<number>;
   getPoints(userId: string): Promise<number>;
   awardBadge(userId: string, badgeName: string): Promise<Badge | null>;
   getBadges(userId: string): Promise<Badge[]>;

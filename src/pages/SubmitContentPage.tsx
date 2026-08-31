@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { CheckboxGroup, Field } from '@/components/ui/Shared';
 import { useToast } from '@/components/ui/Toast';
 import { submitContent } from '@/services/submissionService';
-import { addPoints } from '@/services/pointsService';
+import { addPoints, POINTS } from '@/services/pointsService';
 import { A11Y_TAGS, a11yLabel, thirdSpaceLabel } from '@/lib/format';
 import type { LatLng, SubmissionType, ThirdSpaceType } from '@/types';
 
@@ -76,16 +76,18 @@ export function SubmitContentPage() {
               image_url: imageUrl.trim() || null,
             };
 
-      await submitContent(
+      const submission = await submitContent(
         kind,
         user.id,
         user.full_name ?? user.email,
         payload as unknown as Record<string, unknown>,
       );
-      await addPoints(user.id, 'submit_content').catch(() => null);
+      await addPoints(user.id, 'submit_content', submission.id).catch(() => null);
       void markJourney('contributed');
 
-      toast.success('Sent for review — you will see it on the map once it is approved. +25 points.');
+      toast.success(
+        `Sent for review — you will see it on the map once it is approved. +${POINTS.submit_content} points.`,
+      );
       navigate('/discover');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Could not send that.');

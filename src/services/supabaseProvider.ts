@@ -460,11 +460,14 @@ export const supabaseProvider: DataProvider = {
 
   // ---- points & badges --------------------------------------------------
 
-  async addPoints(userId, points) {
+  async awardPoints(_userId, reason, subjectId) {
     const sb = requireSupabase();
-    const { data, error } = await sb.rpc('add_user_points', {
-      target_user: userId,
-      delta: points,
+    // No user id and no amount: the server reads the caller from the JWT and
+    // looks the value up itself (award_points_for, migration 0003). Passing
+    // either from here is what let a forged request mint its own currency.
+    const { data, error } = await sb.rpc('award_points_for', {
+      reason,
+      subject: subjectId,
     });
     if (error) throw new Error(`Could not add points: ${error.message}`);
     return (data as number) ?? 0;

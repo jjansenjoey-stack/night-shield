@@ -5,7 +5,7 @@ import { useToast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Shared';
 import { submitFeedback } from '@/services/feedbackService';
-import { addPoints } from '@/services/pointsService';
+import { addPoints, POINTS } from '@/services/pointsService';
 import { currentTimeOfDay } from '@/lib/format';
 import type { NightEvent } from '@/types';
 
@@ -52,10 +52,12 @@ export function EventFeedbackForm({
       });
 
       if (user) {
-        await addPoints(user.id, 'event_feedback').catch(() => null);
+        await addPoints(user.id, 'event_feedback', event.id).catch(() => null);
         void markJourney('connected');
       }
-      toast.success(user ? 'Thanks for the feedback. +15 points.' : 'Thanks for the feedback.');
+      toast.success(
+        user ? `Thanks for the feedback. +${POINTS.event_feedback} points.` : 'Thanks for the feedback.',
+      );
       onDone();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Could not send that.');

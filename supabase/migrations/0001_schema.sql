@@ -828,6 +828,14 @@ begin
            )
       into metres;
 
+    -- A comparison against NULL yields NULL, and `if NULL` is simply not
+    -- taken — so `metres > 60` quietly *passes* whenever the distance cannot
+    -- be computed (a cache with no location, a coordinate that does not
+    -- project). NaN needs the same treatment. Demand a real number first.
+    if metres is null or metres <> metres then
+      raise exception 'We could not work out where you are';
+    end if;
+
     if metres > 60 then
       raise exception 'You are still % m away', round(metres);
     end if;

@@ -29,7 +29,7 @@ import {
   spotsLeft,
   toIcs,
 } from '@/services/eventService';
-import { addPoints } from '@/services/pointsService';
+import { addPoints, POINTS } from '@/services/pointsService';
 import { canUserPerformAction } from '@/lib/permissions';
 import { directionsUrl, formatDistance } from '@/lib/geo';
 import { durationLabel, eventCategoryLabel, formatEuros, formatEventDate } from '@/lib/format';
@@ -115,9 +115,9 @@ export function EventDetailModal({ event, distance, onClose }: Props) {
           return;
         }
         await setRsvp(user.id, event.id, 'going');
-        await addPoints(user.id, 'rsvp_event').catch(() => null);
+        await addPoints(user.id, 'rsvp_event', event.id).catch(() => null);
         void markJourney('participated');
-        toast.success("You're on the list. +5 points.");
+        toast.success(`You're on the list. +${POINTS.rsvp_event} points.`);
       }
       await refreshRsvps();
     } catch (error) {

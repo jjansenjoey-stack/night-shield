@@ -34,6 +34,7 @@ import type {
 } from '@/types';
 import { CACHE_FIND_RADIUS_M, remoteCachePoints } from '@/types';
 import { distanceKm } from '@/lib/geo';
+import { POINTS } from './pointsService';
 
 
 /**
@@ -68,6 +69,21 @@ interface Database {
   courses: Course[];
   enrolments: Enrolment[];
   cacheFinds: CacheFind[];
+  /**
+   * One row per points award, keyed by what it was earned against. Mirrors the
+   * point_awards table in migration 0003 — it is what stops the same
+   * contribution being banked twice.
+   */
+  pointAwards: PointAward[];
+}
+
+interface PointAward {
+  user_id: string;
+  reason: string;
+  /** The event, route or location earned against; null for one-per-account. */
+  subject_id: string | null;
+  amount: number;
+  created_at: string;
 }
 
 /** Deterministic non-cryptographic digest. Sufficient for a dev fixture only. */
@@ -110,6 +126,7 @@ function freshDatabase(): Database {
     courses: [...seedCourses],
     enrolments: [],
     cacheFinds: [],
+    pointAwards: [],
   };
 }
 
@@ -143,15 +160,21 @@ function load(): Database {
           seedThirdSpaces,
           ['image_url'],
         ),
-        caches: resyncSeed(mergeSeed(parsed.caches, seedCaches), seedCaches, ['image_url']),
+        caches: resyncSeed(mergeSeed(parsed.caches, seedCaches), seedCaches, [
+          'image_url',
+          'points',
+        ]),
         courses: resyncSeed(mergeSeed(parsed.courses, seedCourses), seedCourses, [
           'image_url',
           'starts_on',
+          'points_cost',
         ]),
         // Snapshots written before `kind` existed hold safety reports with no
         // kind at all. Without this backfill they would be filtered out of the
         // safety summary and every score on the map would vanish.
         feedback: (parsed.feedback ?? []).map((row) => ({ ...row, kind: row.kind ?? 'safety' })),
+        // Snapshots predating the award ledger have no such key at all.
+        pointAwards: parsed.pointAwards ?? [],
       };
       return db;
     }
@@ -503,9 +526,27 @@ export const localProvider: DataProvider = {
 
   // ---- points & badges --------------------------------------------------
 
-  async addPoints(userId, points) {
+  async awardPoints(userId, reason, subjectId) {
+    const db = load();
     const user = findUser(userId);
-    user.points += points;
+
+    // Same rule the server enforces: one award per user, reason and subject.
+    // A repeat is a no-op that reports the balance, not an error — a double
+    // tap should look like nothing happened, not like a failure.
+    const already = db.pointAwards.some(
+      (a) => a.user_id === userId && a.reason === reason && a.subject_id === (subjectId ?? null),
+    );
+    if (already) return tick(user.points);
+
+    const amount = POINTS[reason];
+    db.pointAwards.push({
+      user_id: userId,
+      reason,
+      subject_id: subjectId ?? null,
+      amount,
+      created_at: new Date().toISOString(),
+    });
+    user.points += amount;
     persist();
     return tick(user.points);
   },
@@ -634,7 +675,21 @@ export const localProvider: DataProvider = {
     // things. Here the check is local because there is no server to ask.
     if (method === 'visited') {
       if (!at) throw new Error('We need your location to confirm you are there.');
+
+      /*
+       * NaN fails every comparison, so `NaN > 60` is false and a garbage
+       * coordinate walks straight past a naive range check — claim any cache
+       * in the city from your sofa. The coordinates have to be proved good
+       * before the distance means anything.
+       */
+      if (!Number.isFinite(at.latitude) || !Number.isFinite(at.longitude)) {
+        throw new Error('We could not work out where you are.');
+      }
+
       const metres = distanceKm(at, cache.location) * 1000;
+      if (!Number.isFinite(metres)) {
+        throw new Error('We could not work out where you are.');
+      }
       if (metres > CACHE_FIND_RADIUS_M) {
         throw new Error(`You are still ${Math.round(metres)} m away.`);
       }

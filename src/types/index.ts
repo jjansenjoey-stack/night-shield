@@ -191,7 +191,7 @@ export const CACHE_FIND_RADIUS_M = 60;
 export const REMOTE_FIND_RATIO = 0.4;
 
 export const remoteCachePoints = (points: number) =>
-  Math.max(5, Math.round(points * REMOTE_FIND_RATIO));
+  Math.max(2, Math.round(points * REMOTE_FIND_RATIO));
 
 // ---- Grow: courses you buy with points, not money -------------------------
 
