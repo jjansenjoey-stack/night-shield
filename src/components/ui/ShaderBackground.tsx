@@ -77,8 +77,8 @@ const FRAGMENT_SHADER = `
     vec2 n = floor(p);
     vec2 f = fract(p);
     float md = 50.0;
-    for(int i = -2; i <= 2; i++) {
-      for(int j = -2; j <= 2; j++) {
+    for(int i = -1; i <= 1; i++) {
+      for(int j = -1; j <= 1; j++) {
         vec2 g = vec2(i, j);
         vec2 o = hash3(n + g).xy;
         o = 0.5 + 0.41 * sin(u_time * 1.5 + 6.28 * o);
@@ -100,10 +100,10 @@ const FRAGMENT_SHADER = `
 
   vec2 curl(vec2 p, float time) {
     float eps = 0.5;
-    float n1 = fbm(p + vec2(eps, 0.0), 6);
-    float n2 = fbm(p - vec2(eps, 0.0), 6);
-    float n3 = fbm(p + vec2(0.0, eps), 6);
-    float n4 = fbm(p - vec2(0.0, eps), 6);
+    float n1 = fbm(p + vec2(eps, 0.0), 3);
+    float n2 = fbm(p - vec2(eps, 0.0), 3);
+    float n3 = fbm(p + vec2(0.0, eps), 3);
+    float n4 = fbm(p - vec2(0.0, eps), 3);
     return vec2((n3 - n4) / (2.0 * eps), (n2 - n1) / (2.0 * eps));
   }
 
@@ -122,9 +122,9 @@ const FRAGMENT_SHADER = `
     vec2 curlForce = curl(st * 2.0, time) * 0.6;
     vec2 flowField = st + curlForce;
 
-    float dist1 = fbm(flowField * 1.5 + time * 1.2, 8) * 0.4;
-    float dist2 = fbm(flowField * 2.3 - time * 0.8, 6) * 0.3;
-    float dist3 = fbm(flowField * 3.1 + time * 1.8, 4) * 0.2;
+    float dist1 = fbm(flowField * 1.5 + time * 1.2, 5) * 0.4;
+    float dist2 = fbm(flowField * 2.3 - time * 0.8, 4) * 0.3;
+    float dist3 = fbm(flowField * 3.1 + time * 1.8, 3) * 0.2;
     float dist4 = fbm(flowField * 4.7 - time * 1.1, 3) * 0.15;
 
     float cells = voronoi(flowField * 2.5 + time * 0.5);
@@ -162,7 +162,7 @@ const FRAGMENT_SHADER = `
     vec3 color7 = vec3(1.0, 0.8, 0.1);
 
     float gradient = 1.0 - uv.y;
-    float colorNoise = fbm(flowField * 3.0 + time * 0.5, 4) * 0.5 + 0.5;
+    float colorNoise = fbm(flowField * 3.0 + time * 0.5, 3) * 0.5 + 0.5;
     float colorShift = sin(time * 1.5 + st.y * 2.0) * 0.5 + 0.5;
 
     float t1 = smoothstep(0.85, 1.0, gradient);
@@ -234,8 +234,27 @@ const FRAGMENT_SHADER = `
   }
 `;
 
-/** Retina makes no difference to a soft gradient, and costs it dearly. */
-const MAX_DPR = 1.5;
+/*
+ * Rendered at 55% of CSS pixels and scaled up by the browser.
+ *
+ * Measured before this: 1 frame per second on an ordinary laptop. The shader
+ * costs roughly fifty noise evaluations and a voronoi lookup per pixel, so
+ * cost is linear in area — 0.55 scale is a third of the pixels. It is a soft
+ * gradient behind text, under film grain and scanlines; nobody can see the
+ * difference, and everybody could see one frame a second.
+ */
+const RENDER_SCALE = 0.55;
+
+/** Never above 1: a retina buffer for a blurry gradient is pure waste. */
+const MAX_DPR = 1;
+
+/*
+ * Thirty frames a second, not sixty.
+ *
+ * The animation is a slow drift. Halving the frame rate halves the GPU work
+ * and is genuinely hard to notice on something moving this slowly.
+ */
+const FRAME_MS = 1000 / 30;
 
 function compile(gl: WebGLRenderingContext, type: number, source: string) {
   const shader = gl.createShader(type);
@@ -292,7 +311,7 @@ export function ShaderBackground({ className }: { className?: string }) {
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR) * RENDER_SCALE;
       canvas.width = Math.max(1, Math.round(rect.width * dpr));
       canvas.height = Math.max(1, Math.round(rect.height * dpr));
       gl.viewport(0, 0, canvas.width, canvas.height);
@@ -332,22 +351,51 @@ export function ShaderBackground({ className }: { className?: string }) {
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     };
 
+    let lastDraw = 0;
+    let onScreen = true;
+
     const loop = () => {
       if (stopped) return;
+      frame = requestAnimationFrame(loop);
+
+      // Thirty a second is plenty for a drift this slow, and halves the work.
+      const now = performance.now();
+      if (now - lastDraw < FRAME_MS) return;
+      lastDraw = now;
+
       // Ease intensity back down instead of tweening it on every pointer event.
       intensity += (target - intensity) * 0.05;
       target += (1 - target) * 0.02;
-      draw((performance.now() - start) * 0.001);
-      frame = requestAnimationFrame(loop);
+      draw((now - start) * 0.001);
     };
 
-    const onVisibility = () => {
-      if (document.hidden) {
-        cancelAnimationFrame(frame);
-      } else if (!stopped && !reduced?.matches) {
-        frame = requestAnimationFrame(loop);
-      }
+    const running = () => !stopped && !reduced?.matches && !document.hidden && onScreen;
+
+    const kick = () => {
+      cancelAnimationFrame(frame);
+      if (running()) frame = requestAnimationFrame(loop);
     };
+
+    const onVisibility = kick;
+
+    /*
+     * Stop entirely once the hero scrolls off.
+     *
+     * The landing page is several screens tall and this canvas is only the top
+     * one, but it was rendering the whole way down — burning a GPU on a picture
+     * nobody could see while they read the rest of the page.
+     */
+    let observer: IntersectionObserver | undefined;
+    if (typeof IntersectionObserver !== 'undefined') {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          onScreen = entry.isIntersecting;
+          kick();
+        },
+        { threshold: 0 },
+      );
+      observer.observe(canvas);
+    }
 
     const onContextLost = (event: Event) => {
       event.preventDefault();
@@ -361,7 +409,7 @@ export function ShaderBackground({ className }: { className?: string }) {
     } else {
       canvas.addEventListener('pointermove', onPointerMove);
       document.addEventListener('visibilitychange', onVisibility);
-      frame = requestAnimationFrame(loop);
+      kick();
     }
 
     window.addEventListener('resize', resize);
@@ -374,6 +422,7 @@ export function ShaderBackground({ className }: { className?: string }) {
       document.removeEventListener('visibilitychange', onVisibility);
       canvas.removeEventListener('pointermove', onPointerMove);
       canvas.removeEventListener('webglcontextlost', onContextLost);
+      observer?.disconnect();
       gl.deleteProgram(program);
       gl.deleteShader(vert);
       gl.deleteShader(frag);

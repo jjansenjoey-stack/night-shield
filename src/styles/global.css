@@ -1615,3 +1615,14 @@ button { font-family: inherit; }
 @media (max-width: 480px) {
   .banner__back span { display: none; }
 }
+
+/*
+ * A stretched *link* has to beat the rule that lifts genuinely interactive
+ * children above the overlay — otherwise `.card--stretch a { position: relative }`
+ * un-stretches the very element doing the stretching.
+ */
+.card--stretch a.card__stretch--link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}

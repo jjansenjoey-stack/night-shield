@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import type { HTMLAttributes, ReactNode } from 'react';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -64,6 +65,39 @@ export function ClickableCard({
       <button type="button" className="card__stretch" onClick={onSelect}>
         <span className="sr-only">{label ?? 'Open details'}</span>
       </button>
+      {children}
+    </article>
+  );
+}
+
+/**
+ * A card that is a link to somewhere else.
+ *
+ * The same stretched overlay as ClickableCard, but an anchor rather than a
+ * button, because this navigates: middle-click, open-in-new-tab and copy-link
+ * all have to work, and a button gives you none of them.
+ *
+ * The card stays an <article> so its heading and paragraph keep their meaning;
+ * the link carries the accessible name so a screen reader announces "Night
+ * Caches, link" instead of reading the whole card.
+ */
+export function LinkCard({
+  to,
+  label,
+  className,
+  children,
+  ...rest
+}: HTMLAttributes<HTMLElement> & { to: string; label: string; children: ReactNode }) {
+  return (
+    <article
+      className={['card', 'card--interactive', 'card--stretch', className ?? '']
+        .filter(Boolean)
+        .join(' ')}
+      {...rest}
+    >
+      <Link to={to} className="card__stretch card__stretch--link">
+        <span className="sr-only">{label}</span>
+      </Link>
       {children}
     </article>
   );

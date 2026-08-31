@@ -10,27 +10,32 @@ import {
   Users,
 } from 'lucide-react';
 import { LinkButton } from '@/components/ui/Button';
+import { LinkCard } from '@/components/ui/Card';
 import { ShaderBackground } from '@/components/ui/ShaderBackground';
 import { useAppStore } from '@/store/appStore';
 
 const BENEFITS = [
   {
     Icon: Route,
+    to: '/art-routes',
     title: 'Find safe routes',
     body: 'Walks put together from what residents actually report — lighting, people around, places that stay open.',
   },
   {
     Icon: Brush,
+    to: '/explore',
     title: 'Explore local art',
     body: 'Murals, light works and sound pieces across Tilburg, with the story behind each one.',
   },
   {
     Icon: CalendarDays,
+    to: '/events',
     title: 'Join events',
     body: 'Workshops, artist talks and late openings. Free more often than not.',
   },
   {
     Icon: Users,
+    to: '/explore',
     title: 'Belong together',
     body: 'Third spaces where you can sit for an hour without buying anything, and nobody minds.',
   },
@@ -45,24 +50,28 @@ const BENEFITS = [
 const DOING = [
   {
     Icon: Search,
+    to: '/discover',
     title: 'Night Caches',
     worth: '6–16 pts',
     body: 'Eight hidden things with a story behind each. Stand next to one to log it, or answer the question from home if getting there is not on. There is a trail that strings all eight into one walk.',
   },
   {
     Icon: Footprints,
+    to: '/art-routes',
     title: 'Two Weeks Only',
     worth: '14 pts',
     body: 'A loop with eight spots on it. Put something you have made in a free one and it stays for a fortnight, then you come back for it. Walk it every couple of weeks and it is never the same twice.',
   },
   {
     Icon: CalendarDays,
+    to: '/events',
     title: 'Turn up to things',
     worth: '4–14 pts',
     body: 'Almost everything is free. Longer and harder sessions pay more, and you claim it with a code given out on the night.',
   },
   {
     Icon: GraduationCap,
+    to: '/workshops',
     title: 'Spend it on a workshop',
     worth: '20–200 pts',
     body: 'Screenprinting, darkroom, sound design, ceramics. Bought with points you earned by taking part, not with money.',
@@ -121,8 +130,8 @@ export function LandingPage() {
 
       <div className="page">
         <div className="benefit-grid">
-          {BENEFITS.map(({ Icon, title, body }) => (
-            <article key={title} className="benefit">
+          {BENEFITS.map(({ Icon, title, body, to }) => (
+            <LinkCard key={title} to={to} label={title} className="benefit">
               <div className="benefit__icon" aria-hidden="true">
                 <Icon size={20} />
               </div>
@@ -130,7 +139,7 @@ export function LandingPage() {
               <p className="small muted" style={{ margin: 0 }}>
                 {body}
               </p>
-            </article>
+            </LinkCard>
           ))}
         </div>
 
@@ -148,8 +157,8 @@ export function LandingPage() {
           </p>
 
           <div className="benefit-grid">
-            {DOING.map(({ Icon, title, body, worth }) => (
-              <article key={title} className="card">
+            {DOING.map(({ Icon, title, body, worth, to }) => (
+              <LinkCard key={title} to={to} label={`${title} — worth ${worth}`}>
                 <span className="benefit__icon" aria-hidden="true">
                   <Icon size={20} />
                 </span>
@@ -160,7 +169,7 @@ export function LandingPage() {
                 <p className="small muted" style={{ margin: 0 }}>
                   {body}
                 </p>
-              </article>
+              </LinkCard>
             ))}
           </div>
         </section>
