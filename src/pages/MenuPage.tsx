@@ -4,6 +4,7 @@ import {
   Bell,
   BellRing,
   Database,
+  Footprints,
   GraduationCap,
   Info,
   LogOut,
@@ -73,6 +74,16 @@ export function MenuPage() {
         <p className="tiny muted" style={{ margin: '0.5rem 0 0' }}>
           Screenprinting, darkroom, sound design, ceramics. Paid for with points you earned by
           taking part in the city rather than with money.
+        </p>
+      </Section>
+
+      <Section title="Put something in the city">
+        <LinkButton to="/two-weeks-only" variant="secondary" block icon={<Footprints size={15} />}>
+          Two Weeks Only — the changing route
+        </LinkButton>
+        <p className="tiny muted" style={{ margin: '0.5rem 0 0' }}>
+          Eight spots on a walking loop. Leave a small piece of your own work in a free one,
+          earn points, and come back for it a fortnight later.
         </p>
       </Section>
 

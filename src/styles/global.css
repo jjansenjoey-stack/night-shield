@@ -1329,3 +1329,64 @@ button { font-family: inherit; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------- Two Weeks Only: the changing route ---------- */
+
+.twoweeks-mine {
+  border-color: var(--accent2);
+  margin-bottom: var(--md);
+}
+
+.twoweeks-board { align-items: start; }
+
+.twoweeks-spot h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+/* The number is how a spot is found on the ground, so it reads as a label
+   rather than as part of the sentence. */
+.twoweeks-spot__number {
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-pill);
+  background: var(--accent1);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.twoweeks-spot__image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--r-sm);
+  margin-top: 0.7rem;
+}
+
+/* A free spot should look like an invitation, not like missing content. */
+.twoweeks-spot__empty {
+  margin-top: 0.7rem;
+  padding: var(--sm);
+  border: 1px dashed var(--border);
+  border-radius: var(--r-sm);
+  background: rgba(0, 217, 255, 0.04);
+}
+
+.twoweeks-spot__history {
+  margin-top: 0.7rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.5rem;
+}
+.twoweeks-spot__history summary { cursor: pointer; }
+
+@media (max-width: 640px) {
+  .twoweeks-board { grid-template-columns: 1fr; }
+}

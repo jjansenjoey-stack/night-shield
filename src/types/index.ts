@@ -325,3 +325,68 @@ export interface MapItem {
   accessibility: string[];
   raw: Installation | DiscoveryRoute | NightEvent | ThirdSpace | NightCache;
 }
+
+// ---- The Changing Route: art placed by anyone, for two weeks --------------
+
+/**
+ * One fixed, numbered spot on the changing route.
+ *
+ * The spots never move — the art in them does. That is the whole idea: a
+ * walker learns the route once and finds different work in the same places
+ * every fortnight.
+ */
+export interface RouteSpot {
+  id: string;
+  route_id: string;
+  number: number;
+  /** Where exactly, in words, so it can be found in the dark. */
+  label: string;
+  /** What suits this spot — a ledge, a fence, a plinth. */
+  hint: string;
+  location: LatLng;
+  /** Longest side, in centimetres. Keeps a "small installation" small. */
+  max_size_cm: number;
+  accessibility: string[];
+}
+
+export type PlacementStatus = 'live' | 'collected' | 'removed';
+
+export interface Placement {
+  id: string;
+  spot_id: string;
+  user_id: string;
+  maker_name: string | null;
+  title: string;
+  description: string | null;
+  materials: string | null;
+  image_url: string | null;
+  placed_at: string;
+  /** placed_at + PLACEMENT_DAYS. After this the municipality clears the spot. */
+  collect_by: string;
+  status: PlacementStatus;
+  collected_at: string | null;
+}
+
+/** How long a piece may stay before it has to be taken home. */
+export const PLACEMENT_DAYS = 14;
+
+/**
+ * Expiry is derived, never stored.
+ *
+ * A scheduled job that flips rows to 'removed' is one more thing to run, to
+ * monitor and to get wrong; and if it ever stops, expired work quietly stays
+ * "live" forever. Reading the deadline at render time cannot drift.
+ */
+export function effectivePlacementStatus(
+  placement: Placement,
+  now: Date = new Date(),
+): PlacementStatus {
+  if (placement.status !== 'live') return placement.status;
+  return new Date(placement.collect_by).getTime() < now.getTime() ? 'removed' : 'live';
+}
+
+/** Whole days left before collection is due. Negative once it is overdue. */
+export function daysUntilCollection(placement: Placement, now: Date = new Date()): number {
+  const ms = new Date(placement.collect_by).getTime() - now.getTime();
+  return Math.ceil(ms / 86_400_000);
+}

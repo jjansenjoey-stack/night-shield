@@ -24,6 +24,7 @@ import { MenuPage } from '@/pages/MenuPage';
 import { ModerationPage } from '@/pages/ModerationPage';
 import { SubmitContentPage } from '@/pages/SubmitContentPage';
 import { WorkshopsPage } from '@/pages/WorkshopsPage';
+import { ChangingRoutePage } from '@/pages/ChangingRoutePage';
 import { LoadingBlock } from '@/components/ui/LoadingSpinner';
 
 /*
@@ -62,6 +63,7 @@ function AppRoutes() {
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/events" element={<EventsCalendarPage />} />
         <Route path="/workshops" element={<WorkshopsPage />} />
+        <Route path="/two-weeks-only" element={<ChangingRoutePage />} />
         {/* The page was called Grow before it earned its own tab. */}
         <Route path="/grow" element={<Navigate to="/workshops" replace />} />
         <Route path="/menu" element={<MenuPage />} />

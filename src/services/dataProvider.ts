@@ -15,6 +15,8 @@ import type {
   ItemType,
   JourneyStage,
   NightEvent,
+  Placement,
+  RouteSpot,
   RsvpCounts,
   RsvpStatus,
   SavedItem,
@@ -134,6 +136,25 @@ export interface DataProvider {
     at: LatLng | null,
     answer: string | null,
   ): Promise<CacheFind>;
+
+  // ---- two weeks only: art placed on the changing route -----------------
+  getRouteSpots(routeId: string): Promise<RouteSpot[]>;
+  /** Every placement for the route, including collected and expired ones. */
+  getPlacements(routeId: string): Promise<Placement[]>;
+  /**
+   * Claims a free spot and records the piece.
+   *
+   * Whether the spot is actually free is decided by the backend, not the
+   * caller: two people can tap "place here" on the same spot at once, and a
+   * client that was told the spot was empty a minute ago is not evidence.
+   */
+  placeArt(
+    userId: string,
+    spotId: string,
+    data: { title: string; description: string | null; materials: string | null; image_url: string | null },
+  ): Promise<Placement>;
+  /** Marks your own piece as taken home, and pays for doing it. */
+  collectPlacement(userId: string, placementId: string): Promise<Placement>;
 
   // ---- grow: courses bought with points ---------------------------------
   getCourses(): Promise<Course[]>;

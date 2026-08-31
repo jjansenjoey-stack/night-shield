@@ -1,5 +1,7 @@
 import type {
   Course,
+  Placement,
+  RouteSpot,
   DiscoveryRoute,
   Feedback,
   Installation,
@@ -49,6 +51,20 @@ const PHOTOS: Record<string, string> = {
   'grove-1': 'Leijpark 1, Tilburg.jpg',
   'overhead-1': 'Tilburg Centraal Station Mosaicpanelen 2.jpg',
   'overhead-2': 'Tilburg Centraal Station Mosaicpaneel 1.jpg',
+
+  // --- Two Weeks Only: the eight spots, then the work currently in them ----
+  'twoweeks-lochal': 'LocHal 20190606 - 06.jpg',
+  'twoweeks-spoorpark': 'Spoorpark (Tilburg) 016.jpg',
+  'twoweeks-wilhelmina': 'Wilhelminapark 63, Tilburg RM.jpg',
+  'twoweeks-noordstraat': 'Willem II Straat Tilburg P1170079.jpg',
+  'twoweeks-veemarkt': 'Textielmuseum Tilburg editathon 2.jpg',
+  'twoweeks-koningsplein': 'Koningsplein, Tilburg 050copy.jpg',
+  'twoweeks-piusplein': 'Heuvel (Tilburg) 032copy3.jpg',
+  'twoweeks-hall70': 'Spoorzone Tilburg 2023.jpg',
+  'twoweeks-bells': 'Bike workshop - bicycle repair shop.jpg',
+  'twoweeks-windows': 'Zine Making 3.jpg',
+  'twoweeks-textile': 'Tilburg textielmuseum1.jpg',
+  'twoweeks-concrete': 'Buitenmuur.jpg',
 
   lochal: 'LocHal 20190606 - 01.jpg',
   werkplaats: 'Heuvel (Tilburg) 029copy1.jpg',
@@ -135,6 +151,13 @@ function daysFromNow(days: number, hour: number, minute = 0): string {
 function daysAgo(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() - days);
+  return d.toISOString();
+}
+
+/** n days from now, as an ISO string. Negative goes backwards. */
+function inDays(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
   return d.toISOString();
 }
 
@@ -548,6 +571,79 @@ export const seedRoutes: DiscoveryRoute[] = [
     created_by: null,
     moderation_status: 'approved',
     created_at: daysAgo(60),
+  },
+  {
+    id: 'route-two-weeks-only',
+    title: 'Two Weeks Only',
+    description:
+      'A loop with eight empty spots on it. Anyone can put a small piece of work in one, and it stays for a fortnight — then the maker takes it home and someone else fills the gap. Walk it every couple of weeks and it is never the same route twice.',
+    type: 'art_walk',
+    distance_km: 3.6,
+    estimated_time_minutes: 52,
+    start_location: { latitude: 51.5607, longitude: 5.0799 },
+    end_location: { latitude: 51.5617, longitude: 5.083 },
+    stops: [
+      {
+        order: 1,
+        title: 'LocHal forecourt',
+        note: 'Spot 1 is on the low wall by the bicycle racks. Start here.',
+        image_url: img('twoweeks-lochal'),
+        location: { latitude: 51.5607, longitude: 5.0799 },
+      },
+      {
+        order: 2,
+        title: 'Spoorpark, Ringbaan gate',
+        note: 'Spot 2 sits on the gatepost. Park is open and lit until midnight.',
+        image_url: img('twoweeks-spoorpark'),
+        location: { latitude: 51.5556, longitude: 5.074 },
+      },
+      {
+        order: 3,
+        title: 'Wilhelminapark bandstand',
+        note: 'Spot 3 is on the bandstand step, under cover when it rains.',
+        image_url: img('twoweeks-wilhelmina'),
+        location: { latitude: 51.5645, longitude: 5.074 },
+      },
+      {
+        order: 4,
+        title: 'Noordstraat underpass',
+        note: 'Spot 4 is the ledge halfway through. Bright, and never quiet.',
+        image_url: img('twoweeks-noordstraat'),
+        location: { latitude: 51.562, longitude: 5.0865 },
+      },
+      {
+        order: 5,
+        title: 'Veemarktstraat, Dwaalgebied',
+        note: 'Spot 5 is the shelf beside the studio door.',
+        image_url: img('twoweeks-veemarkt'),
+        location: { latitude: 51.559, longitude: 5.0895 },
+      },
+      {
+        order: 6,
+        title: 'Koningsplein',
+        note: 'Spot 6 is on the planter edge, facing the square.',
+        image_url: img('twoweeks-koningsplein'),
+        location: { latitude: 51.557, longitude: 5.0855 },
+      },
+      {
+        order: 7,
+        title: 'Piusplein',
+        note: 'Spot 7 is the window sill of the old kiosk. Busy until late.',
+        image_url: img('twoweeks-piusplein'),
+        location: { latitude: 51.5548, longitude: 5.09 },
+      },
+      {
+        order: 8,
+        title: 'Spoorzone, Hall 70 wall',
+        note: 'Spot 8 is the last one, on the brick ledge. Back to the LocHal in six minutes.',
+        image_url: img('twoweeks-hall70'),
+        location: { latitude: 51.5617, longitude: 5.083 },
+      },
+    ],
+    accessibility: ['wheelchair', 'step_free', 'well_lit'],
+    created_by: null,
+    moderation_status: 'approved',
+    created_at: daysAgo(45),
   },
 ];
 
@@ -1085,6 +1181,163 @@ export const seedCaches: NightCache[] = [
  * the trade is legible. The Inclusivity Department buys the places; residents
  * earn them by taking part in the city rather than by being able to afford them.
  */
+
+export const CHANGING_ROUTE_ID = 'route-two-weeks-only';
+
+/*
+ * The eight spots are fixed and the work in them rotates. Sizes are small on
+ * purpose: everything here has to be carried in by one person, survive two
+ * weeks of Dutch weather, and be carried out again.
+ */
+export const seedRouteSpots: RouteSpot[] = [
+  {
+    id: 'spot-1',
+    route_id: CHANGING_ROUTE_ID,
+    number: 1,
+    label: 'LocHal forecourt — low wall by the bicycle racks',
+    hint: 'Flat brick, waist height. Weather comes straight across, so nothing paper.',
+    location: { latitude: 51.5607, longitude: 5.0799 },
+    max_size_cm: 40,
+    accessibility: ['wheelchair', 'step_free', 'well_lit'],
+  },
+  {
+    id: 'spot-2',
+    route_id: CHANGING_ROUTE_ID,
+    number: 2,
+    label: 'Spoorpark — the Ringbaan gatepost',
+    hint: 'Square post, ties or clamps work best. Gets full afternoon sun.',
+    location: { latitude: 51.5556, longitude: 5.074 },
+    max_size_cm: 30,
+    accessibility: ['step_free', 'well_lit'],
+  },
+  {
+    id: 'spot-3',
+    route_id: CHANGING_ROUTE_ID,
+    number: 3,
+    label: 'Wilhelminapark — bandstand step',
+    hint: 'Under cover. The only spot on the route where paper survives.',
+    location: { latitude: 51.5645, longitude: 5.074 },
+    max_size_cm: 50,
+    accessibility: ['quiet', 'step_free'],
+  },
+  {
+    id: 'spot-4',
+    route_id: CHANGING_ROUTE_ID,
+    number: 4,
+    label: 'Noordstraat underpass — the ledge halfway through',
+    hint: 'Lit all night and never empty. Loud. Sound pieces are wasted here.',
+    location: { latitude: 51.562, longitude: 5.0865 },
+    max_size_cm: 35,
+    accessibility: ['wheelchair', 'step_free', 'well_lit'],
+  },
+  {
+    id: 'spot-5',
+    route_id: CHANGING_ROUTE_ID,
+    number: 5,
+    label: 'Veemarktstraat — shelf beside the studio door',
+    hint: 'Sheltered, at eye height, and the studio keeps an eye on it.',
+    location: { latitude: 51.559, longitude: 5.0895 },
+    max_size_cm: 40,
+    accessibility: ['step_free', 'well_lit'],
+  },
+  {
+    id: 'spot-6',
+    route_id: CHANGING_ROUTE_ID,
+    number: 6,
+    label: 'Koningsplein — planter edge facing the square',
+    hint: 'Seen by everyone crossing the square. Fix it down properly.',
+    location: { latitude: 51.557, longitude: 5.0855 },
+    max_size_cm: 45,
+    accessibility: ['wheelchair', 'step_free', 'well_lit'],
+  },
+  {
+    id: 'spot-7',
+    route_id: CHANGING_ROUTE_ID,
+    number: 7,
+    label: 'Piusplein — window sill of the old kiosk',
+    hint: 'Busy until 02:00 at weekends. Nothing fragile.',
+    location: { latitude: 51.5548, longitude: 5.09 },
+    max_size_cm: 30,
+    accessibility: ['step_free', 'well_lit'],
+  },
+  {
+    id: 'spot-8',
+    route_id: CHANGING_ROUTE_ID,
+    number: 8,
+    label: 'Spoorzone — brick ledge under the Hall 70 wall',
+    hint: 'Deep ledge, sheltered from the west. The biggest spot on the route.',
+    location: { latitude: 51.5617, longitude: 5.083 },
+    max_size_cm: 60,
+    accessibility: ['wheelchair', 'step_free'],
+  },
+];
+
+/*
+ * Seeded so the route shows every state at once: something fresh, something
+ * nearly due, something overdue that the municipality will clear, and one
+ * already taken home.
+ */
+export const seedPlacements: Placement[] = [
+  {
+    id: 'place-1',
+    spot_id: 'spot-1',
+    user_id: 'seed-attendee-a',
+    maker_name: 'Ilse',
+    title: 'Fifty Bicycle Bells',
+    description:
+      'Bells from the bike graveyard behind the station, strung on wire. It plays itself when the wind comes off the tracks.',
+    materials: 'Salvaged bells, galvanised wire',
+    image_url: img('twoweeks-bells'),
+    placed_at: daysAgo(3),
+    collect_by: inDays(11),
+    status: 'live',
+    collected_at: null,
+  },
+  {
+    id: 'place-2',
+    spot_id: 'spot-3',
+    user_id: 'seed-attendee-b',
+    maker_name: 'Tomas',
+    title: 'Seven Small Windows',
+    description:
+      'Seven cut-paper panels of the houses on my street, lit from behind by a solar lamp.',
+    materials: 'Cut paper, perspex box, solar lamp',
+    image_url: img('twoweeks-windows'),
+    placed_at: daysAgo(12),
+    collect_by: inDays(2),
+    status: 'live',
+    collected_at: null,
+  },
+  {
+    id: 'place-3',
+    spot_id: 'spot-5',
+    user_id: 'seed-attendee-c',
+    maker_name: 'Reem',
+    title: 'What the Textile Mill Left',
+    description: 'Loom offcuts from the TextielLab, rewoven into a small hanging panel.',
+    materials: 'Wool offcuts, oak frame',
+    image_url: img('twoweeks-textile'),
+    placed_at: daysAgo(17),
+    collect_by: inDays(-3),
+    status: 'live',
+    collected_at: null,
+  },
+  {
+    id: 'place-4',
+    spot_id: 'spot-6',
+    user_id: 'seed-attendee-d',
+    maker_name: 'Joost',
+    title: 'Koningsplein, 03:00',
+    description: 'A concrete cast of the square at its emptiest. Taken home on time.',
+    materials: 'Cast concrete, steel pin',
+    image_url: img('twoweeks-concrete'),
+    placed_at: daysAgo(24),
+    collect_by: daysAgo(10),
+    status: 'collected',
+    collected_at: daysAgo(11),
+  },
+];
+
 export const seedCourses: Course[] = [
   {
     id: 'course-screenprint',

@@ -18,6 +18,14 @@ export const POINTS = {
   submit_content: 10,
   complete_route: 12,
   save_first_item: 2,
+  /*
+   * Two Weeks Only. Placing is the largest single award on the board because it
+   * is the most work — you make something, carry it across town and fix it
+   * down. Collecting is worth real points too, and that is deliberate: without
+   * it the route slowly turns into fly-tipping with a nicer name.
+   */
+  place_art: 14,
+  collect_art: 6,
 } as const;
 
 export type PointsReason = keyof typeof POINTS;

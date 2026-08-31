@@ -14,6 +14,8 @@ import type {
   LatLng,
   NightCache,
   NightEvent,
+  Placement,
+  RouteSpot,
   CacheFind,
   RsvpCounts,
   SavedItem,
@@ -676,6 +678,67 @@ export const supabaseProvider: DataProvider = {
     void userId;
     const { error } = await sb.rpc('cancel_enrolment', { target_course: courseId });
     if (error) throw new Error(error.message);
+  },
+
+  // ---- two weeks only: art on the changing route -------------------------
+
+  async getRouteSpots(routeId) {
+    const sb = requireSupabase();
+    const { data, error } = await sb
+      .from('route_spots')
+      .select('id, route_id, number, label, hint, latitude, longitude, max_size_cm, accessibility')
+      .eq('route_id', routeId)
+      .order('number');
+    if (error) throw new Error(`Could not load the spots: ${error.message}`);
+    return (data ?? []).map((row) => ({
+      id: row.id,
+      route_id: row.route_id,
+      number: row.number,
+      label: row.label,
+      hint: row.hint,
+      location: { latitude: row.latitude, longitude: row.longitude },
+      max_size_cm: row.max_size_cm,
+      accessibility: row.accessibility ?? [],
+    })) as RouteSpot[];
+  },
+
+  async getPlacements(routeId) {
+    const sb = requireSupabase();
+    // A view, not the table: it joins through route_spots so the filter can be
+    // by route, and it leaves out anything a reader has no business seeing.
+    const { data, error } = await sb
+      .from('placements_public')
+      .select(
+        'id, spot_id, user_id, maker_name, title, description, materials, image_url, placed_at, collect_by, status, collected_at',
+      )
+      .eq('route_id', routeId)
+      .order('placed_at', { ascending: false });
+    if (error) throw new Error(`Could not load what is out there: ${error.message}`);
+    return (data ?? []) as Placement[];
+  },
+
+  async placeArt(userId, spotId, input) {
+    const sb = requireSupabase();
+    void userId; // the server uses auth.uid()
+    // Occupancy, the one-piece-at-a-time rule and the deadline are all set
+    // inside the function, under a row lock on the spot.
+    const { data, error } = await sb.rpc('place_art', {
+      target_spot: spotId,
+      p_title: input.title,
+      p_description: input.description,
+      p_materials: input.materials,
+      p_image_url: input.image_url,
+    });
+    if (error) throw new Error(error.message);
+    return data as Placement;
+  },
+
+  async collectPlacement(userId, placementId) {
+    const sb = requireSupabase();
+    void userId;
+    const { data, error } = await sb.rpc('collect_placement', { target_placement: placementId });
+    if (error) throw new Error(error.message);
+    return data as Placement;
   },
 
   // ---- community submissions -------------------------------------------

@@ -6,6 +6,8 @@ import {
   seedEvents,
   seedFeedback,
   seedInstallations,
+  seedPlacements,
+  seedRouteSpots,
   seedRoutes,
   seedThirdSpaces,
   seedUsers,
@@ -22,6 +24,8 @@ import type {
   Course,
   Enrolment,
   NightCache,
+  Placement,
+  RouteSpot,
   CacheFind,
   RsvpCounts,
   RsvpStatus,
@@ -32,7 +36,12 @@ import type {
   UserProfile,
 
 } from '@/types';
-import { CACHE_FIND_RADIUS_M, remoteCachePoints } from '@/types';
+import {
+  CACHE_FIND_RADIUS_M,
+  effectivePlacementStatus,
+  PLACEMENT_DAYS,
+  remoteCachePoints,
+} from '@/types';
 import { distanceKm } from '@/lib/geo';
 import { POINTS } from './pointsService';
 
@@ -75,6 +84,8 @@ interface Database {
    * contribution being banked twice.
    */
   pointAwards: PointAward[];
+  routeSpots: RouteSpot[];
+  placements: Placement[];
 }
 
 interface PointAward {
@@ -127,6 +138,8 @@ function freshDatabase(): Database {
     enrolments: [],
     cacheFinds: [],
     pointAwards: [],
+    routeSpots: [...seedRouteSpots],
+    placements: [...seedPlacements],
   };
 }
 
@@ -175,6 +188,14 @@ function load(): Database {
         feedback: (parsed.feedback ?? []).map((row) => ({ ...row, kind: row.kind ?? 'safety' })),
         // Snapshots predating the award ledger have no such key at all.
         pointAwards: parsed.pointAwards ?? [],
+        routeSpots: mergeSeed(parsed.routeSpots, seedRouteSpots),
+        // Only seeded rows are touched, so a real maker's photo is never
+        // overwritten by this.
+        placements: resyncSeed(
+          mergeSeed(parsed.placements, seedPlacements),
+          seedPlacements,
+          ['image_url'],
+        ),
       };
       return db;
     }
@@ -716,6 +737,94 @@ export const localProvider: DataProvider = {
 
     persist();
     return tick(row);
+  },
+
+  // ---- two weeks only: art on the changing route -------------------------
+
+  async getRouteSpots(routeId) {
+    return tick(
+      load()
+        .routeSpots.filter((s) => s.route_id === routeId)
+        .sort((a, b) => a.number - b.number),
+    );
+  },
+
+  async getPlacements(routeId) {
+    const data = load();
+    const spotIds = new Set(
+      data.routeSpots.filter((s) => s.route_id === routeId).map((s) => s.id),
+    );
+    return tick(data.placements.filter((p) => spotIds.has(p.spot_id)));
+  },
+
+  async placeArt(userId, spotId, input) {
+    const data = load();
+    const spot = data.routeSpots.find((s) => s.id === spotId);
+    if (!spot) throw new Error('That spot is not on the route any more.');
+
+    const now = new Date();
+
+    // Mirrors place_art() in migration 0004, so both backends refuse the same
+    // things. Occupancy is decided here, not by whatever the client last saw.
+    const occupied = data.placements.some(
+      (p) => p.spot_id === spotId && effectivePlacementStatus(p, now) === 'live',
+    );
+    if (occupied) throw new Error('Someone got to that spot first. Try another one.');
+
+    // One piece at a time. Eight spots and no limit means one enthusiast can
+    // hold the whole route for a fortnight.
+    const alreadyOut = data.placements.find(
+      (p) => p.user_id === userId && effectivePlacementStatus(p, now) === 'live',
+    );
+    if (alreadyOut) {
+      throw new Error('You already have a piece out. Collect it before placing another.');
+    }
+
+    const collectBy = new Date(now);
+    collectBy.setDate(collectBy.getDate() + PLACEMENT_DAYS);
+
+    const user = findUser(userId);
+    const placement: Placement = {
+      id: uid('place'),
+      spot_id: spotId,
+      user_id: userId,
+      maker_name: user.full_name ?? null,
+      title: input.title,
+      description: input.description,
+      materials: input.materials,
+      image_url: input.image_url,
+      placed_at: now.toISOString(),
+      collect_by: collectBy.toISOString(),
+      status: 'live',
+      collected_at: null,
+    };
+    data.placements.push(placement);
+    persist();
+
+    await this.awardPoints(userId, 'place_art', placement.id);
+    return tick(placement);
+  },
+
+  async collectPlacement(userId, placementId) {
+    const data = load();
+    const placement = data.placements.find((p) => p.id === placementId);
+    if (!placement) throw new Error('We cannot find that piece.');
+    if (placement.user_id !== userId) throw new Error('That is not yours to collect.');
+
+    const status = effectivePlacementStatus(placement);
+    if (status === 'collected') return tick(placement);
+    if (status === 'removed') {
+      throw new Error(
+        'The two weeks are up, so the municipality has already cleared this spot.',
+      );
+    }
+
+    placement.status = 'collected';
+    placement.collected_at = new Date().toISOString();
+    persist();
+
+    await this.awardPoints(userId, 'collect_art', placement.id);
+    return tick(placement);
   },
 
   // ---- grow: courses bought with points ---------------------------------
