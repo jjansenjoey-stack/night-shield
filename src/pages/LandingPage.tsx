@@ -35,7 +35,7 @@ export function LandingPage() {
       <section className="hero">
         <span className="hero__kicker">
           <ShieldHalf size={14} aria-hidden="true" />
-          Municipality of Tilburg · Inclusivity Department
+          A concept for Tilburg · Inclusivity · Safety · Awareness
         </span>
 
         <h1>
@@ -100,8 +100,8 @@ export function LandingPage() {
         </div>
 
         <p className="tiny muted center" style={{ marginTop: '2rem' }}>
-          Built for the Municipality of Tilburg, Inclusivity Department · designed by Joey Jansen
-          (Fontys)
+          Designed by Joey Jansen (Fontys) around the Municipality of Tilburg&rsquo;s Inclusivity,
+          Safety and Awareness themes. A student concept — not an official municipal product.
         </p>
       </div>
     </div>

@@ -195,11 +195,22 @@ export function MenuPage() {
         <Card>
           <p className="small" style={{ marginBottom: '0.4rem' }}>
             <Info size={14} style={{ verticalAlign: '-2px' }} aria-hidden="true" /> Night Shield is
-            built for the Municipality of Tilburg, Inclusivity Department.
+            a concept built around three of the Municipality of Tilburg&rsquo;s themes:{' '}
+            <strong>Inclusivity</strong>, <strong>Safety</strong> and <strong>Awareness</strong>.
           </p>
-          <p className="tiny muted" style={{ margin: 0 }}>
+          <p className="tiny muted" style={{ marginBottom: '0.4rem' }}>
             Safety scores come from residents, are always anonymous, and are only shown once at
-            least three people have reported on a place. Designed by Joey Jansen (Fontys).
+            least three people have reported on a place.
+          </p>
+          {/*
+            The municipality's name is on this app but the municipality did not
+            make it, commission it or approve it. Saying so plainly is the
+            difference between a student concept and something that reads as an
+            official council service.
+          */}
+          <p className="tiny muted" style={{ margin: 0 }}>
+            A student project by Joey Jansen (Fontys). It is not an official product of the
+            Municipality of Tilburg and is not endorsed by them.
           </p>
         </Card>
       </Section>

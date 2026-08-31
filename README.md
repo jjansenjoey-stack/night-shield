@@ -6,7 +6,12 @@ An urban-experience app for young adults (18–30) in Tilburg: an interactive ma
 guided discovery routes, events and community third spaces, with anonymous safety reporting and a
 contribution loop that runs from *Discover* to *Belong*.
 
-Built for the **Municipality of Tilburg, Inclusivity Department**. Designed by Joey Jansen (Fontys).
+A concept built around three of the Municipality of Tilburg's themes — **Inclusivity**, **Safety**
+and **Awareness**. Designed by Joey Jansen (Fontys).
+
+> This is a student project. It is not an official product of the Municipality of Tilburg, was not
+> commissioned by them, and is not endorsed by them. The municipality appears throughout the app as
+> the body that would run it, which is part of the concept rather than a statement of fact.
 
 ---
 
