@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import {
   CalendarClock,
@@ -278,36 +279,6 @@ export function ArtRoutesPage() {
         look as though caches expired too. They do not: the two-week clock
         belongs to the art route above and to nothing else on this page.
       */}
-      <Section title="Night Caches">
-        <Card>
-          <h3 style={{ margin: '0 0 0.3rem', fontSize: '1rem' }}>
-            <Search size={15} aria-hidden="true" /> Permanent, and always there
-          </h3>
-          <p className="small muted" style={{ margin: 0 }}>
-            Eight details of the city, each with a story behind it: a rail left in the pavement,
-            a bolt on the water tower. Nobody puts these there and nobody takes them home —{' '}
-            <strong>they do not expire</strong>. You go and find them, and they stay for the next
-            person. Worth 6–16 points each, and there is a trail that links all eight into one
-            walk.
-          </p>
-          <p className="tiny muted" style={{ margin: '0.6rem 0 0' }}>
-            The two-week rule above is only for Two Weeks Only. It does not apply here.
-          </p>
-          <div className="row row--wrap" style={{ gap: '0.35rem', marginTop: '0.6rem' }}>
-            <LinkButton to="/discover" variant="text" icon={<MapPin size={14} />}>
-              Find them on the map
-            </LinkButton>
-            <LinkButton
-              to="/route/route-night-cache-trail"
-              variant="text"
-              icon={<Footprints size={14} />}
-            >
-              Walk the trail
-            </LinkButton>
-          </div>
-        </Card>
-      </Section>
-
       <Section title="The gallery">
         <ArtGallery placements={placements} spots={spots} />
       </Section>
@@ -319,7 +290,14 @@ export function ArtRoutesPage() {
       ) : null}
 
       {otherWalks.length > 0 ? (
-        <Section title="Other art walks">
+        <Section title="Permanent walks">
+          <p className="small muted" style={{ margin: '0 0 0.7rem' }}>
+            These do not change. The same artworks are there whenever you go, so the
+            two-week rule above does not apply to any of them. One of them is the Night
+            Cache trail, which links all eight caches into a single walk —{' '}
+            <Link to="/explore">the caches themselves live in Explore</Link>, where you can
+            see what each one is worth and tick them off as you find them.
+          </p>
           <div className="stack stack--xs">
             {otherWalks.map((route) => (
               <Card key={route.id} className="card--interactive">

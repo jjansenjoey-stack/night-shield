@@ -1301,9 +1301,9 @@ export const seedCaches: NightCache[] = [
     id: 'cache-drowned-stream',
     is_example: true,
     title: 'The drowned stream',
-    hint: 'In the Leijpark, find the low stone kerb that runs through the grass and stops for no reason. It is not decorative.',
+    hint: 'In the Leijpark, find the low stone curb that runs through the grass and stops for no reason. It is not decorative.',
     story:
-      'The Leij is still there — it is simply underneath you, culverted in the 1950s when a stream through a park read as untidy rather than valuable. The kerb traces the old bank. The Quiet Grove installation nearby plays recordings made before the water went under, which is the closest anyone can now get to hearing this park as it was.',
+      'The Leij is still there — it is simply underneath you, culverted in the 1950s when a stream through a park read as untidy rather than valuable. The curb traces the old bank. The Quiet Grove installation nearby plays recordings made before the water went under, which is the closest anyone can now get to hearing this park as it was.',
     location: { latitude: 51.5465, longitude: 5.0933 },
     area: 'Leijpark',
     difficulty: 'medium',
