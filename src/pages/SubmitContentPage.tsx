@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Brush, Coffee, Send } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
-import { LocationPicker } from '@/components/events/LocationPicker';
+import { LocationPicker } from '@/components/events/LocationPickerLazy';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { CheckboxGroup, Field } from '@/components/ui/Shared';

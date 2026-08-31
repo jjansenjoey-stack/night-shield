@@ -22,7 +22,17 @@ export function AppShell() {
       </a>
 
       <header className="app-header">
-        <Link to="/discover" className="app-header__brand">
+        {/*
+          Where "home" is depends on who you are. Someone browsing as a guest
+          arrived from the front page and has no other way back to it — the
+          bottom nav has no room for a tab that only matters once. Someone
+          signed in wants the map.
+        */}
+        <Link
+          to={user ? '/discover' : '/'}
+          className="app-header__brand"
+          aria-label={user ? 'Night Shield — go to the map' : 'Night Shield — back to the front page'}
+        >
           <ShieldHalf size={20} aria-hidden="true" />
           Night Shield
         </Link>

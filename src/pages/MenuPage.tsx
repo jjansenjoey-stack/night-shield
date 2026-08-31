@@ -6,6 +6,7 @@ import {
   Database,
   Footprints,
   GraduationCap,
+  Home,
   Info,
   LogOut,
   Plus,
@@ -192,6 +193,10 @@ export function MenuPage() {
       </Section>
 
       <Section title="About">
+        <LinkButton to="/" variant="text" block icon={<Home size={15} />}>
+          Back to the front page
+        </LinkButton>
+        <div style={{ height: 'var(--xs)' }} />
         <Card>
           <p className="small" style={{ marginBottom: '0.4rem' }}>
             <Info size={14} style={{ verticalAlign: '-2px' }} aria-hidden="true" /> Night Shield is

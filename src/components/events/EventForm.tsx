@@ -3,7 +3,7 @@ import { useAppStore } from '@/store/appStore';
 import { useToast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import { CheckboxGroup, Field } from '@/components/ui/Shared';
-import { LocationPicker } from './LocationPicker';
+import { LocationPicker } from './LocationPickerLazy';
 import { createEvent, updateEvent, validateEvent } from '@/services/eventService';
 import { A11Y_TAGS, a11yLabel, eventCategoryLabel } from '@/lib/format';
 import type { EventCategory, LatLng, NightEvent } from '@/types';
