@@ -162,7 +162,11 @@ function load(): Database {
           seedInstallations,
           ['images'],
         ),
-        routes: resyncSeed(mergeSeed(parsed.routes, seedRoutes), seedRoutes, ['stops']),
+        routes: resyncSeed(mergeSeed(parsed.routes, seedRoutes), seedRoutes, [
+          'stops',
+          'distance_km',
+          'estimated_time_minutes',
+        ]),
         events: resyncSeed(
           mergeSeed(parsed.events, seedEvents),
           seedEvents,

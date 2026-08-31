@@ -12,6 +12,7 @@ import { Brush, CalendarDays, Coffee, Route as RouteIcon, Search } from 'lucide-
 import type { FeatureCollection } from 'geojson';
 import { useAppStore } from '@/store/appStore';
 import { useFilteredItems, type DecoratedItem } from '@/hooks/useFilteredItems';
+import { useSnappedRoutes } from '@/hooks/useSnappedRoutes';
 import { ROUTE_LINE_COLORS, routePath } from '@/services/routeService';
 import { hasEnoughReports, SAFETY_BAND_META, safetyBand } from '@/services/feedbackService';
 import { formatDistance } from '@/lib/geo';
@@ -153,7 +154,7 @@ export function MapView({
   }, []);
 
   // Route polylines (prompt 33). Only drawn when the route layer is on.
-  const routeLines = useMemo<FeatureCollection>(() => {
+  const visibleRoutes = useMemo<DiscoveryRoute[]>(() => {
     const routes =
       routesOverride ??
       (prefs.layers.route && filtered.items.some((i) => i.type === 'route')
@@ -164,20 +165,37 @@ export function MapView({
       ? new Set(routesOverride.map((r) => r.id))
       : new Set(filtered.items.filter((i) => i.type === 'route').map((i) => i.id));
 
-    return {
-      type: 'FeatureCollection',
-      features: routes
-        .filter((route) => visibleRouteIds.has(route.id))
-        .map((route) => ({
-          type: 'Feature' as const,
-          properties: { color: ROUTE_LINE_COLORS[route.type], id: route.id },
-          geometry: {
-            type: 'LineString' as const,
-            coordinates: routePath(route).map((p) => [p.longitude, p.latitude]),
-          },
-        })),
-    };
+    return routes.filter((route) => visibleRouteIds.has(route.id));
   }, [routesOverride, prefs.layers.route, data?.routes, filtered.items]);
+
+  /*
+   * Real pedestrian geometry, when the router can supply it.
+   *
+   * A route is a handful of stops; joining them with straight lines draws
+   * through buildings and across the ring road. This arrives a moment after
+   * first paint and replaces those lines with the pavements people actually
+   * walk. Until then — and forever, if the router is unreachable — the
+   * straight lines below are what shows.
+   */
+  const snapped = useSnappedRoutes(visibleRoutes);
+
+  const routeLines = useMemo<FeatureCollection>(
+    () => ({
+      type: 'FeatureCollection',
+      features: visibleRoutes.map((route) => ({
+        type: 'Feature' as const,
+        properties: { color: ROUTE_LINE_COLORS[route.type], id: route.id },
+        geometry: {
+          type: 'LineString' as const,
+          coordinates: (snapped.get(route.id)?.points ?? routePath(route)).map((p) => [
+            p.longitude,
+            p.latitude,
+          ]),
+        },
+      })),
+    }),
+    [visibleRoutes, snapped],
+  );
 
   /*
    * A fresh copy of the style per map instance.

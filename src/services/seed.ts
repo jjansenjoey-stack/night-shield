@@ -398,7 +398,7 @@ export const seedRoutes: DiscoveryRoute[] = [
     description:
       'Station to Piushaven along streets that stay lit and busy after midnight. Built from three years of resident reports.',
     type: 'safe',
-    distance_km: 2.4,
+    distance_km: 2.6,
     estimated_time_minutes: 32,
     start_location: { latitude: 51.5606, longitude: 5.0836 },
     end_location: { latitude: 51.5503, longitude: 5.0978 },
@@ -450,7 +450,7 @@ export const seedRoutes: DiscoveryRoute[] = [
     description:
       'An hour through the wandering quarter: murals, galleries with lit windows, and two courtyards most people walk straight past.',
     type: 'art_walk',
-    distance_km: 1.8,
+    distance_km: 1.5,
     estimated_time_minutes: 55,
     start_location: { latitude: 51.5565, longitude: 5.077 },
     end_location: { latitude: 51.559, longitude: 5.0895 },
@@ -495,7 +495,7 @@ export const seedRoutes: DiscoveryRoute[] = [
     description:
       'For people who like not knowing what is next. Crosses into Tilburg-Noord, ends at the open graffiti wall.',
     type: 'exploration',
-    distance_km: 3.6,
+    distance_km: 2.2,
     estimated_time_minutes: 70,
     start_location: { latitude: 51.5609, longitude: 5.0797 },
     end_location: { latitude: 51.571, longitude: 5.068 },
@@ -540,7 +540,7 @@ export const seedRoutes: DiscoveryRoute[] = [
     description:
       'A low-stimulation loop through two parks. Step-free the whole way, benches every 200 metres, no through traffic.',
     type: 'safe',
-    distance_km: 2.1,
+    distance_km: 1.2,
     estimated_time_minutes: 40,
     start_location: { latitude: 51.5643, longitude: 5.079 },
     end_location: { latitude: 51.5643, longitude: 5.079 },
@@ -578,8 +578,8 @@ export const seedRoutes: DiscoveryRoute[] = [
     description:
       'A loop with eight empty spots on it. Anyone can put a small piece of work in one, and it stays for a fortnight — then the maker takes it home and someone else fills the gap. Walk it every couple of weeks and it is never the same route twice.',
     type: 'art_walk',
-    distance_km: 3.6,
-    estimated_time_minutes: 52,
+    distance_km: 5.9,
+    estimated_time_minutes: 80,
     start_location: { latitude: 51.5607, longitude: 5.0799 },
     end_location: { latitude: 51.5617, longitude: 5.083 },
     stops: [

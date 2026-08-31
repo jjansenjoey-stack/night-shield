@@ -162,7 +162,7 @@ export function ArtRoutesPage() {
           {freeCount} of {board.length} spots free
         </Badge>
         <Badge tone="neutral" icon={<Footprints size={13} />}>
-          3.6 km · about 52 minutes
+          5.9 km · about 80 minutes
         </Badge>
         <Badge tone="pink" icon={<Trophy size={13} />}>
           {POINTS.place_art} to place · {POINTS.collect_art} to collect
