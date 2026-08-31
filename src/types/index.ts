@@ -63,6 +63,12 @@ export interface DiscoveryRoute {
   start_location: LatLng;
   end_location: LatLng;
   stops: RouteStop[];
+  /**
+   * True when the art on this route is swapped by the public every fortnight,
+   * false or absent when it is permanent. Two routes that look identical in a
+   * list behave completely differently, so the difference has to be visible.
+   */
+  rotates?: boolean;
   accessibility: string[];
   created_by: string | null;
   moderation_status: ModerationStatus;
@@ -89,6 +95,14 @@ export interface NightEvent {
   is_virtual: boolean;
   virtual_url: string | null;
   is_featured: boolean;
+  /**
+   * Made up for the demo rather than a real listing.
+   *
+   * Everything seeded here is invented — plausible for Tilburg, but nobody has
+   * booked a room. Saying so on the card is the honest thing, and it doubles as
+   * a worked example for an organiser posting a real one later.
+   */
+  is_example?: boolean;
   /**
    * What turning up is worth, when the organizer wants to set it by hand.
    * Left unset, it is derived from how long the event runs — see

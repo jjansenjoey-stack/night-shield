@@ -582,6 +582,7 @@ export const seedRoutes: DiscoveryRoute[] = [
   },
   {
     id: 'route-two-weeks-only',
+    rotates: true,
     title: 'Two Weeks Only',
     description:
       'A loop with eight empty spots on it. Anyone can put a small piece of work in one, and it stays for a fortnight — then the maker takes it home and someone else fills the gap. Walk it every couple of weeks and it is never the same route twice.',
@@ -655,7 +656,7 @@ export const seedRoutes: DiscoveryRoute[] = [
   },
   {
     id: 'route-night-cache-trail',
-    title: 'The Night Cache Trail',
+    title: 'The Night Cache trail',
     description:
       'All eight Night Caches in one walk, ordered so you never double back. It is the longest route in the app by a distance and it crosses the whole city, so treat it as an afternoon and an evening rather than an hour. The caches are worth points on their own; finishing the trail is worth the usual route reward on top.',
     type: 'art_walk',
@@ -740,10 +741,11 @@ export const seedRoutes: DiscoveryRoute[] = [
 export const seedEvents: NightEvent[] = [
   {
     id: 'evt-screenprint',
+    is_example: true,
     attendance_code: 'SCREEN25',
     title: 'Screenprint your own patch',
     description:
-      'Bring a jacket, leave with a patch. All materials provided, no experience needed. Runs in the Veemarkt Studios drop-in slot.',
+      'Print your own patch and take it home the same evening. You get the ink, the screen and someone to show you each step. Bring a jacket or a bag to print on, or use one of ours. No experience needed.',
     category: 'workshop',
     location: { latitude: 51.559, longitude: 5.0895 },
     address: 'Veemarktstraat 44',
@@ -763,10 +765,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-night-walk',
+    is_example: true,
     attendance_code: 'NIGHTW18',
     title: 'Night walk: The Lit Way Home',
     description:
-      'We walk the safe route together, then talk about what makes a street feel walkable. Hosted with the Inclusivity Department.',
+      'We walk one of the safe routes together and talk about what makes a street feel good to walk at night: lighting, how busy it is, and what is open. About an hour, at an easy pace.',
     category: 'social',
     location: { latitude: 51.5606, longitude: 5.0836 },
     address: 'Tilburg Centraal, south exit',
@@ -786,10 +789,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-artist-talk',
+    is_example: true,
     attendance_code: 'ARTIST25',
     title: 'Artist talk: Sanne de Wit on The Loom Wall',
     description:
-      'How a 1920s sample book became a ten-metre wall. Followed by questions and a walk to the piece itself.',
+      'Sanne de Wit talks about painting The Loom Wall, from the first sketch to the finished mural. Thirty minutes of talking, then questions. Free, and you do not need to know anything about art.',
     category: 'art_talk',
     location: { latitude: 51.5609, longitude: 5.0797 },
     address: 'LocHal, Stadszaal',
@@ -809,10 +813,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-late-opening',
+    is_example: true,
     attendance_code: 'LATEOP32',
     title: 'Late opening — Kiosk Piushaven',
     description:
-      'The harbour stays lit until 02:00 with a DJ on the terrace. Free entry, drinks at normal prices.',
+      'The kiosk on the harbour stays open late. Hot drinks, a place to sit by the water, and no pressure to buy anything. Come alone or bring people.',
     category: 'nightlife',
     location: { latitude: 51.5503, longitude: 5.0978 },
     address: 'Piushaven 1',
@@ -832,10 +837,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-language-cafe',
+    is_example: true,
     attendance_code: 'LANGUA39',
     title: 'Language café',
     description:
-      'Practise Dutch, English, Arabic or Tigrinya over tea. Come as a learner or a speaker, both are needed.',
+      'Practise Dutch or English with people who are also learning. You sit at a table, someone starts a topic, and you talk. All levels are welcome, including complete beginners.',
     category: 'social',
     location: { latitude: 51.5622, longitude: 5.0069 },
     address: 'Buurthuis De Symfonie, Reeshof',
@@ -855,10 +861,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-online-mapping',
+    is_example: true,
     attendance_code: 'ONLINE46',
     title: 'Online: map your own safe route',
     description:
-      'A one-hour call where we build a personal route together and add it to Night Shield. Join from anywhere.',
+      'An online session where we build a safe route together on the map. You need a laptop and about an hour. We send the link to everyone who says they are coming.',
     category: 'workshop',
     location: null,
     address: null,
@@ -881,10 +888,11 @@ export const seedEvents: NightEvent[] = [
   // and needs no sign-up — the section of the calendar that has to stay full.
   {
     id: 'evt-repair-cafe',
+    is_example: true,
     attendance_code: 'REPAIR25',
     title: 'Repair Café',
     description:
-      'Bring the thing that broke. Volunteers fix clothes, bikes, lamps, laptops and kettles, and show you how while they do it. Parts at cost, labour free, no appointment.',
+      'Bring something broken and repair it with help: a lamp, a kettle, a jacket, a bag. Volunteers have the tools and show you how, rather than doing it for you. Free.',
     category: 'workshop',
     location: { latitude: 51.5622, longitude: 5.0069 },
     address: 'Buurthuis De Symfonie, Eilenbergstraat 250',
@@ -904,10 +912,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-board-games',
+    is_example: true,
     attendance_code: 'BOARDG25',
     title: 'Board game night',
     description:
-      'Fifty-odd games on the shelf, from ten-minute card games to the ones that eat an evening. Turn up alone — the whole point is that you get put on a table with people.',
+      'Board games in the warm, with people who will explain the rules. There are short games for a first visit and longer ones if you stay. Come on your own — most people do.',
     category: 'social',
     location: { latitude: 51.5688, longitude: 5.0731 },
     address: 'Café de Werkplaats, Wagnerplein 12',
@@ -927,10 +936,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-open-mic',
+    is_example: true,
     attendance_code: 'OPENMI94',
     title: 'Open mic — first-timers only',
     description:
-      'Five minutes each, and you are not allowed to have done this before. Poetry, songs, stand-up, a thing you wrote on the bus. The audience is contractually obliged to be kind.',
+      'An open mic for people who have never done one. Five minutes each: music, poems, jokes, anything. The audience is on your side. You can also just come and listen.',
     category: 'art_talk',
     location: { latitude: 51.559, longitude: 5.0895 },
     address: 'Veemarkt Studios, Veemarktstraat 44',
@@ -950,10 +960,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-study-cafe',
+    is_example: true,
     attendance_code: 'STUDYC18',
-    title: 'Study café — free coffee until close',
+    title: 'Study café — free coffee until closing',
     description:
-      'Long tables, plugs at every seat, and the machine kept running for anyone with an exam coming. Silence upstairs, talking allowed downstairs.',
+      'A quiet place to study, with free coffee until closing. Big tables, plug sockets, and nobody asking you to order more. Come for an hour or stay all evening.',
     category: 'social',
     location: { latitude: 51.5609, longitude: 5.0797 },
     address: 'LocHal, Kennismakerij',
@@ -973,10 +984,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-skate-jam',
+    is_example: true,
     attendance_code: 'SKATEJ11',
     title: 'Skate jam & paint session',
     description:
-      'Open session at the Hall of Fame wall. Spare boards and spare cans for anyone who turns up without either. Beginners get the first hour to themselves.',
+      'Skating and spray painting in the same afternoon. Boards to borrow if you do not have one, and a wall you are allowed to paint. All levels, including day one.',
     category: 'social',
     location: { latitude: 51.571, longitude: 5.068 },
     address: 'Hall of Fame, Quirijnstokstraat',
@@ -996,10 +1008,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-queer-social',
+    is_example: true,
     attendance_code: 'QUEERS32',
-    title: 'Queer social — no dance floor, just chairs',
+    title: 'Queer social — chairs, not a dance floor',
     description:
-      'A quiet alternative to a club night. Tea, a corner to sit in, and people to sit with. Trans and non-binary friendly, sober-friendly, and you can leave whenever you like without explaining.',
+      'A quiet social evening for LGBTQ+ people and friends. Chairs, tables and conversation — no dance floor and no loud music. Easy to join if you are new to the city.',
     category: 'social',
     location: { latitude: 51.559, longitude: 5.0895 },
     address: 'Veemarktkwartier, courtyard studio',
@@ -1019,10 +1032,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-bike-drop-in',
+    is_example: true,
     attendance_code: 'BIKEDR32',
     title: 'Bike repair drop-in',
     description:
-      'Brakes, lights, punctures, a chain that keeps coming off. Bring the bike, borrow the tools, someone will talk you through it. Free lights while they last — Dutch autumn being what it is.',
+      'Bring your bike and fix it yourself, with help. Volunteers show you how to repair brakes, lights, punctures and a chain that keeps slipping. All tools are there, and you do not need any experience. Free bike lights while they last, because it gets dark early here in autumn.',
     category: 'workshop',
     location: { latitude: 51.5688, longitude: 5.0731 },
     address: 'Wagnerplein, outside the community centre',
@@ -1042,10 +1056,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-community-meal',
+    is_example: true,
     attendance_code: 'COMMUN46',
-    title: 'Eetcafé — pay what you can',
+    title: 'Community meal — pay what you can',
     description:
-      'One pot, one long table, forty chairs. There is a tin by the door and nobody watches it. Vegetarian by default, halal on request, allergies catered for if you say so beforehand.',
+      'A hot meal cooked by neighbours. Pay what you can, including nothing. Sit at the long table and eat with whoever is there.',
     category: 'social',
     location: { latitude: 51.5622, longitude: 5.0069 },
     address: 'Buurthuis De Symfonie, Reeshof',
@@ -1065,10 +1080,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-cache-walk',
+    is_example: true,
     attendance_code: 'CACHEW18',
     title: 'Night Cache walk: the first four',
     description:
-      'A guided run at four of the Night Caches, ending at the station canopy after dark so the mirrors actually do their thing. Bring a phone; everything else is provided.',
+      'We walk to the first four Night Caches together and find them as a group. Good if you want to try the game once before doing it on your own. About ninety minutes.',
     category: 'social',
     location: { latitude: 51.5609, longitude: 5.0797 },
     address: 'LocHal, main entrance',
@@ -1088,10 +1104,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-morning-park-run',
+    is_example: true,
     attendance_code: 'MORNIN60',
     title: 'Slow walk in the Spoorpark',
     description:
-      'Forty-five minutes at whatever pace the slowest person sets, once round the lake and back to the pavilion for coffee. Explicitly not a running club.',
+      'A slow walk around the lake in the Spoorpark, at the pace of the slowest person. Forty-five minutes, then coffee at the pavilion. This is a walk, not a run.',
     category: 'social',
     location: { latitude: 51.5652, longitude: 5.0742 },
     address: 'Spoorpark pavilion',
@@ -1111,10 +1128,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-past-zine',
+    is_example: true,
     attendance_code: 'PASTZI11',
     title: 'Zine night: writing the city',
     description:
-      'We made a twenty-page zine in one evening. Copies are in the LocHal reading room.',
+      'Make a small magazine about your street in one evening. Paper, pens and a copier are provided. You leave with something you made and a copy for the library.',
     category: 'workshop',
     location: { latitude: 51.5609, longitude: 5.0797 },
     address: 'LocHal, Kennismakerij',
@@ -1134,10 +1152,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-past-night-walk',
+    is_example: true,
     attendance_code: 'LITWAY42',
     title: 'Night walk: the long way round',
     description:
-      'A slow loop from the station to Piushaven and back along the water. Twenty-two people came, which is the most yet.',
+      'A slow loop from the station to the harbour and back along the water. Twenty-two people came, which is the most so far.',
     category: 'social',
     location: { latitude: 51.5606, longitude: 5.0836 },
     address: 'Tilburg Centraal, south exit',
@@ -1157,10 +1176,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-past-repair-cafe',
+    is_example: true,
     attendance_code: 'REPAIR17',
-    title: 'Repair Café — bring the broken thing',
+    title: 'Repair Café — bring something broken',
     description:
-      'Lamps, kettles, one accordion. Volunteers with tools and the patience to show you rather than do it for you.',
+      'Lamps, kettles and one accordion. Volunteers brought tools and showed people how to repair their own things instead of doing it for them.',
     category: 'workshop',
     location: { latitude: 51.5648, longitude: 5.0776 },
     address: 'Buurthuis De Symfonie',
@@ -1180,10 +1200,11 @@ export const seedEvents: NightEvent[] = [
   },
   {
     id: 'evt-past-artist-talk',
+    is_example: true,
     attendance_code: 'LOOM88',
     title: 'Artist talk: what the mill left behind',
     description:
-      'An hour on the textile works that used to stand where the Spoorzone is now, and the pieces made from what was left.',
+      'An hour about the textile factory that once stood where the Spoorzone is now, and the artworks made from what was left behind.',
     category: 'art_talk',
     location: { latitude: 51.5607, longitude: 5.0799 },
     address: 'LocHal, Stadszaal',
@@ -1214,7 +1235,7 @@ export const seedEvents: NightEvent[] = [
 export const seedCaches: NightCache[] = [
   {
     id: 'cache-last-rail',
-    title: 'The Last Rail',
+    title: 'The last rail',
     hint: 'Outside the LocHal, look down instead of up. One strip of the old depot never got lifted, and the paving was laid around it.',
     story:
       'Everything here was rails until 2009 — this was the workshop where the national fleet came to be repaired, and 1,200 people worked in the halls you are standing between. When the Spoorzone was rebuilt the planners kept exactly one rail in place, flush with the pavement, as a full-size footnote. Stand on it and you are standing where a locomotive stood.',
@@ -1231,7 +1252,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-kruikenzeiker',
-    title: 'The Man With The Jug',
+    title: 'The man with the jug',
     hint: 'Near the Heuvel, someone is permanently relieving himself into a pot. Nobody in Tilburg finds this odd. Look for the bronze.',
     story:
       "The Kruikenzeiker is Tilburg's own self-portrait. Wool needs ammonia to fix dye, so nineteenth-century mills paid households for their urine, collected in stone jugs. An entire city's nickname comes from that arrangement, and at carnival Tilburg renames itself Kruikenstad without a hint of embarrassment. The statue is what a city looks like when it decides its least glamorous history is the part worth casting in bronze.",
@@ -1248,7 +1269,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-drowned-stream',
-    title: 'The Drowned Stream',
+    title: 'The drowned stream',
     hint: 'In the Leijpark, find the low stone kerb that runs through the grass and stops for no reason. It is not decorative.',
     story:
       'The Leij is still there — it is simply underneath you, culverted in the 1950s when a stream through a park read as untidy rather than valuable. The kerb traces the old bank. The Quiet Grove installation nearby plays recordings made before the water went under, which is the closest anyone can now get to hearing this park as it was.',
@@ -1265,7 +1286,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-sixty-windows',
-    title: 'Sixty Windows',
+    title: 'Sixty windows',
     hint: 'Off the Willem II-straat there is an archway most people read as private. It is not. Go through it and count the faces on the wall.',
     story:
       'The Dwaalgebied is named for wandering, and this courtyard is the reward for actually doing it. The mural was photographed street by street: every face was taken on the road it now looks out over, so the people on this wall can stand in front of their own portrait. Sixty neighbours agreed. Two more are painted from memory.',
@@ -1282,7 +1303,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-water-tower-bolt',
-    title: 'The Water Tower Bolt',
+    title: 'The water tower bolt',
     hint: 'Spoorpark, at the foot of the tower. One of the base bolts is brass and the rest are steel. Somebody replaced it on purpose.',
     story:
       'The tower fed steam locomotives until diesel made it useless, and it stood empty for forty years while the city argued about demolishing it. It survived because residents put up their own money — Spoorpark was crowdfunded by the people who live around it, which is not how parks usually happen. The brass bolt was set by the volunteers who finished the base. It is the only signature they left.',
@@ -1299,7 +1320,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-harbour-ring',
-    title: 'Ring Number Four',
+    title: 'Ring number four',
     hint: 'Walk the Piushaven quay counting mooring rings from the kiosk. The fourth one is worn smooth on one side only.',
     story:
       'A century of rope pulling in the same direction did that. This was a working harbour — peat in, textiles out — until the trade left and the water sat unused for decades. It came back as somewhere to live and sit rather than somewhere to unload, and the rings were kept. After dark the Harbour Signals buoys pick up on movement along this stretch, so walking the quay lights it as you go.',
@@ -1316,7 +1337,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-wagner-corner',
-    title: 'The Corner That Waited',
+    title: 'The corner that waited',
     hint: 'Wagnerplein, Tilburg-Noord. On the café side, one shopfront has its original 1960s tiling behind the newer sign. You can see it from the pavement.',
     story:
       'Tilburg-Noord was built fast in the sixties for mill workers and, later, for the people the mills recruited from Morocco and Turkey. The square was designed as its centre and then more or less written off for thirty years. Café de Werkplaats on this corner is volunteer-run, coffee is a euro, and nobody is asked how long they intend to stay — which is the whole point of a third space and the reason this corner is on the map.',
@@ -1333,7 +1354,7 @@ export const seedCaches: NightCache[] = [
   },
   {
     id: 'cache-station-mirror',
-    title: 'Find Yourself Overhead',
+    title: 'Find yourself overhead',
     hint: 'Tilburg Centraal, on the bicycle ramp. There is exactly one spot where the mirrored panels above put your own reflection directly over your head. It is closer to the railing than you think.',
     story:
       'The canopy is a listed piece of 1960s concrete engineering that the mirrored panels were designed not to touch — every fixing is clamped, nothing is drilled. The artist wanted the platform lights doubled at night, and the reflection of anyone standing underneath thrown back at them. It works properly after dark, and barely at all at noon.',
@@ -1459,7 +1480,7 @@ export const seedPlacements: Placement[] = [
     spot_id: 'spot-1',
     user_id: 'seed-attendee-a',
     maker_name: 'Ilse',
-    title: 'Fifty Bicycle Bells',
+    title: 'Fifty bicycle bells',
     description:
       'Bells from the bike graveyard behind the station, strung on wire. It plays itself when the wind comes off the tracks.',
     materials: 'Salvaged bells, galvanised wire',
@@ -1474,7 +1495,7 @@ export const seedPlacements: Placement[] = [
     spot_id: 'spot-2',
     user_id: 'seed-attendee-b',
     maker_name: 'Tomas',
-    title: 'Seven Small Windows',
+    title: 'Seven small windows',
     description:
       'Seven cut-paper panels of the houses on my street, lit from behind by a solar lamp.',
     materials: 'Cut paper, perspex box, solar lamp',
@@ -1489,7 +1510,7 @@ export const seedPlacements: Placement[] = [
     spot_id: 'spot-4',
     user_id: 'seed-attendee-c',
     maker_name: 'Reem',
-    title: 'What the Textile Mill Left',
+    title: 'What the textile mill left',
     description: 'Loom offcuts from the TextielLab, rewoven into a small hanging panel.',
     materials: 'Wool offcuts, oak frame',
     image_url: img('twoweeks-textile'),

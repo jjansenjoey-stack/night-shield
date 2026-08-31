@@ -65,6 +65,10 @@ export function CalendarGrid({ month, onMonthChange, selected, onSelect, events 
         </button>
       </div>
 
+      <p className="tiny muted calendar__hint">
+        Tap a highlighted day to see what is on. Tap it again to go back.
+      </p>
+
       {/*
         Deliberately not role="grid". A real grid needs row/rowgroup children
         and roving tabindex; role="gridcell" would also strip the day buttons of
@@ -88,6 +92,7 @@ export function CalendarGrid({ month, onMonthChange, selected, onSelect, events 
             !isSameMonth(day, month) ? 'is-outside' : '',
             isToday(day) ? 'is-today' : '',
             isSelected ? 'is-selected' : '',
+            dayEvents.length > 0 ? 'has-events' : '',
           ]
             .filter(Boolean)
             .join(' ');

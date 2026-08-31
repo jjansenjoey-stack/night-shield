@@ -163,7 +163,9 @@ export function bestTimeToVisit(report: WeatherReport | null): string | null {
 
   const when = new Date(best.date).toLocaleDateString(undefined, { weekday: 'long' });
   const dry = (best.precipitationChance ?? 100) < 30;
+  // "Wettest-free window" was a double negative that meant nothing. Both lines
+  // now say the same thing the same way, in plain words.
   return dry
-    ? `Best time to visit: ${when} — ${best.description.toLowerCase()}, ${best.maxC}°C`
-    : `Rain likely all week. Wettest-free window: ${when}, ${best.maxC}°C`;
+    ? `Best day to go: ${when} — ${best.description.toLowerCase()}, ${best.maxC}°C`
+    : `Rain most days this week. Driest day: ${when}, ${best.maxC}°C`;
 }

@@ -242,6 +242,7 @@ export function EventDetailModal({ event, distance, onClose }: Props) {
             {event.is_virtual ? <Badge tone="teal">Online</Badge> : null}
             {event.is_featured ? <Badge tone="warning">Featured</Badge> : null}
             {past ? <Badge tone="neutral">Finished</Badge> : null}
+            {event.is_example ? <Badge tone="warning">Example</Badge> : null}
           </div>
 
           <h2 style={{ marginBottom: '0.2rem' }}>{event.title}</h2>
@@ -263,6 +264,21 @@ export function EventDetailModal({ event, distance, onClose }: Props) {
         </div>
 
         {event.description ? <p>{event.description}</p> : null}
+
+        {/*
+          Said plainly rather than hidden in a footer. Nobody should turn up to
+          a room for an event that was never booked — and an organiser reading
+          this is looking at the shape their own listing should take.
+        */}
+        {event.is_example ? (
+          <Card style={{ borderColor: 'var(--warning)' }}>
+            <p className="small" style={{ margin: 0 }}>
+              <strong>This is an example.</strong> It shows how a real event would look here.
+              Nobody has booked this room and nobody is running it. Organisers in Tilburg would
+              post real events in this format.
+            </p>
+          </Card>
+        ) : null}
 
         <AttendanceBlock event={event} isGoing={isGoing} />
 

@@ -97,14 +97,24 @@ export function currentTimeOfDay(date = new Date()): TimeOfDay {
 }
 
 /** Human label for the accessibility tags stored on records. */
+/*
+ * Plain words, not access jargon.
+ *
+ * "Step-free access" was read as "no walking involved" on a page full of
+ * walking routes, which is the opposite of what it means. "Hearing loop" is a
+ * real piece of equipment but almost nobody outside the field knows the term.
+ * Everything here is now written so a B2 reader gets it first time.
+ */
 const A11Y_LABELS: Record<string, string> = {
-  wheelchair: 'Wheelchair accessible',
+  wheelchair: 'Wheelchair friendly',
   parking: 'Parking nearby',
-  quiet: 'Quiet space',
-  pet_friendly: 'Pet friendly',
-  hearing_loop: 'Hearing loop',
-  service_animal: 'Service animals welcome',
-  step_free: 'Step-free access',
+  quiet: 'Quiet, low noise',
+  pet_friendly: 'Dogs welcome',
+  hearing_loop: 'Hearing loop for hearing aids',
+  service_animal: 'Assistance dogs welcome',
+  // Avoids kerb/curb entirely — the spelling differs by country and the word
+  // adds nothing. "No steps" is what people actually need to know.
+  step_free: 'No steps',
   well_lit: 'Well lit at night',
   gender_neutral_toilets: 'Gender-neutral toilets',
 };

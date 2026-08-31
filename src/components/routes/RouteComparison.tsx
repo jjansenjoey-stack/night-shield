@@ -117,7 +117,7 @@ export function RouteComparison({ routes }: { routes: DiscoveryRoute[] }) {
           onClick={() => setStepFreeOnly((on) => !on)}
         >
           <Accessibility size={13} aria-hidden="true" />
-          Step-free only
+          No steps
         </button>
       </div>
 
@@ -128,7 +128,7 @@ export function RouteComparison({ routes }: { routes: DiscoveryRoute[] }) {
       {rows.length === 0 ? (
         <Card>
           <p className="small muted" style={{ margin: 0 }}>
-            None of the walks are marked step-free yet. Turn the filter off to see them all.
+            None of the walks are marked as step-free yet. Turn the filter off to see them all.
           </p>
         </Card>
       ) : (
@@ -145,6 +145,22 @@ export function RouteComparison({ routes }: { routes: DiscoveryRoute[] }) {
                       {route.id === shortestId ? <Badge tone="success">Shortest</Badge> : null}
                       {route.id === longestId ? <Badge tone="warning">Longest</Badge> : null}
                     </div>
+
+                    {/*
+                      The single most useful thing to know before setting off:
+                      will the art still be there next month, or is it gone in a
+                      fortnight? Two routes that look the same in a list behave
+                      completely differently.
+                    */}
+                    <p className="tiny" style={{ margin: '0 0 0.25rem' }}>
+                      {route.rotates ? (
+                        <span style={{ color: 'var(--accent1)' }}>
+                          Changes every 2 weeks — the public puts the art here
+                        </span>
+                      ) : (
+                        <span className="muted">Same all year — permanent artworks</span>
+                      )}
+                    </p>
 
                     <h3 style={{ margin: '0 0 0.25rem', fontSize: '1.02rem' }}>
                       <Link to={`/route/${route.id}`}>{route.title}</Link>

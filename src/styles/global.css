@@ -1626,3 +1626,26 @@ button { font-family: inherit; }
   inset: 0;
   z-index: 1;
 }
+
+/*
+ * A day with something on it has to look pressable.
+ *
+ * The grid was already clickable, but a bare number with three small dots under
+ * it reads as a label, not a control — people were not discovering that tapping
+ * a day filters the list below.
+ */
+.calendar__day.has-events {
+  background: rgba(0, 217, 255, 0.1);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  font-weight: 700;
+  color: var(--neutral);
+}
+.calendar__day.has-events:hover {
+  background: rgba(0, 217, 255, 0.2);
+  border-color: var(--accent2);
+}
+.calendar__day.is-selected { background: var(--accent1); border-color: var(--accent1); color: #fff; }
+.calendar__hint {
+  margin: 0 0 0.5rem;
+  text-align: center;
+}

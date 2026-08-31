@@ -147,8 +147,10 @@ export function ArtRoutesPage() {
     <div className="page">
       <h1 className="page__title">Art routes</h1>
       <p className="page__lede">
-        Walks through Tilburg built around what people have made. One of them changes every
-        fortnight, because the work on it is yours to put there.
+        Walks through Tilburg built around what people have made. There are two kinds.{' '}
+        <strong>Two Weeks Only</strong> changes every fortnight, because anyone can put their own
+        work on it and then take it home again. The others are permanent — the same artworks are
+        there whenever you go. Each walk says which kind it is.
       </p>
 
       <h2 style={{ marginBottom: '0.3rem' }}>Two Weeks Only</h2>
@@ -227,7 +229,16 @@ export function ArtRoutesPage() {
             {otherWalks.map((route) => (
               <Card key={route.id} className="card--interactive">
                 <h3 style={{ margin: 0 }}>{route.title}</h3>
-                <p className="small muted" style={{ margin: '0.2rem 0 0.6rem' }}>
+                <p className="tiny" style={{ margin: '0.2rem 0 0.15rem' }}>
+                  {route.rotates ? (
+                    <span style={{ color: 'var(--accent1)' }}>
+                      Changes every 2 weeks — anyone can add work
+                    </span>
+                  ) : (
+                    <span className="muted">Same all year — permanent artworks</span>
+                  )}
+                </p>
+                <p className="small muted" style={{ margin: '0 0 0.6rem' }}>
                   {route.distance_km} km · about {route.estimated_time_minutes} minutes
                 </p>
                 {route.description ? (
