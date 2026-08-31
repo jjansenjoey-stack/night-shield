@@ -159,6 +159,18 @@ verified — a QR code scanned at the door is the usual answer.
 
 ---
 
+## Tests
+
+`npm test` runs the economy suite (`src/services/economy.test.ts`) — 20 cases,
+about 20 ms of actual assertions. Every one of them is a defect that really
+shipped and was caught by hand in a browser console: infinite point farming, NaN
+cache finds from anywhere on earth, an unknown reason bricking a balance, spot
+ids stranded by a renumbering.
+
+The guards were each removed on purpose to confirm the suite goes red, because a
+test that has only ever seen working code proves nothing. If one of these fails,
+someone is about to buy a course for free, or be locked out of buying one at all.
+
 ## Consistency checks
 
 Two things drift silently and are worth re-checking after any change to the
@@ -178,9 +190,6 @@ economy or the provider interface:
   Locking the view down would empty a feature the app is built around, so the
   three options are written into `0003_hardening.sql` for a product decision
   rather than chosen unilaterally.
-- **No tests.** Everything was verified by hand in a console. The economy rules
-  are pure functions — ledger idempotency, refund exactness, the 60 m boundary —
-  and a dozen Vitest cases would stop them regressing.
 - **The map bundle is 762 kB.** Lazy-loading MapLibre per route would cut first
   paint noticeably on a phone.
 - **The demo never shows night safety bands.** The threshold is three reports;

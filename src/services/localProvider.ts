@@ -294,8 +294,17 @@ function persist() {
 }
 
 /** Simulated latency so loading states are exercised in development. */
+/*
+ * Simulated latency so loading states get exercised in development. Skipped
+ * under test: ninety milliseconds times a few hundred provider calls is a
+ * minute of waiting to prove arithmetic.
+ */
+const LATENCY_MS = import.meta.env.MODE === 'test' ? 0 : 90;
+
 const tick = <T>(value: T): Promise<T> =>
-  new Promise((resolve) => setTimeout(() => resolve(value), 90));
+  LATENCY_MS === 0
+    ? Promise.resolve(value)
+    : new Promise((resolve) => setTimeout(() => resolve(value), LATENCY_MS));
 
 function publicUser(user: StoredUser): UserProfile {
   const { password_digest: _digest, ...rest } = user;

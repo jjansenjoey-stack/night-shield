@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
@@ -18,4 +19,11 @@ export default defineConfig({
   },
   server: { port: 5173, open: false },
   preview: { port: 4173 },
+
+  test: {
+    // localProvider stores everything in localStorage, so the suite needs a DOM.
+    environment: 'jsdom',
+    globals: true,
+    include: ['src/**/*.test.ts'],
+  },
 });
