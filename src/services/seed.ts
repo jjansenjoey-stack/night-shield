@@ -936,7 +936,9 @@ export const seedEvents: NightEvent[] = [
     description:
       'Bring something broken and repair it with help: a lamp, a kettle, a jacket, a bag. Volunteers have the tools and show you how, rather than doing it for you. Free.',
     category: 'workshop',
-    location: { latitude: 51.5622, longitude: 5.0069 },
+    // Was 5.0069, which is west of the city edge and put this event 4.9 km
+    // from the other Repair Café at the same buurthuis. Matched to that one.
+    location: { latitude: 51.5648, longitude: 5.0776 },
     address: 'Buurthuis De Symfonie, Eilenbergstraat 250',
     start_time: daysFromNow(3, 14),
     end_time: daysFromNow(3, 17),
