@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Night Shield">
+  <!--
+    The same half-shield the app header wears, drawn for 16px rather than
+    borrowed from the icon set: at favicon size a 2px stroke closes up into a
+    smudge, so the left half is solid and only the right half is outlined.
+    That keeps the "half" reading at a size where fine detail cannot survive.
+  -->
+  <rect width="32" height="32" rx="8" fill="#1a1a2e"/>
+  <path d="M16 5.2c-2.2 1.8-5 3-7 3v7.4c0 5.2 3.7 8 7 9.4V5.2z" fill="#ff006e"/>
+  <path d="M16 5.2c2.2 1.8 5 3 7 3v7.4c0 5.2-3.7 8-7 9.4"
+        fill="none" stroke="#ff006e" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
