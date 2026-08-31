@@ -93,14 +93,17 @@ export function MapFilters() {
         ) : null}
       </div>
 
-      <p
-        className="tiny muted"
-        style={{ margin: 0, paddingLeft: '0.35rem' }}
-        role="status"
-        aria-live="polite"
-      >
-        Showing {items.length} of {total} locations
-      </p>
+      {/*
+        Only worth saying when a filter is actually hiding something. Shown
+        unconditionally it was a line of text over the map that read
+        "Showing 40 of 40 locations" — a sentence that tells you nothing.
+        The screen-reader count lives on the page itself, so nothing is lost.
+      */}
+      {items.length !== total ? (
+        <p className="tiny muted map-count">
+          Showing {items.length} of {total} locations
+        </p>
+      ) : null}
 
       <Modal
         open={advancedOpen}

@@ -1497,3 +1497,121 @@ button { font-family: inherit; }
   border-top: 1px solid var(--border);
   padding-top: 0.6rem;
 }
+
+/* ---------- Discover: featured strip along the bottom ---------- */
+
+/*
+ * Sits above the bottom nav and stops short of the two floating buttons on the
+ * right, so nothing overlaps and the middle of the map stays visible.
+ */
+.featured-strip {
+  position: absolute;
+  left: var(--xs);
+  right: calc(var(--xs) + 60px);
+  /* Clear of the scale bar on the left and the tile attribution on the
+     right, both of which MapLibre paints along the very bottom edge. */
+  bottom: 34px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  pointer-events: none;
+}
+.featured-strip > * { pointer-events: auto; }
+
+.featured-strip__label {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent2);
+}
+
+.featured-strip__scroll {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px;
+}
+.featured-strip__scroll::-webkit-scrollbar { display: none; }
+
+.featured-pill {
+  flex: 0 0 auto;
+  max-width: 60vw;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--r-pill);
+  background: rgba(26, 26, 46, 0.93);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  color: var(--neutral);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  transition: border-color 0.15s, transform 0.12s;
+}
+.featured-pill:hover { border-color: var(--accent1); transform: translateY(-1px); }
+.featured-pill__when { font-size: 0.58rem; color: var(--accent1); white-space: nowrap; }
+.featured-pill__what {
+  font-size: 0.74rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.map-count {
+  margin: 0;
+  padding: 0.15rem 0.5rem;
+  align-self: flex-start;
+  border-radius: var(--r-pill);
+  background: rgba(26, 26, 46, 0.9);
+  backdrop-filter: blur(8px);
+}
+
+/* The label eats width a phone does not have; the pills say enough. */
+@media (max-width: 560px) {
+  .featured-strip__label { display: none; }
+}
+
+/* The points a thing pays, sat beside its name on the front page. */
+.landing-worth {
+  flex: 0 0 auto;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--r-pill);
+  background: rgba(255, 0, 110, 0.16);
+  border: 1px solid rgba(255, 0, 110, 0.4);
+  color: #ff8ac0;
+  white-space: nowrap;
+}
+
+/* The guest banner's way home. */
+.banner__back {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  color: var(--neutral);
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.banner__back:hover { border-color: var(--accent2); color: var(--accent2); }
+
+@media (max-width: 480px) {
+  .banner__back span { display: none; }
+}

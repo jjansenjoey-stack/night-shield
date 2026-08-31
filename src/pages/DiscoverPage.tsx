@@ -94,8 +94,11 @@ export function DiscoverPage() {
         </div>
 
         <MapFilters />
-        <FeaturedCarousel />
       </div>
+
+      {/* Pinned to the bottom, not stacked under the toolbar — see the note in
+          FeaturedCarousel. The map keeps its middle. */}
+      <FeaturedCarousel />
 
       <button
         className="map-fab"
@@ -124,7 +127,8 @@ export function DiscoverPage() {
           className="tiny"
           style={{
             position: 'absolute',
-            bottom: 8,
+            // Above the featured strip, which owns the bottom edge now.
+            bottom: 78,
             left: '50%',
             transform: 'translateX(-50%)',
             background: 'rgba(26,26,46,0.92)',

@@ -1,43 +1,44 @@
 import { Sparkles } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
-import { ClickableCard } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { SafeImage } from '@/components/ui/Shared';
 import { eventToMapItem } from '@/services/api';
 import { isPast } from '@/services/eventService';
 import { formatEventDate } from '@/lib/format';
 
-/** Prompt 57 — "Featured this week" strip above the map. */
+/**
+ * "Featured this week", as a strip along the bottom of the map.
+ *
+ * It used to be three full image cards stacked under the search bar and the
+ * filter chips, which took about a hundred and eighty pixels off the top of the
+ * map — on a phone that is most of the city gone, to advertise three events.
+ *
+ * The map is the page. Controls belong over it; content does not. So this is
+ * now one scrollable row of small pills pinned to the bottom, out of the way of
+ * both the toolbar and the two floating buttons on the right, and it costs
+ * about forty pixels. Tapping one still centres the map and opens the event,
+ * which was always the point of it.
+ */
 export function FeaturedCarousel() {
   const data = useAppStore((s) => s.data);
   const setSelectedItem = useAppStore((s) => s.setSelectedItem);
   const setMapCenter = useAppStore((s) => s.setMapCenter);
 
-  const featured = (data?.events ?? []).filter((e) => e.is_featured && !isPast(e)).slice(0, 3);
+  const featured = (data?.events ?? []).filter((e) => e.is_featured && !isPast(e)).slice(0, 4);
   if (featured.length === 0) return null;
 
   return (
-    <section aria-label="Featured this week">
-      <p
-        className="tiny"
-        style={{
-          margin: '0 0 0.3rem 0.35rem',
-          color: 'var(--accent2)',
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-        }}
-      >
-        <Sparkles size={11} style={{ verticalAlign: '-1px' }} aria-hidden="true" /> Featured this
-        week
-      </p>
+    <section className="featured-strip" aria-label="Featured this week">
+      <span className="featured-strip__label">
+        <Sparkles size={11} aria-hidden="true" />
+        This week
+      </span>
 
-      <div className="carousel">
+      <div className="featured-strip__scroll">
         {featured.map((event) => (
-          <ClickableCard
+          <button
             key={event.id}
-            flush
-            label={`Open event: ${event.title}`}
-            onSelect={() => {
+            type="button"
+            className="featured-pill"
+            onClick={() => {
               const item = eventToMapItem(event);
               if (item) {
                 setMapCenter(item.location, 16);
@@ -45,21 +46,11 @@ export function FeaturedCarousel() {
               }
             }}
           >
-            <SafeImage
-              src={event.image_url}
-              alt=""
-              style={{ width: '100%', height: 96, objectFit: 'cover', display: 'block' }}
-            />
-            <div style={{ padding: '0.6rem' }}>
-              <Badge tone="pink">{formatEventDate(event.start_time)}</Badge>
-              <strong className="truncate" style={{ display: 'block', marginTop: '0.3rem' }}>
-                {event.title}
-              </strong>
-              <span className="tiny muted truncate" style={{ display: 'block' }}>
-                {event.is_virtual ? 'Online' : (event.address ?? 'Tilburg')}
-              </span>
-            </div>
-          </ClickableCard>
+            <span className="featured-pill__when">
+              {formatEventDate(event.start_time, event.end_time)}
+            </span>
+            <span className="featured-pill__what">{event.title}</span>
+          </button>
         ))}
       </div>
     </section>

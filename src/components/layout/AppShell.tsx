@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { CloudOff, LogIn, ShieldHalf } from 'lucide-react';
+import { ArrowLeft, CloudOff, LogIn, ShieldHalf } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { Avatar } from '@/components/ui/Shared';
@@ -63,7 +63,18 @@ export function AppShell() {
 
       {!user ? (
         <div className="banner">
-          <span>Sign in to RSVP to events and save routes.</span>
+          {/*
+            The only place a guest reliably looks. A link home on the logo is
+            easy to miss, and the bottom nav has no room for a tab that matters
+            once — but this banner is already here, and only for the people who
+            need the way back.
+          */}
+          <Link to="/" className="banner__back">
+            <ArrowLeft size={13} aria-hidden="true" />
+            Front page
+          </Link>
+          {/* Short enough to stay on one line next to the two buttons. */}
+          <span className="grow">Sign in to RSVP and save places.</span>
           <LinkButton to="/signup" variant="primary" size="sm" className="banner__cta">
             Sign up
           </LinkButton>
