@@ -279,6 +279,305 @@ values
   )
 on conflict do nothing;
 
+-- ---- generated: season events (start) ----
+-- ---------------------------------------------------------------------------
+-- Season events, mid-October to New Year's Eve 2026
+--
+-- Same rows as the season() block in src/services/seed.ts, generated from one
+-- list so the two backends agree. Unlike the events above these are fixed
+-- dates, not relative to when the seed runs: Halloween, Sinterklaas and New
+-- Year's Eve only make sense on their own days. All are example content (the
+-- local provider shows them with an "Example" badge; this schema has no
+-- is_example column).
+-- ---------------------------------------------------------------------------
+
+insert into public.events
+  (title, description, category, location, address, start_time, end_time,
+   capacity, cost_euros, organizer_name, image_url, accessibility,
+   is_virtual, virtual_url, is_featured, attendance_code)
+values
+  (
+    'Life drawing for beginners',
+    'Draw a clothed model in short poses, from one minute to twenty. Paper and charcoal are on the table, and nobody looks at your drawing unless you want them to. No experience needed.',
+    'workshop', pg_temp.pt(51.5590, 5.0895), 'Veemarkt Studios, Veemarktstraat 62',
+    timestamp '2026-10-14 19:30' at time zone 'Europe/Amsterdam', timestamp '2026-10-14 21:30' at time zone 'Europe/Amsterdam',
+    18, 3, 'Veemarkt Studios',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Textielmuseum%20Tilburg%20editathon%202.jpg?width=900',
+    array['wheelchair', 'step_free', 'quiet'], false, null, false, 'DRAWIN14'
+  ),
+  (
+    'Art walk: murals after dark',
+    'A guided walk past the big walls of the Spoorzone, with a stop at each one to hear who painted it and why. The route stays on lit streets. About ninety minutes at an easy pace.',
+    'art_talk', pg_temp.pt(51.5609, 5.0797), 'LocHal, main entrance',
+    timestamp '2026-10-17 20:00' at time zone 'Europe/Amsterdam', timestamp '2026-10-17 21:30' at time zone 'Europe/Amsterdam',
+    30, 0, 'Nadia el Amrani',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Riverside%20Skatepark%20Micro%20Mini%20Ramp%2020180505.jpg?width=900',
+    array['wheelchair', 'step_free', 'well_lit', 'service_animal'], false, null, false, 'MURALW17'
+  ),
+  (
+    'Open mic: poetry and spoken word',
+    'Five minutes on the stage, in any language. Read from your phone, from paper or from memory. Sign up at the door; people who have never performed go first.',
+    'art_talk', pg_temp.pt(51.5590, 5.0895), 'Veemarkt Studios, Veemarktstraat 62',
+    timestamp '2026-10-21 20:00' at time zone 'Europe/Amsterdam', timestamp '2026-10-21 22:30' at time zone 'Europe/Amsterdam',
+    60, 0, 'Veemarkt Studios',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Open%20Mic%20Night%20(62617955).jpeg?width=900',
+    array['wheelchair', 'step_free', 'hearing_loop'], false, null, false, 'POETRY21'
+  ),
+  (
+    'Club night: Veemarkt Late',
+    'House and disco until two. Free water at the bar and a quiet room upstairs if you need a break. Getting home: night bus times are on a board at the door, a staffed taxi point runs until closing, and there is a lift-share board for people going the same way. The awareness team wears purple and you can find them all night.',
+    'nightlife', pg_temp.pt(51.5590, 5.0895), 'Veemarktkwartier, courtyard studio',
+    timestamp '2026-10-24 22:00' at time zone 'Europe/Amsterdam', timestamp '2026-10-25 02:00' at time zone 'Europe/Amsterdam',
+    250, 8, 'Veemarkt Studios',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/De%20Havenmeester%20Tilburg.jpg?width=900',
+    array['wheelchair', 'well_lit', 'gender_neutral_toilets'], false, null, false, 'VMLATE24'
+  ),
+  (
+    'Repair Café: coats and bike lights',
+    'The clocks go back today, so bring the bike light that stopped working and the coat with the broken zip. Volunteers show you how to fix them. Free.',
+    'workshop', pg_temp.pt(51.5648, 5.0776), 'Buurthuis De Symfonie, Eilenbergstraat 250',
+    timestamp '2026-10-25 14:00' at time zone 'Europe/Amsterdam', timestamp '2026-10-25 17:00' at time zone 'Europe/Amsterdam',
+    null, 0, 'Buurthuis De Symfonie',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Bike%20workshop%20-%20bicycle%20repair%20shop.jpg?width=900',
+    array['wheelchair', 'step_free', 'hearing_loop', 'service_animal'], false, null, false, 'LIGHTS25'
+  ),
+  (
+    'Pumpkin lantern workshop',
+    'Carve a pumpkin lantern for Halloween. We have the pumpkins, the tools and the candles. Lanterns can stay at the café for the weekend so the square glows.',
+    'workshop', pg_temp.pt(51.5688, 5.0731), 'Café de Werkplaats, Wagnerplein 12',
+    timestamp '2026-10-28 19:00' at time zone 'Europe/Amsterdam', timestamp '2026-10-28 21:30' at time zone 'Europe/Amsterdam',
+    24, 2, 'Café de Werkplaats',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Heuvel%20(Tilburg)%20029copy1.jpg?width=900',
+    array['wheelchair', 'step_free', 'pet_friendly'], false, null, false, 'CARVEP28'
+  ),
+  (
+    'Halloween night: costumes optional',
+    'Dress up or come as you are. A costume is never an invitation: ask before you touch anyone. Quiet room, free water, and no masks at the bar. Getting home: night bus times are on a board at the door, a staffed taxi point runs until closing, and there is a lift-share board for people going the same way. The awareness team wears purple and you can find them all night.',
+    'nightlife', pg_temp.pt(51.5590, 5.0895), 'Veemarkt Studios, Veemarktstraat 62',
+    timestamp '2026-10-31 21:00' at time zone 'Europe/Amsterdam', timestamp '2026-11-01 01:00' at time zone 'Europe/Amsterdam',
+    200, 5, 'Veemarkt Studios',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Heuvel%20(Tilburg)%20032copy3.jpg?width=900',
+    array['wheelchair', 'step_free', 'gender_neutral_toilets', 'well_lit'], false, null, false, 'SPOOKY31'
+  ),
+  (
+    'Slow walk: autumn in the Wilhelminapark',
+    'A slow walk round the park after the Halloween weekend. No goal and no speed: we stop to look at the trees, then end with tea at the bandstand.',
+    'social', pg_temp.pt(51.5643, 5.0790), 'Wilhelminapark, by the bandstand',
+    timestamp '2026-11-01 15:00' at time zone 'Europe/Amsterdam', timestamp '2026-11-01 17:00' at time zone 'Europe/Amsterdam',
+    null, 0, 'Spoorpark vrijwilligers',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Vijver%20Wilhelminapark%20(Tilburg).jpg?width=900',
+    array['wheelchair', 'step_free', 'pet_friendly', 'quiet'], false, null, false, 'AUTUMN01'
+  ),
+  (
+    'Workshop: boundaries and saying no',
+    'A calm, practical evening on setting boundaries on a night out: how to say no clearly, how to help a friend, and who to call. No physical contact, and you can watch instead of taking part.',
+    'workshop', pg_temp.pt(51.5609, 5.0797), 'LocHal, Kennismakerij',
+    timestamp '2026-11-04 19:00' at time zone 'Europe/Amsterdam', timestamp '2026-11-04 21:00' at time zone 'Europe/Amsterdam',
+    20, 0, 'Inclusivity Department',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/LocHal%2020190606%20-%2012.jpg?width=900',
+    array['wheelchair', 'step_free', 'quiet', 'hearing_loop', 'gender_neutral_toilets'], false, null, false, 'BOUNDS04'
+  ),
+  (
+    'Silent disco in the LocHal',
+    'Three channels on the headphones: pop, techno and a low-volume chill channel. Turn it down whenever you like. Headphones are cleaned between every guest.',
+    'nightlife', pg_temp.pt(51.5609, 5.0797), 'LocHal, Stadszaal',
+    timestamp '2026-11-07 21:00' at time zone 'Europe/Amsterdam', timestamp '2026-11-08 00:30' at time zone 'Europe/Amsterdam',
+    150, 6, 'LocHal',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/LocHal%2020190606%20-%2001.jpg?width=900',
+    array['wheelchair', 'step_free', 'quiet', 'hearing_loop'], false, null, false, 'SILENT07'
+  ),
+  (
+    'Sint-Maarten lantern walk for grown-ups',
+    'On Sint-Maarten, children walk with lanterns and sing at doors. This is the grown-up version: a short lantern walk through the Spoorpark, with soup at the end. Lanterns to borrow.',
+    'social', pg_temp.pt(51.5652, 5.0742), 'Spoorpark pavilion',
+    timestamp '2026-11-11 19:00' at time zone 'Europe/Amsterdam', timestamp '2026-11-11 20:30' at time zone 'Europe/Amsterdam',
+    40, 0, 'Spoorpark vrijwilligers',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Walk%20in%20the%20park%20(50663291701).jpg?width=900',
+    array['wheelchair', 'step_free', 'well_lit', 'pet_friendly'], false, null, false, 'MAARTE11'
+  ),
+  (
+    'Artist talk: painting at night',
+    'Three street artists talk about working after dark: light, safety, permits, and the neighbours who bring coffee. Thirty minutes each, then questions.',
+    'art_talk', pg_temp.pt(51.5590, 5.0895), 'Veemarkt Studios, Veemarktstraat 62',
+    timestamp '2026-11-13 20:00' at time zone 'Europe/Amsterdam', timestamp '2026-11-13 22:00' at time zone 'Europe/Amsterdam',
+    60, 0, 'Inclusivity Department',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/LocHal%2020190606%20-%2011.jpg?width=900',
+    array['wheelchair', 'step_free', 'hearing_loop'], false, null, false, 'PAINTN13'
+  ),
+  (
+    'Zine afternoon: the city at night',
+    'Make a page for a shared zine about Tilburg after dark: a drawing, a poem, a map of your way home. Everyone gets a printed copy at the end.',
+    'workshop', pg_temp.pt(51.5609, 5.0797), 'LocHal, Kennismakerij',
+    timestamp '2026-11-15 14:00' at time zone 'Europe/Amsterdam', timestamp '2026-11-15 16:30' at time zone 'Europe/Amsterdam',
+    20, 3, 'Nadia el Amrani',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Zine%20Making%203.jpg?width=900',
+    array['wheelchair', 'quiet', 'step_free'], false, null, false, 'ZINEAF15'
+  ),
+  (
+    'Board game night: co-op games only',
+    'Everyone wins or everyone loses together. Good for a first visit, because nobody has to beat anybody. Hosts explain every game.',
+    'social', pg_temp.pt(51.5688, 5.0731), 'Café de Werkplaats, Wagnerplein 12',
+    timestamp '2026-11-18 19:30' at time zone 'Europe/Amsterdam', timestamp '2026-11-18 22:30' at time zone 'Europe/Amsterdam',
+    null, 0, 'Café de Werkplaats',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Family%20Board%20Game%20Night-U.S.%20Army%20Garrison%20Humphreys%2C%20South%20Korea%20-%2018%20September%202014%20(15098350338).jpg?width=900',
+    array['wheelchair', 'step_free', 'quiet', 'pet_friendly'], false, null, false, 'COOPGA18'
+  ),
+  (
+    'Hall of Fame night: hip-hop and skate',
+    'DJs, a cypher for anyone who wants the mic, and the skate bowl open until midnight. Helmets to borrow. Getting home: night bus times are on a board at the door, a staffed taxi point runs until closing, and there is a lift-share board for people going the same way. The awareness team wears purple and you can find them all night.',
+    'nightlife', pg_temp.pt(51.5710, 5.0680), 'Hall of Fame, Quirijnstokstraat',
+    timestamp '2026-11-21 21:00' at time zone 'Europe/Amsterdam', timestamp '2026-11-22 01:00' at time zone 'Europe/Amsterdam',
+    300, 7, 'Hall of Fame collective',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Riverside%20Skatepark%20Micro%20Mini%20Ramp%2020180505.jpg?width=900',
+    array['parking', 'well_lit'], false, null, false, 'HALLFA21'
+  ),
+  (
+    'Night walk: which streets feel safe, and why',
+    'On the international day against violence towards women, we walk a safe route together and note what helps: light, people, open doors. Your notes go to the municipality.',
+    'social', pg_temp.pt(51.5606, 5.0836), 'Tilburg Centraal, south exit',
+    timestamp '2026-11-25 19:00' at time zone 'Europe/Amsterdam', timestamp '2026-11-25 21:00' at time zone 'Europe/Amsterdam',
+    40, 0, 'Inclusivity Department',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Pedestrian%20crossing%20at%20night%2C%20Redland%20-%20geograph.org.uk%20-%206034970.jpg?width=900',
+    array['wheelchair', 'step_free', 'well_lit', 'service_animal'], false, null, false, 'ORANGE25'
+  ),
+  (
+    'Craft market: made in Tilburg',
+    'Twenty makers sell prints, ceramics, zines and knitwear. Every stall shows its prices, and there is a table where you can swap instead of buy.',
+    'social', pg_temp.pt(51.5590, 5.0895), 'Veemarktkwartier, courtyard studio',
+    timestamp '2026-11-28 14:00' at time zone 'Europe/Amsterdam', timestamp '2026-11-28 18:00' at time zone 'Europe/Amsterdam',
+    null, 0, 'Veemarkt Studios',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Textielmuseum%20Tilburg%20editathon%202.jpg?width=900',
+    array['wheelchair', 'step_free', 'pet_friendly'], false, null, false, 'CRAFTM28'
+  ),
+  (
+    'Write a Sinterklaas poem',
+    'In the Netherlands, a Sinterklaas present comes with a funny rhyming poem. Learn how to write one, in Dutch or English. Good for anyone celebrating for the first time.',
+    'workshop', pg_temp.pt(51.5609, 5.0797), 'LocHal, Kennismakerij',
+    timestamp '2026-11-29 15:00' at time zone 'Europe/Amsterdam', timestamp '2026-11-29 17:00' at time zone 'Europe/Amsterdam',
+    25, 0, 'LocHal',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Booksa%20-%20Workshop%20of%20creative%20writing%20of%20short%20stories%2055%2B.jpg?width=900',
+    array['wheelchair', 'quiet', 'step_free', 'hearing_loop'], false, null, false, 'GEDICH29'
+  ),
+  (
+    'Build a Sinterklaas surprise',
+    'A "surprise" is a present hidden inside something homemade: a giant shoe, a cardboard bike, a tiny Tilburg. Bring cardboard; we bring glue, paint and ideas.',
+    'workshop', pg_temp.pt(51.5688, 5.0731), 'Café de Werkplaats, Wagnerplein 12',
+    timestamp '2026-12-02 19:00' at time zone 'Europe/Amsterdam', timestamp '2026-12-02 21:30' at time zone 'Europe/Amsterdam',
+    20, 2, 'Café de Werkplaats',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Taller%20de%20serigraf%C3%ADa%20-%20La%20Ermita%201.jpg?width=900',
+    array['wheelchair', 'step_free'], false, null, false, 'SURPRI02'
+  ),
+  (
+    'Pakjesavond for people far from home',
+    'Sinterklaas evening for international students and anyone without family nearby. Dinner, a small present game with a five-euro limit, and pepernoten. Pay what you can.',
+    'social', pg_temp.pt(51.5648, 5.0776), 'Buurthuis De Symfonie, Eilenbergstraat 250',
+    timestamp '2026-12-05 18:00' at time zone 'Europe/Amsterdam', timestamp '2026-12-05 21:00' at time zone 'Europe/Amsterdam',
+    50, 0, 'Buurthuis De Symfonie',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Heartsite%20Community%20Meal.png?width=900',
+    array['wheelchair', 'step_free', 'hearing_loop', 'service_animal', 'quiet'], false, null, false, 'PAKJES05'
+  ),
+  (
+    'Open mic: winter songs',
+    'Bring a winter song, in any language and any style. There is a guitar and a keyboard on stage. First-timers are welcome, and the room is kind.',
+    'art_talk', pg_temp.pt(51.5590, 5.0895), 'Veemarkt Studios, Veemarktstraat 62',
+    timestamp '2026-12-09 19:30' at time zone 'Europe/Amsterdam', timestamp '2026-12-09 21:30' at time zone 'Europe/Amsterdam',
+    60, 0, 'Veemarkt Studios',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Open%20Mic%20Night%20(62617955).jpeg?width=900',
+    array['wheelchair', 'step_free', 'hearing_loop'], false, null, false, 'WINTER09'
+  ),
+  (
+    'Winter market in the Spoorpark',
+    'Stalls with warm food, mulled wine and alcohol-free punch, under the lights around the pavilion. The paths are lit and flat. Free to walk around.',
+    'social', pg_temp.pt(51.5652, 5.0742), 'Spoorpark pavilion',
+    timestamp '2026-12-11 17:00' at time zone 'Europe/Amsterdam', timestamp '2026-12-11 22:00' at time zone 'Europe/Amsterdam',
+    null, 0, 'Spoorpark vrijwilligers',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Walk%20in%20the%20park%20(50663291701).jpg?width=900',
+    array['wheelchair', 'step_free', 'well_lit', 'pet_friendly'], false, null, false, 'MARKET11'
+  ),
+  (
+    'Club night: Winter Warm-up',
+    'Disco, funk and Dutch classics until two. Coats go in a free cloakroom, and there is a quiet corner with seats. Getting home: night bus times are on a board at the door, a staffed taxi point runs until closing, and there is a lift-share board for people going the same way. The awareness team wears purple and you can find them all night.',
+    'nightlife', pg_temp.pt(51.5590, 5.0895), 'Veemarktkwartier, courtyard studio',
+    timestamp '2026-12-12 22:00' at time zone 'Europe/Amsterdam', timestamp '2026-12-13 02:00' at time zone 'Europe/Amsterdam',
+    250, 8, 'Veemarkt Studios',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/De%20Havenmeester%20Tilburg.jpg?width=900',
+    array['wheelchair', 'well_lit', 'gender_neutral_toilets'], false, null, false, 'WARMUP12'
+  ),
+  (
+    'Make a winter wreath',
+    'Make a wreath from branches cut in the park during autumn pruning. Everything is provided, and you take the wreath home.',
+    'workshop', pg_temp.pt(51.5648, 5.0776), 'Buurthuis De Symfonie, Eilenbergstraat 250',
+    timestamp '2026-12-16 19:00' at time zone 'Europe/Amsterdam', timestamp '2026-12-16 21:00' at time zone 'Europe/Amsterdam',
+    20, 4, 'Buurthuis De Symfonie',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Drieburcht%2C%20renovatie%20Wagnerplein%20Tilburg%201.jpg?width=900',
+    array['wheelchair', 'step_free', 'quiet'], false, null, false, 'WREATH16'
+  ),
+  (
+    'Christmas lights walk to the Heuvel',
+    'A short evening walk past the Christmas lights in the centre, ending at the market stalls on the Heuvel. We go together and leave together.',
+    'social', pg_temp.pt(51.5588, 5.0902), 'Heuvel, by the statue',
+    timestamp '2026-12-18 18:30' at time zone 'Europe/Amsterdam', timestamp '2026-12-18 20:30' at time zone 'Europe/Amsterdam',
+    40, 0, 'Nadia el Amrani',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Heuvel%20(Tilburg)%20029copy1.jpg?width=900',
+    array['wheelchair', 'step_free', 'well_lit', 'service_animal'], false, null, false, 'LIGHTW18'
+  ),
+  (
+    'Queer winter social',
+    'Chairs, warm drinks and a playlist kept low enough to talk. Bring a friend or come alone; a host welcomes everyone at the door.',
+    'social', pg_temp.pt(51.5590, 5.0895), 'Veemarktkwartier, courtyard studio',
+    timestamp '2026-12-19 20:00' at time zone 'Europe/Amsterdam', timestamp '2026-12-19 23:00' at time zone 'Europe/Amsterdam',
+    45, 0, 'Inclusivity Department',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Heuvel%20(Tilburg)%20032copy3.jpg?width=900',
+    array['wheelchair', 'quiet', 'step_free', 'gender_neutral_toilets', 'service_animal'], false, null, false, 'QUEERW19'
+  ),
+  (
+    'Study café: exam week',
+    'Free coffee and tea for everyone revising, and a silent room. Plugs at every table.',
+    'social', pg_temp.pt(51.5609, 5.0797), 'LocHal, Kennismakerij',
+    timestamp '2026-12-22 14:00' at time zone 'Europe/Amsterdam', timestamp '2026-12-22 17:00' at time zone 'Europe/Amsterdam',
+    null, 0, 'LocHal',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/LocHal%2020190606%20-%2012.jpg?width=900',
+    array['wheelchair', 'quiet', 'step_free', 'hearing_loop'], false, null, false, 'EXAMCA22'
+  ),
+  (
+    'Christmas Eve dinner: nobody eats alone',
+    'A long table, a warm meal and good company for anyone on their own this Christmas. Vegetarian and halal options. Pay what you can, or nothing.',
+    'social', pg_temp.pt(51.5648, 5.0776), 'Buurthuis De Symfonie, Eilenbergstraat 250',
+    timestamp '2026-12-24 17:00' at time zone 'Europe/Amsterdam', timestamp '2026-12-24 21:00' at time zone 'Europe/Amsterdam',
+    60, 0, 'Buurthuis De Symfonie',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Heartsite%20Community%20Meal.png?width=900',
+    array['wheelchair', 'step_free', 'hearing_loop', 'service_animal', 'quiet'], false, null, false, 'XMASEV24'
+  ),
+  (
+    'Second Christmas Day slow walk',
+    'Walk off the Christmas food in the Wilhelminapark. A slow loop of about an hour, then hot chocolate at the bandstand.',
+    'social', pg_temp.pt(51.5643, 5.0790), 'Wilhelminapark, by the bandstand',
+    timestamp '2026-12-26 15:00' at time zone 'Europe/Amsterdam', timestamp '2026-12-26 16:30' at time zone 'Europe/Amsterdam',
+    null, 0, 'Spoorpark vrijwilligers',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Vijver%20Wilhelminapark%20(Tilburg).jpg?width=900',
+    array['wheelchair', 'step_free', 'pet_friendly', 'quiet'], false, null, false, 'KERST226'
+  ),
+  (
+    'Online: your year of safe routes',
+    'An online hour to look back on 2026: which routes you walked, what felt better, and what should change next year. You need a laptop or a phone.',
+    'workshop', null, null,
+    timestamp '2026-12-29 19:00' at time zone 'Europe/Amsterdam', timestamp '2026-12-29 20:00' at time zone 'Europe/Amsterdam',
+    40, 0, 'Inclusivity Department',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Spoorpark%20(Tilburg)%20006.jpg?width=900',
+    array['hearing_loop', 'quiet'], true, 'https://meet.example.org/night-shield-year-review', false, 'REVIEW29'
+  ),
+  (
+    'New Year''s Eve safe night at the Piushaven',
+    'Count down by the water with music, free water and a heated tent to warm up. Watch the fireworks from the quay, away from the crowds. Extra night buses run after midnight, a staffed taxi point is open until 01:30, and the awareness team is there all night.',
+    'nightlife', pg_temp.pt(51.5503, 5.0978), 'Piushaven 1',
+    timestamp '2026-12-31 21:00' at time zone 'Europe/Amsterdam', timestamp '2027-01-01 01:30' at time zone 'Europe/Amsterdam',
+    300, 0, 'Inclusivity Department',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/De%20Havenmeester%20Tilburg.jpg?width=900',
+    array['wheelchair', 'well_lit', 'step_free'], false, null, false, 'NYESAF31'
+  )
+on conflict do nothing;
+-- ---- generated: season events (end) ----
+
 -- ---------------------------------------------------------------------------
 -- Night Caches
 --

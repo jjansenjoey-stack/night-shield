@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Marker } from 'react-map-gl/maplibre';
-import { CheckCircle2, Flag, MapPin, Navigation, Timer, X } from 'lucide-react';
+import { CheckCircle2, Flag, Navigation, Timer, X } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { MapView } from '@/components/map/MapView';
@@ -114,17 +113,14 @@ export function RouteNavigationPage() {
   return (
     <div className="nav-page">
       <div className="nav-page__map">
-        <MapView items={items} routesOverride={[route]} showUser>
-          {current ? (
-            <Marker
-              latitude={current.location.latitude}
-              longitude={current.location.longitude}
-              anchor="bottom"
-            >
-              <MapPin size={34} color="var(--accent1)" fill="var(--accent1)" aria-hidden="true" />
-            </Marker>
-          ) : null}
-        </MapView>
+        {/* The next stop is a prop, not a child marker, so it draws in either
+            map engine — MapLibre, or Leaflet when WebGL is unavailable. */}
+        <MapView
+          items={items}
+          routesOverride={[route]}
+          showUser
+          pin={current ? current.location : null}
+        />
 
         <button
           className="map-fab"

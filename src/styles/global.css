@@ -742,6 +742,62 @@ button { font-family: inherit; }
   border: 2px solid var(--primary);
 }
 
+/*
+ * The Leaflet map, used when the browser has no WebGL. Markers are the same
+ * React buttons as on the MapLibre map, portalled into zero-size Leaflet
+ * marker nodes and centred on them here.
+ */
+.map-canvas--loading { background: var(--primary); }
+/* Leaflet stacks its panes at z-index 400-1000; keep all of that inside the map
+   so the page's own overlays (toolbar, filters, carousel) stay on top. */
+.map-canvas--leaflet { position: absolute; inset: 0; z-index: 0; isolation: isolate; }
+.leaflet-host { position: absolute; inset: 0; }
+.map-canvas--leaflet .leaflet-container {
+  font-family: var(--font-body);
+  background: var(--primary);
+}
+.map-canvas--leaflet .leaflet-container .leaflet-control-attribution {
+  font-size: 10px;
+  background: rgba(26, 26, 46, 0.75);
+  color: var(--text-muted);
+}
+.map-canvas--leaflet .leaflet-container .leaflet-control-attribution a { color: var(--neutral); }
+.map-canvas--leaflet .leaflet-container .leaflet-bar a {
+  background: var(--surface-raised);
+  color: var(--neutral);
+  border-bottom-color: var(--border);
+}
+.map-canvas--leaflet .leaflet-container .leaflet-bar a:hover { background: var(--surface); }
+.map-canvas--leaflet .leaflet-container .leaflet-control-scale-line {
+  background: rgba(26, 26, 46, 0.6);
+  color: var(--neutral);
+  border-color: var(--neutral);
+}
+.ns-leaflet-slot { width: 0; height: 0; overflow: visible; }
+.ns-leaflet-anchor { position: absolute; left: 0; top: 0; }
+.ns-leaflet-anchor--center { transform: translate(-50%, -50%); }
+.ns-leaflet-anchor--bottom { transform: translate(-50%, -100%); line-height: 0; }
+/* Leaflet turns pointer events off on non-interactive markers; the buttons
+   inside are the interactive part. */
+.ns-leaflet-slot .map-marker { pointer-events: auto; }
+.map-fallback-note {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 450;
+  margin: 0;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--r-pill);
+  background: rgba(26, 26, 46, 0.78);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.map-fallback-note--inline { color: var(--neutral); }
+
 .user-dot {
   width: 18px;
   height: 18px;
@@ -1458,6 +1514,81 @@ button { font-family: inherit; }
 }
 .hero--shader h1 {
   text-shadow: 0 2px 22px rgba(0, 0, 0, 0.6);
+}
+
+/*
+ * The shader without WebGL.
+ *
+ * Shown when the browser has no usable GPU (hardware acceleration off, a
+ * blocklisted driver, a crashed GPU process). Four soft blobs in the shader's
+ * own palette drift on long, mismatched loops over near-black. Only
+ * `transform` is animated, so after the first paint the compositor moves
+ * finished layers around and nothing is repainted. The blur is built into the
+ * radial gradients (they fade to transparent) rather than a CSS filter: a
+ * machine on this path has no GPU, and a filter over moving layers would be
+ * recomputed in software on every frame.
+ */
+.shader-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  background: #06040f;
+}
+.shader-fallback__blob {
+  position: absolute;
+  width: 70vmax;
+  height: 70vmax;
+  border-radius: 50%;
+  opacity: 0.85;
+  will-change: transform;
+  animation: shader-drift-a 26s ease-in-out infinite alternate;
+}
+.shader-fallback__blob--purple {
+  left: -20vmax;
+  top: -25vmax;
+  background: radial-gradient(circle at center, rgba(77, 26, 230, 0.95), rgba(77, 26, 230, 0) 62%);
+}
+.shader-fallback__blob--magenta {
+  right: -22vmax;
+  top: -10vmax;
+  background: radial-gradient(circle at center, rgba(255, 26, 153, 0.9), rgba(255, 26, 153, 0) 60%);
+  animation-name: shader-drift-b;
+  animation-duration: 31s;
+}
+.shader-fallback__blob--orange {
+  left: 5vmax;
+  bottom: -40vmax;
+  background: radial-gradient(circle at center, rgba(255, 77, 26, 0.75), rgba(255, 77, 26, 0) 58%);
+  animation-name: shader-drift-c;
+  animation-duration: 37s;
+}
+.shader-fallback__blob--blue {
+  right: -15vmax;
+  bottom: -35vmax;
+  background: radial-gradient(circle at center, rgba(76, 170, 255, 0.7), rgba(76, 170, 255, 0) 58%);
+  animation-name: shader-drift-a;
+  animation-duration: 43s;
+  animation-direction: alternate-reverse;
+}
+@keyframes shader-drift-a {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(14vmax, 8vmax, 0) scale(1.15); }
+  100% { transform: translate3d(4vmax, 18vmax, 0) scale(0.92); }
+}
+@keyframes shader-drift-b {
+  0% { transform: translate3d(0, 0, 0) scale(1.05); }
+  50% { transform: translate3d(-16vmax, 10vmax, 0) scale(0.9); }
+  100% { transform: translate3d(-6vmax, -6vmax, 0) scale(1.2); }
+}
+@keyframes shader-drift-c {
+  0% { transform: translate3d(0, 0, 0) scale(0.95); }
+  50% { transform: translate3d(18vmax, -12vmax, 0) scale(1.2); }
+  100% { transform: translate3d(-8vmax, -4vmax, 0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* The colour still arrives; the movement does not — same rule as the shader. */
+  .shader-fallback__blob { animation: none; }
 }
 
 /* Without a context the canvas is transparent, so keep a gradient underneath. */

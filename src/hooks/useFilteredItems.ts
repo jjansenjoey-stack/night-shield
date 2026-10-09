@@ -9,6 +9,17 @@ import { toMapItems } from '@/services/api';
 import { distanceKm } from '@/lib/geo';
 import type { ItemType, LatLng, MapItem, NightEvent } from '@/types';
 
+/*
+ * How far ahead the map looks for events.
+ *
+ * The calendar now runs to New Year's Eve, and every future event drawn at
+ * once would bury the art, routes and third spaces under December's markers —
+ * five of them stacked on the LocHal alone. The map is for "what is on soon",
+ * so it shows the same fortnight the calendar's "Coming up" list does. A search
+ * still finds anything further out, and the calendar shows it all.
+ */
+export const MAP_EVENT_HORIZON_DAYS = 14;
+
 /** Stable identity so the memo below does not recompute on every render. */
 const NO_NEEDS: string[] = [];
 
@@ -70,6 +81,7 @@ export function useFilteredItems(): {
     const all = toMapItems(data, visibleTypes);
     const origin = userLocation ?? mapCenter;
     const query = searchQuery.trim().toLowerCase();
+    const horizon = Date.now() + MAP_EVENT_HORIZON_DAYS * 24 * 60 * 60 * 1000;
 
     const decorated: DecoratedItem[] = all.map((item) => ({
       ...item,
@@ -79,6 +91,13 @@ export function useFilteredItems(): {
     const filtered = decorated.filter((item) => {
       if (!withinDistance(distanceBand, item.distance)) return false;
       if (!matchesTime(timeFilter, item)) return false;
+      if (
+        item.type === 'event' &&
+        !query &&
+        new Date((item.raw as NightEvent).start_time).getTime() > horizon
+      ) {
+        return false;
+      }
 
       if (accessibilityFilters.length) {
         if (!accessibilityFilters.every((tag) => item.accessibility.includes(tag))) return false;

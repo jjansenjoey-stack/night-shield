@@ -78,7 +78,9 @@ export function DiscoverPage() {
 
   return (
     <div className="map-page">
-      <MapView />
+      {/* Toolbar on top, carousel at the bottom: the simple map's note goes in
+          the attribution line, where it cannot cover either. */}
+      <MapView fallbackNote="attribution" />
 
       <div className="map-overlay">
         <div className="map-toolbar">

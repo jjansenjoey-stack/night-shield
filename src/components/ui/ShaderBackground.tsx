@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { webglAvailable } from '@/lib/webgl';
 
 /**
  * The animated WebGL gradient behind the landing page.
@@ -25,8 +26,11 @@ import { useEffect, useRef } from 'react';
  *      be an odd thing to ship.
  *   4. Paused while the tab is hidden, and stopped if the GL context is lost.
  *
- * If WebGL is missing or fails, the canvas simply stays transparent and the
- * CSS gradient underneath shows through.
+ * If WebGL is missing, or the shader fails to compile or link, or the context
+ * is lost, the canvas is swapped for <ShaderFallback>: blurred colour blobs in
+ * the same palette, drifting on CSS keyframes. That path needs no GPU and costs
+ * almost nothing — it animates transforms only, which the browser composites
+ * without repainting. Force it with `?nowebgl=1` (see lib/webgl.ts).
  */
 
 const VERTEX_SHADER = `
@@ -269,33 +273,73 @@ function compile(gl: WebGLRenderingContext, type: number, source: string) {
   return shader;
 }
 
+/**
+ * The no-WebGL version: four soft blobs on near-black, each on its own slow
+ * loop so the picture never quite repeats. Styles live in global.css under
+ * `.shader-fallback`; prefers-reduced-motion holds them still.
+ */
+function ShaderFallback({ className }: { className?: string }) {
+  return (
+    <div
+      className={['shader-fallback', className].filter(Boolean).join(' ')}
+      aria-hidden="true"
+    >
+      <span className="shader-fallback__blob shader-fallback__blob--purple" />
+      <span className="shader-fallback__blob shader-fallback__blob--magenta" />
+      <span className="shader-fallback__blob shader-fallback__blob--orange" />
+      <span className="shader-fallback__blob shader-fallback__blob--blue" />
+    </div>
+  );
+}
+
 export function ShaderBackground({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [fallback, setFallback] = useState(() => !webglAvailable());
 
   useEffect(() => {
+    if (fallback) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const gl = canvas.getContext('webgl', {
-      antialias: false,
-      alpha: false,
-      // The frame is never read back, so the driver may drop it after paint.
-      preserveDrawingBuffer: false,
-      powerPreference: 'low-power',
-    });
-    if (!gl) return;
+    // Any failure from here on hands over to the CSS version.
+    const fail = () => setFallback(true);
+
+    let context: WebGLRenderingContext | null = null;
+    try {
+      context = canvas.getContext('webgl', {
+        antialias: false,
+        alpha: false,
+        // The frame is never read back, so the driver may drop it after paint.
+        preserveDrawingBuffer: false,
+        powerPreference: 'low-power',
+      });
+    } catch {
+      context = null;
+    }
+    if (!context || context.isContextLost()) {
+      fail();
+      return;
+    }
+    const gl = context;
 
     const vert = compile(gl, gl.VERTEX_SHADER, VERTEX_SHADER);
     const frag = compile(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER);
-    if (!vert || !frag) return;
+    if (!vert || !frag) {
+      fail();
+      return;
+    }
 
     const program = gl.createProgram();
-    if (!program) return;
+    if (!program) {
+      fail();
+      return;
+    }
     gl.attachShader(program, vert);
     gl.attachShader(program, frag);
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       console.warn('Shader link failed:', gl.getProgramInfoLog(program));
+      fail();
       return;
     }
 
@@ -401,6 +445,8 @@ export function ShaderBackground({ className }: { className?: string }) {
       event.preventDefault();
       stopped = true;
       cancelAnimationFrame(frame);
+      // A GPU that drops the context rarely comes back while the page is open.
+      fail();
     };
 
     if (reduced?.matches) {
@@ -435,7 +481,8 @@ export function ShaderBackground({ className }: { className?: string }) {
        * canvas is discarded with the element anyway.
        */
     };
-  }, []);
+  }, [fallback]);
 
+  if (fallback) return <ShaderFallback className={className} />;
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 }
